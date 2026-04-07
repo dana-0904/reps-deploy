@@ -1337,7 +1337,22 @@ button{cursor:pointer;border:none;background:none;color:inherit;}
 .rs-meta{font-size:0.72rem;color:var(--muted);margin-top:2px;}
 .rs-del{background:none;border:none;color:#444;cursor:pointer;padding:6px;border-radius:8px;display:flex;align-items:center;justify-content:center;transition:color .15s,background .15s;flex-shrink:0;}
 .rs-del:active{color:var(--pink);background:rgba(255,77,106,0.12);}
+.rs-edit{background:none;border:none;color:#555;cursor:pointer;padding:6px;border-radius:8px;display:flex;align-items:center;justify-content:center;transition:color .15s,background .15s;flex-shrink:0;}
+.rs-edit:active{color:var(--lime);background:rgba(198,241,53,0.12);}
 .rs-empty{padding:20px 18px;font-size:0.8rem;color:var(--muted);text-align:center;}
+/* Edit log modal */
+#edit-log-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.65);z-index:400;align-items:flex-end;backdrop-filter:blur(4px);}
+#edit-log-modal.open{display:flex;}
+.edit-log-sheet{background:#181818;border-radius:24px 24px 0 0;width:100%;max-height:80vh;display:flex;flex-direction:column;}
+.edit-log-inner{overflow-y:auto;padding:0 16px 8px;flex:1;-webkit-overflow-scrolling:touch;}
+.edit-log-ex{margin-bottom:20px;}
+.edit-log-ex-name{font-family:'Barlow Condensed',sans-serif;font-size:0.85rem;font-weight:800;letter-spacing:.08em;color:var(--lime);margin-bottom:8px;text-transform:uppercase;}
+.edit-log-set-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.edit-log-set-num{font-size:0.72rem;color:var(--muted);width:16px;flex-shrink:0;text-align:right;}
+.edit-log-input{background:var(--elevated2);border:1px solid rgba(255,255,255,0.06);border-radius:8px;color:var(--white);font-size:0.88rem;padding:7px 10px;width:72px;text-align:center;font-family:'Inter',sans-serif;}
+.edit-log-sep{color:var(--muted);font-size:0.85rem;}
+.edit-log-unit{font-size:0.72rem;color:var(--muted);}
+.edit-log-save{width:calc(100% - 32px);margin:12px 16px calc(env(safe-area-inset-bottom)+16px);padding:15px;background:var(--lime);border:none;border-radius:14px;color:#000;font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:900;letter-spacing:.06em;cursor:pointer;flex-shrink:0;}
 .pr-card{
   background:var(--surface);
   border-radius:20px;
@@ -3981,7 +3996,6 @@ function renderSetRows(exData, wk, prs, logs, isCardio){
             showPRBanner(exData.name, k);
           }
           renderActiveView();
-          startRestTimer(exData.name);
         }
       }
 
@@ -4140,25 +4154,37 @@ function renderRecentSessions(){
     + logs.map((log,i)=>{
       const name = wkMap[log.workoutId] || log.workoutId || 'Workout';
       const exCount = log.exercises ? log.exercises.length : 0;
+      const isCardio = log.workoutId === 'cardio';
       const totalSets = log.exercises ? log.exercises.reduce((s,e)=>s+(e.sets||e.setsData||[]).length,0) : 0;
+      const totalMins = isCardio && log.exercises ? log.exercises.reduce((sum,e)=>{
+        return sum + (e.sets||[]).reduce((s2,s)=>s2+(parseInt(s.reps)||0),0);
+      },0) : 0;
       const dateStr = log.date;
       const isOpen = _rsExpanded.has(i);
       const exDetails = isOpen && log.exercises ? log.exercises.map(ex=>{
         const sets = ex.sets||ex.setsData||[];
         const doneSets = sets.filter(s=>s.kg||s.reps);
         if(!doneSets.length) return '';
-        const setsStr = doneSets.map((s,si)=>`<span class="rs-set-chip">${si+1}. ${s.kg||'—'} kg × ${s.reps||'—'}</span>`).join('');
+        const setsStr = isCardio
+          ? doneSets.map((s,si)=>`<span class="rs-set-chip">${si+1}. ${s.reps||'—'} min</span>`).join('')
+          : doneSets.map((s,si)=>`<span class="rs-set-chip">${si+1}. ${s.kg||'—'} kg × ${s.reps||'—'}</span>`).join('');
         return `<div class="rs-ex-row"><div class="rs-ex-name">${ex.name}</div><div class="rs-ex-sets">${setsStr}</div></div>`;
       }).join('') : '';
+      const metaSuffix = isCardio
+        ? `${totalMins} min total`
+        : `${totalSets} sets`;
       return `<div class="rs-item rs-item-clickable" onclick="toggleRsExpand(${i})">
-        <div class="rs-dot"></div>
+        <div class="rs-dot" style="${isCardio?'background:var(--cyan)':''}"></div>
         <div class="rs-info" style="flex:1;">
           <div class="rs-name">${name.toUpperCase()}</div>
-          <div class="rs-meta">${dateStr}${log.duration?' · '+log.duration+' MIN':''} · ${exCount} exercises · ${totalSets} sets</div>
+          <div class="rs-meta">${dateStr}${log.duration?' · '+log.duration+' MIN':''} · ${exCount} exercises · ${metaSuffix}</div>
           ${isOpen?`<div class="rs-detail">${exDetails}</div>`:''}
         </div>
-        <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
+        <div style="display:flex;align-items:center;gap:4px;flex-shrink:0;">
           <svg style="opacity:0.4;transition:transform .2s;transform:rotate(${isOpen?180:0}deg)" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <button class="rs-edit" onclick="event.stopPropagation();editLog(${i})" aria-label="Edit session">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M9.5 1.5L11.5 3.5 4.5 10.5H2.5V8.5L9.5 1.5z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
           <button class="rs-del" onclick="event.stopPropagation();deleteLog(${i})" aria-label="Delete session">
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 2l10 10M12 2L2 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
           </button>
@@ -4169,6 +4195,63 @@ function renderRecentSessions(){
 function toggleRsExpand(i){
   if(_rsExpanded.has(i)) _rsExpanded.delete(i); else _rsExpanded.add(i);
   renderRecentSessions();
+}
+
+let _editLogIdx = null;
+let _editLogData = null;
+
+function editLog(sortedIndex){
+  const logs = getLogs().slice().sort((a,b)=>b.date.localeCompare(a.date));
+  const log = logs[sortedIndex];
+  if(!log) return;
+  _editLogIdx = sortedIndex;
+  _editLogData = JSON.parse(JSON.stringify(log)); // deep copy
+  const isCardio = log.workoutId === 'cardio';
+  const inner = document.getElementById('edit-log-inner');
+  inner.innerHTML = (_editLogData.exercises||[]).map((ex,ei)=>{
+    const sets = ex.sets||[];
+    if(!sets.length) return '';
+    const setRows = sets.map((s,si)=>{
+      if(isCardio){
+        return `<div class="edit-log-set-row">
+          <span class="edit-log-set-num">${si+1}</span>
+          <input class="edit-log-input" type="number" min="0" value="${s.reps||''}" placeholder="0"
+            oninput="_editLogData.exercises[${ei}].sets[${si}].reps=this.value">
+          <span class="edit-log-unit">MIN</span>
+        </div>`;
+      }
+      return `<div class="edit-log-set-row">
+        <span class="edit-log-set-num">${si+1}</span>
+        <input class="edit-log-input" type="number" min="0" step="0.5" value="${s.kg||''}" placeholder="kg"
+          oninput="_editLogData.exercises[${ei}].sets[${si}].kg=this.value">
+        <span class="edit-log-sep">×</span>
+        <input class="edit-log-input" type="number" min="0" value="${s.reps||''}" placeholder="reps"
+          oninput="_editLogData.exercises[${ei}].sets[${si}].reps=this.value">
+      </div>`;
+    }).join('');
+    return `<div class="edit-log-ex"><div class="edit-log-ex-name">${ex.name}</div>${setRows}</div>`;
+  }).join('');
+  document.getElementById('edit-log-modal').classList.add('open');
+}
+
+function closeEditLog(){
+  document.getElementById('edit-log-modal').classList.remove('open');
+  _editLogIdx=null; _editLogData=null;
+}
+
+function saveLogEdit(){
+  if(_editLogIdx===null||!_editLogData) return;
+  const logs = getLogs().slice().sort((a,b)=>b.date.localeCompare(a.date));
+  const target = logs[_editLogIdx];
+  if(!target) return;
+  const all = getLogs();
+  const idx = all.findIndex(l=>l.date===target.date&&l.workoutId===target.workoutId);
+  if(idx===-1) return;
+  all[idx]=_editLogData;
+  saveLogs(all);
+  closeEditLog();
+  renderRecentSessions();
+  showToast('SESSION UPDATED');
 }
 
 function deleteLog(sortedIndex){
@@ -4417,7 +4500,7 @@ function renderPRCard(){
 
 // ===== PROFILE =====
 function getProfile(){
-  const def = {name:'ATHLETE',avatar:null,weight:null,height:null,dob:null,goal:'hypertrophy',trainingStart:null,freqGoal:2};
+  const def = {name:'ATHLETE',avatar:null,weight:null,height:null,dob:null,goal:'hypertrophy',trainingStart:null,freqGoal:4};
   try{ return Object.assign({},def,JSON.parse(localStorage.getItem('reps_profile')||'{}')); }
   catch(e){ return def; }
 }
@@ -4513,7 +4596,7 @@ function renderProfile(){
     const totalSets = _calcTotalSets(logs);
     const totalPRs = Object.keys(prs).length;
     // Consistency: last 8 weeks, how many hit freqGoal
-    const goal = parseInt(profile.freqGoal||2);
+    const goal = parseInt(profile.freqGoal||4);
     const today = new Date();
     const weekData = [];
     for(let w=7;w>=0;w--){
@@ -5733,6 +5816,19 @@ initAuth();
   </div>
 </div>
 
+
+<!-- EDIT LOG MODAL -->
+<div id="edit-log-modal" onclick="if(event.target===this)closeEditLog()">
+  <div class="edit-log-sheet">
+    <div style="width:36px;height:4px;background:#444;border-radius:2px;margin:12px auto 0;flex-shrink:0;"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px 12px;flex-shrink:0;">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:900;letter-spacing:.06em;">EDIT SESSION</div>
+      <button class="ql-close" onclick="closeEditLog()"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M1 1l10 10M11 1L1 11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+    </div>
+    <div class="edit-log-inner" id="edit-log-inner"></div>
+    <button class="edit-log-save" onclick="saveLogEdit()">SAVE CHANGES</button>
+  </div>
+</div>
 
 <!-- PROJ EX PICKER -->
 <div id="proj-ex-modal" onclick="if(event.target===this)closeProjExPicker()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:350;align-items:flex-end;backdrop-filter:blur(4px);">
