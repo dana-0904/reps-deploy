@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>REPS. Notes Importer</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#0d0d0d;color:#fff;font-family:'SF Pro Display',sans-serif;padding:24px;}
+  h1{color:#c6f135;font-size:20px;letter-spacing:4px;margin-bottom:4px;}
+  .sub{color:#444;font-size:11px;letter-spacing:2px;margin-bottom:24px;}
+  .stats{display:flex;gap:16px;margin-bottom:24px;flex-wrap:wrap;}
+  .stat{background:#1a1a1a;border-radius:12px;padding:14px 20px;border:1px solid #2a2a2a;}
+  .stat-val{font-size:28px;font-weight:700;color:#c6f135;}
+  .stat-label{font-size:10px;color:#555;letter-spacing:2px;margin-top:2px;}
+  .btn{background:#c6f135;color:#000;border:none;padding:14px 28px;border-radius:12px;font-weight:700;font-size:14px;letter-spacing:2px;cursor:pointer;margin-right:10px;margin-bottom:12px;}
+  .btn:active{opacity:0.8;}
+  .btn.sec{background:#1a1a1a;color:#c6f135;border:1px solid #c6f135;}
+  .copied{display:none;color:#c6f135;font-size:12px;margin-top:8px;letter-spacing:1px;}
+  table{width:100%;border-collapse:collapse;margin-top:24px;font-size:12px;}
+  th{background:#1a1a1a;color:#555;text-align:left;padding:10px 14px;letter-spacing:2px;font-size:10px;border-bottom:1px solid #222;}
+  td{padding:10px 14px;border-bottom:1px solid #1a1a1a;vertical-align:top;}
+  tr:hover td{background:#141414;}
+  .upper{color:#c6f135;font-weight:700;}
+  .legs{color:#ff4d6a;font-weight:700;}
+  .ex-list{color:#666;font-size:11px;line-height:1.6;}
+  .ex-name{color:#aaa;}
+  .sets-count{color:#444;font-size:10px;}
+  .instructions{background:#1a1a1a;border-radius:16px;padding:20px;margin-bottom:24px;border:1px solid #2a2a2a;}
+  .instructions h2{color:#c6f135;font-size:12px;letter-spacing:3px;margin-bottom:12px;}
+  .instructions ol{padding-left:20px;color:#666;font-size:13px;line-height:1.8;}
+  .instructions li{margin-bottom:4px;}
+  .instructions b{color:#aaa;}
+</style>
+</head>
+<body>
+<h1>REPS. NOTES IMPORTER</h1>
+<div class="sub">PARSED FROM APPLE NOTES · PREVIEW BEFORE IMPORT</div>
+
+<div class="instructions">
+  <h2>HOW TO IMPORT</h2>
+  <ol>
+    <li>Click <b>Copy JSON</b> below</li>
+    <li>Open the REPS. app → <b>Settings</b> (☰ top left)</li>
+    <li>Tap <b>Import Workout History</b></li>
+    <li>Paste the JSON → <b>Import</b></li>
+  </ol>
+</div>
+
+<div class="stats" id="stats"></div>
+<button class="btn" onclick="copyJSON()">Copy JSON</button>
+<button class="btn sec" onclick="toggleRaw()">View JSON</button>
+<div class="copied" id="copied">✓ Copied to clipboard!</div>
+
+<pre id="raw" style="display:none;background:#111;padding:16px;border-radius:12px;font-size:10px;color:#444;overflow:auto;max-height:200px;margin-top:12px;"></pre>
+
+<table>
+  <thead>
+    <tr>
+      <th>#</th><th>DATE</th><th>WORKOUT</th><th>EXERCISES</th><th>SETS</th>
+    </tr>
+  </thead>
+  <tbody id="tbody"></tbody>
+</table>
+
+<script>
+const RAW_NOTES = `Training
+
+Mittwoch, 25.3.: Arme & Rücken (CGN)
+Latzug eng (Silber): 60kg 1x5 / 55kg 1x6 / 50kg 1x8 / 45kg 1x10
+Rudern Chest: 50kg 1x5 / 45kg 2x8
+Face Pulls: 65kg 1x8 / 55kg 1x10 / 50kg 1x12
+Brustpresse: 37kg 2x8 / 29kg 1x10
+Seitheben: 7kg 2x8 / 1x6
+Bizeps Curls: 8kg 1x8 2x6
+Unterarm Curls: 6kg 1x10
+Triceps (beidseitig): 20kg 1x10 1x12 / 25kg 1x10
+Klimmzugmaschine: 20kg x5 / 25kg x8 / 30kg x10
+Butterfly einseitig: 29kg 1x6 / 21kg 2x10
+Stairmaster 25 min
+
+Samstag, 21.3.: Arme & Rücken (DD)
+Bench Press (flach): 30kg 1x4 / 25kg 1x6 1x11
+Latzug eng (Silber): 61kg 1x3 / 54kg 1x5 / 47kg 1x8 / 40kg 1x10
+Seitheben: 6kg 3x8
+Bizeps Curls: 7kg 1x12 2x8
+Face Pulls: 60kg 1x10 / 55kg 1x10 / 50kg 1x12
+Triceps: 15kg 1x10 1x6 / 10kg
+Rudern Chest: 45kg 1x8 1x6 / 40kg 2x10
+Brustpresse: 37kg 1x8 / 29kg 2x10
+Unterarm Curls: 7kg 3x10
+Butterfly einseitig: 29kg 1x5 / 21kg 2x10
+Stairmaster 20 min
+
+Mittwoch, 18.03.: Legs & Glutes (CGN)
+SMITH SQUAT: 30kg 3x8
+Hip Thrust Machine 45kg 3x12
+Beinpresse 1-beinig (steil): 50kg 1x8 / 40kg 2x8
+Hyperextensions 5kg 4x12
+Beinbeuger 45kg 1x8 / 40kg 1x8 / 35kg 1x10
+Addukt 60kg 1x10 / 55kg 1x10 / 50kg
+Beinstrecker 35kg 1x8 / 30kg 1x10 1x12
+Abduktoren 60kg 1x10 / 55kg 2x10
+20 min Stairmaster
+
+Montag, 16.3.: Arme & Rücken (CGN)
+Latzug eng Frauen (Silber): 69kg 1x5 / 61kg 1x8 / 53kg 1x12
+Klimmzugmaschine: 20kg x5 / 25kg x8 / 30kg x10
+Rudern Chest: 45kg 1x8 1x6 / 40kg 2x10
+Brustpresse: 37kg 1x8 / 29kg 2x10
+Face Pulls: 60kg 1x10 / 55kg 1x10 / 50kg 1x12
+Triceps: 15kg 1x10 1x6 / 10kg
+Seitheben: 6kg 3x10
+Bizeps Curls: 7kg 1x12 2x8
+Unterarm Curls: 7kg 3x10
+Butterfly einseitig: 29kg 1x5 / 21kg 2x10
+Stairmaster 20 min
+
+Mittwoch, 11.3.: Arme & Rücken (CGN)
+Latzug eng (Silber): 69kg 1x3 / 61kg 1x6 / 53kg 1x10
+Klimmzugmaschine: 20kg 1x5 / 25kg 1x6 / 30kg
+Rudern Chest: 45kg 1x5 / 40kg 2x10
+Brustpresse: 37kg 1x8 / 29kg 2x10
+Face Pulls: 60kg 1x10 / 55kg 1x10 / 50kg 1x12
+Triceps: 15kg 1x10 / 10kg 2x10
+Seitheben: 6kg 3x10
+Bizeps Curls: 7kg 1x10 2x8
+Unterarm Curls: 7kg 3x10
+Butterfly einseitig: 29kg 1x5 / 21kg 2x10
+Stairmaster 20 min
+
+Montag, 09.03.: Legs & Glutes (CGN)
+SMITH SQUAT 30kg 3x10
+Beinpresse 93kg 1x10
+Beinpresse 1-beinig: 69kg 1x8 / 61kg 1x10
+Beinbeuger 45kg 1x5 / 40kg 1x8 / 35kg 1x10
+Hyperextensions 10kg 4x10
+Beinstrecker 35kg 1x8 / 30kg 1x10 1x12
+Addukt 60kg 1x12 / 65kg 1x8 / 60kg
+Hip Thrust Machine 40kg 3x12
+Abduktoren 60kg 1x10 / 55kg 2x10
+20 min Stairmaster
+
+Mittwoch, 04.03.: Legs & Glutes (CGN)
+SMITH SQUAT 30kg 3x10
+Beinpresse 101kg 1x5 / 93kg 1x8 / 85kg 1x10
+Beinbeuger 35kg 1x10 / 40kg 1x8 / 35kg 1x10
+Hyperextensions 5kg 3x10
+Beinstrecker 35kg 1x8 / 30kg 1x10 1x12
+Addukt 60kg 1x10 1x8 / 55kg 1x10
+Hip Thrust Machine 35kg 3x12
+Abduktoren 60kg 1x10 / 55kg 2x10
+20 min Stairmaster
+
+Montag, 2.3.: Arme & Rücken (CGN)
+Latzug eng (Silber): 61kg 1x4 / 53kg 1x10 / 45kg 1x12
+Rudern Chest: 40kg 1x8 / 45kg 1x6
+Face Pulls: 55kg 1x10 / 50kg 1x10 / 45kg 1x10
+Seitheben: 6kg 2x10
+Klimmzugmaschine: 25kg 1x8 / 20kg 1x4 / 30kg 1x10
+Brustpresse: 37kg 1x5 / 29kg 2x10
+Bizeps Curls: 8kg 2x8 / 1x5
+Unterarm Curls: 6kg 3x10
+Butterfly einseitig: 21kg 3x10
+Stairmaster 20 min
+
+Samstag, 21.2.: Arme & Rücken (DD)
+Bench Press Schräg: 25kg 1x5 1x6 1x7
+Latzug eng (Silber): 55kg 1x7 / 50kg 1x8 / 45kg 1x10
+Rudern Chest: 45kg 1x8 / 40kg 2x8
+Face Pulls: 55kg 1x10 / 50kg 1x10 / 45kg 1x10
+Klimmzugmaschine: 25kg 1x6 / 30kg 1x8 / 35kg 1x10
+Seitheben: 6kg 3x8
+Bizeps Curls: 8kg 1x8 1x6 1x5
+Trizeps Cable 10kg 3x10
+Brustpresse: 30kg 1x10 / 25kg 1x10
+Butterfly einseitig: 20kg 1x10 / 25kg 1x8 1x6
+Unterarm Curls: 8kg 1x8 / 6kg 2x10
+Stairmaster 20 min
+
+Freitag, 20.02.: Legs & Glutes (CGN)
+SMITH SQUAT 30kg 3x10
+1-Bein Beinpresse 69kg 1x6 / 61kg 1x10 / 77kg 1x12
+Hip Thrust Machine 35kg 3x10
+Beinbeuger 35kg 1x8 1x10 / 30kg 1x10
+Addukt 60kg 1x10 1x6 / 55kg 2x10
+Hyperextensions 1x15 / 2x12
+Abduktoren 60kg 1x10 / 55kg 2x10
+Beinstrecker 35kg 1x10 / 30kg 2x10
+15 min Stairmaster
+
+Dienstag, 17.2.: Arme & Rücken (CGN)
+Rudern Chest: 45kg 1x8 / 40kg 2x8
+Latzug eng (Silber): 53kg 1x8 / 45kg 1x10 / 61kg 1x5
+Face Pulls: 55kg 1x10 / 50kg 1x10 / 45kg 1x10
+Klimmzugmaschine: 25kg 1x6 / 30kg 1x8 / 35kg 1x10
+Brustpresse: 37kg 1x10 / 29kg 2x10
+Seitheben: 6kg 3x8
+Bizeps Curls: 7kg 3x8
+Unterarm Curls: 8kg 1x8 / 6kg 2x10
+Butterfly einseitig: 21kg 3x10
+Stairmaster 20 min
+
+Freitag, 13.02.: Legs & Glutes (CGN)
+SMITH SQUAT 30kg 1x10
+Hip Thrust 80kg 1x8 / 1x10
+Beinstrecker 35kg 1x10 / 30kg 2x10
+Beinpress 93kg 1x10 / 85kg 1x10 / 77kg 1x12
+Beinbeuger 35kg 1x10 / 30kg 2x10
+Hyperextensions 3x12
+Addukt 60kg 1x10 / 55kg 1x8 / 45kg 1x12
+Abduktoren 60kg 1x10 / 55kg 2x10
+15 min Stairmaster
+
+Dienstag, 7.2.: Arme & Rücken (CGN)
+Latzug eng (Silber): 53kg 1x10 / 45kg 1x10 / 61kg 1x5
+Rudern Chest: 50kg 1x5 / 45kg 1x5 / 40kg 1x8
+Brustpresse: 29kg 1x10 / 37kg 1x5 / 29kg 1x8
+Face Pulls: 50kg 1x12 1x10 / 45kg 1x12
+Klimmzugmaschine: 30kg 1x10 / 25kg 1x5 / 30kg 1x6
+Seitheben: 6kg 1x8
+Bizeps Curls: 7kg 2x8 / 1x6
+Unterarm Curls: 8kg 3x10
+Butterfly einseitig: 21kg 3x10
+Stairmaster 20 min
+
+Samstag, 7.2.: Arme & Rücken (DD)
+Latzug eng (Silber): 50kg 1x10 1x8 / 45kg 1x10
+T-Bar: 20kg 1x10 / 15kg 1x10 / 10kg 1x10
+Face Pulls: 50kg 1x10 / 45kg 1x12
+Bizeps Curls: 7kg 2x8 / 1x6
+Seitheben: 4kg 3x12
+Unterarm Curls: 8kg 3x8
+Duale Bankdrückmaschine: 20kg 1x6 / 10kg 1x8
+Brustpresse: 25kg 3x10
+
+Freitag, 06.02.: Legs & Glutes (CGN)
+SMITH SQUAT 30kg 2x10 / 40kg 1x10
+Hip Thrust Machine 3x10 30kg
+Beinpress 93kg 1x10 / 85kg 1x10 / 77kg 1x12
+Beinbeuger 35kg 2x10 / 30kg 1x12
+Hyperextensions 3x12
+Addukt 60kg 1x10 / 55kg 1x10 / 50kg 1x10
+Abduktoren 55kg 3x12
+Beinstrecker 35kg 1x10 / 30kg 2x10
+15 min Stairmaster
+
+Dienstag, 3.2.: Arme & Rücken (CGN)
+Latzug eng (Silber): 53kg 1x10 / 45kg 2x10
+Klimmzugmaschine: 25kg 1x6 / 30kg 1x10 / 35kg 1x10
+Rudern Chest: 45kg 1x5 / 40kg 1x8 / 35kg 1x10
+Face Pulls: 55kg 1x10 / 50kg 2x12
+Bizeps Curls: 7kg 1x10 / 2x6
+Seitheben: 6kg 2x10 / 1x8
+Brustpresse: 29kg 2x10 / 1x8
+20 min Stairmaster
+Butterfly einseitig: 21kg 3x10
+Unterarm Curls: 7kg 3x10
+
+Freitag, 30.1.: Legs & Glutes (CGN)
+SMITH SQUAT 30kg 1x10 / 40kg 2x10
+Einbeinige Beinpresse 61kg 3x10
+Hip Thrust Machine 3x12 25kg
+Hyperextensions 3x12
+Beinbeuger 30kg 1x12 / 35kg 2x10
+Abduktoren 55kg 2x12 / 60kg 1x10
+Beinstrecker 35kg 1x10 / 30kg 2x10
+Adduktoren 55kg 3x10
+15 min Stairmaster
+
+Dienstag, 27.1.: Arme & Rücken (CGN)
+Klimmzugmaschine: 25kg 1x10 / 20kg x5 / 25kg x8
+Rudern Chest: 50kg 1x5 / 45kg 1x8 / 40kg 1x8 / 35kg 1x10
+Face Pulls: 55kg 1x10 / 50kg 3x12
+Bizeps Curls: 7kg 3x8
+Unterarm Curls: 7kg 3x10
+Seitheben: 6kg 3x10
+Butterfly einseitig: 21kg 3x10
+Brustpresse: 29kg 3x10
+Latzug eng (schwarz): 53kg 1x12 / 53kg 1x10
+Stairmaster
+
+Samstag, 24.1.: Legs & Glutes (DD)
+SMITH SQUAT MACHINE 40kg 1x10 / 1x8
+Hip Thrust machine (Seilzug) 45kg 1x12 / 53kg 1x12 / 61kg 1x12
+Einbeinige Beinpresse 61kg 1x10
+Beinpresse 93kg 2x12
+Beinbeuger 30kg 1x12 / 35kg 2x10
+Beinstrecker 35kg 1x10 / 30kg 2x10
+Abduktoren 50kg 1x10 / 55kg 1x10
+Adduktoren 55kg 3x10
+Hyperextensions 2x12 / 1x15
+15 min Stairmaster
+
+Freitag, 23.1.: Arme & Rücken (CGN)
+Klimmzugmaschine: 35kg 1x12 / 25kg 2x8
+Rudern Chest: 45kg 1x8 / 40kg 1x10 / 35kg 1x10
+Face Pulls: 45kg 1x12 / 50kg 1x12 / 50kg 1x10
+Bizeps Curls: 6kg 3x10
+Unterarm Curls: 6kg 3x12
+Seitheben: 5kg 3x12
+Butterfly einseitig: 20kg 3x12
+Brustpresse: 29kg 3x10
+Stairmaster
+Latzug eng (schwarz): 53kg 1x12 / 53kg 1x10
+
+Mittwoch, 14.1.: Arme & Rücken (CGN)
+Rudern Chest: 45kg 1x10 / 40kg 2x10 / 35kg 1x12
+Latzug eng (schwarz): 53kg 1x12 / 53kg 1x10
+Klimmzugmaschine: 40kg 1x12 / 25kg 1x5 / 30kg 1x10
+Bizeps Curls: 6kg 1x12 / 1x10
+Unterarm Curls: 6kg 3x12
+Face Pulls: 45kg 3x12
+Seitheben: 5kg 3x12
+Butterfly einseitig: 20kg 1x12 / 2x10
+Brustpresse: 29kg 1x12 / 2x10
+25 min Stairmaster
+
+Montag, 12.1.: Legs & Glutes (CGN)
+Einbeinige Beinpresse (steil) 40kg 3x12
+SMITH SQUAT MACHINE 30kg 3x10
+Hyperextensions 2x12 / 1x15
+Hip Thrust machine 3x12 20kg
+Adduktoren 60kg 1x10 / 55kg 1x10 / 50kg 1x10
+Beinbeuger 35kg 1x12 / 2x10
+Beinstrecker 35kg 1x10 / 30kg 2x10
+Abduktoren 55kg 3x10
+15 min Stairmaster
+
+Freitag, 9.1.: Arme & Rücken (CGN)
+Klimmzugmaschine: 35kg 1x10 / 25kg 1x5 / 30kg 1x10
+Rudern Chest: 45kg 1x8 / 40kg 1x10 / 35kg 1x10
+Face Pulls: 40kg 1x15 / 45kg 2x12
+Seitheben: 5kg 3x12
+Brustpresse 37kg x5 / 29kg 1x12 / 29kg 1x6
+Bizeps Curls: 6kg 3x12
+Unterarm Curls: 6kg 3x12
+Butterfly einseitig: 20kg 3x10
+Stairmaster
+
+Mittwoch, 7.1.: Arme & Rücken (CGN)
+Rudern: 50kg 1x5 / 40kg 1x10 / 35kg 1x12
+Latzug mitteleng: 53kg 1x10 / 45kg 2x12
+Face Pulls: 40kg 1x15 / 45kg 1x12
+Butterfly einseitig: 20kg 3x10
+Seitheben: 5kg 3x12
+Bizeps Curls: 6kg 1x10 / 2x12
+Unterarm Curls: 6kg 2x12 / 1x10
+Brustpresse 37kg x10 / 29kg 2x10
+15 min Stair Master
+
+Montag, 5.1.: Legs & Glutes (CGN)
+Einbeinige Beinpresse 53kg 2x10 / 61kg 1x10
+Hyperextensions 3x15
+SMITH SQUAT MACHINE 40kg 3x8
+Beinbeuger 35kg 3x10
+Beinstrecker 35kg 1x10 / 30kg 2x10
+Abduktoren 55kg 3x10
+Adduktoren 55kg 1x12 / 2x10
+Hip Thrust 3x10 60kg
+5 min Stepper
+
+Freitag, 2.1.: Arme & Rücken (DD)
+Latzug eng: 55kg x8 / 50kg x10 / 40kg x15
+Rudern: 45kg 1x10 / 45kg 1x8 / 35kg x15
+Bizeps Curls: 6kg 3x10
+Seitheben: 5kg 1x10 / 2x12
+Unterarm Curls: 5kg 3x15
+Brustpresse 35kg x8 / 30kg 2x10
+Butterfly einseitig: 20kg 1x10 / 15kg x15
+Face Pulls: 10 min
+
+Dienstag, 30.12.: Arme & Rücken (CGN)
+Latzug eng: 55kg x8 / 50kg 2x10
+Face Pulls (sitzend): 45kg 1x10 / 40kg 2x15
+Seitheben: 5kg 3x12
+Bizeps Curls: 6kg 2x12 1x10
+Unterarm Curls: 4kg 3x15
+Brustpresse 29kg 2x15 1x12
+Rudern Chest: 45kg 1x10 / 40kg 1x12 / 40kg 1x10
+
+Montag, 29.12.: Legs & Glutes (CGN)
+SMITH SQUAT MACHINE 3x10 30kg
+Einbeinige Beinpresse 45kg 3x12
+Hyperextensions 3x12
+Hip Thrust 3x10 60kg
+Beinbeuger 30kg 3x12
+Adduktoren 60kg 1x10 / 55kg 2x10
+Beinstrecker 30kg 3x10
+Abduktoren 60kg 1x10 / 55kg 2x10
+20 min Stairmaster
+
+Donnerstag, 25.12.: Arme & Rücken (CGN)
+Latzug 61kg x5 / 53kg 2x10
+Face Pulls 35kg 1x10 / 40kg 2x10
+Rudern 53kg 1x5 / 45kg 2x10
+Seitheben 6kg 2x8 / 4kg 1x10
+Bizeps Curls 8kg 1x5 / 6kg 2x10
+Unterarm Curls 4kg 3x10
+Brustpresse 29kg 3x10
+20 min Stairmaster
+
+Dienstag, 23.12.: Legs & Glutes (CGN)
+Hip Thrust Machine 3x10 20kg
+Einbeinige Beinpresse 45kg 3x10
+Hyperextensions 3x12
+Beinbeuger 30kg 3x10
+Beinstrecker 30kg 3x10
+Adduktoren 60kg 3x10
+Abduktoren 60kg 1x10 / 55kg 2x10
+
+Freitag, 19.12.: Arme & Rücken (CGN)
+Latzug 61kg x10 / 53kg x10 / 53kg x10
+Face Pulls 35kg 3x10
+Seitheben 4kg 3x10
+Bizeps Curls 6kg 3x10
+Rudern 45kg x8 / 40kg x10 / 35kg x12
+Brustpresse 30kg 3x10
+
+Dienstag, 16.12.: Legs & Glutes
+Hip Thrust 3x10 50kg
+Smith Machine Squat 5kg 3x10
+Hyperextensions 3x12
+Einbeinige Beinpresse 37kg 3x10
+Beinbeuger 27kg 3x10
+Beinstrecker 30kg x10 / 25kg 2x10
+Adduktoren 60kg x10 / 55kg 2x10
+Abduktoren 60kg x8 / 55kg x10 / 50kg x10
+
+Montag, 15.12.: Arme & Rücken
+Rudern 50kg x10 / 45kg x10 / 40kg x10
+Bizeps Curls 6kg 3x10
+Latzug 55kg x8 / 50kg x10 / 45kg x12
+Face Pulls 22kg 3x10
+Seitheben 4kg 3x10
+Brustpresse 25kg 3x10
+
+Samstag, 13.12.: Legs & Glutes
+Hip Thrust 3x12 40kg
+Smith Machine Squat 5kg 3x10
+Einbeinige Beinpresse 37kg 3x10
+Hyperextensions 3x12
+Beinbeuger 25kg 3x10
+Beinstrecker 24kg 3x10
+Abduktoren 57kg 3x10
+Adduktoren 65kg 3x12
+
+Freitag, 12.12.: Arme & Rücken
+Latzug 55kg x5 / 45kg x12 / 35kg x20
+Rudern 45kg x6 / 35kg x10 / 35kg x8
+Face Pulls 16kg 3x10
+Bizeps Curls 6kg 3x10
+Seitheben 5kg 3x10
+Butterfly 15kg 2x6
+Brustpresse 25kg 2x10
+
+Montag, 8.12.: Legs & Glutes
+Hyperextensions 4x15
+Smith Machine Squat 5kg 3x10
+Hip Thrust 3x10 40kg
+Einbeinige Beinpresse 37kg 3x10
+Abduktoren 55kg 3x10
+Beinbeuger 20kg 3x10
+Beinstrecker 30kg 3x10
+Adduktoren 55kg 2x10
+
+Donnerstag, 4.12.: Legs & Glutes
+Hyperextensions 4x15
+Smith Machine Squat 5kg 3x10
+Hip Thrust 4x12 40kg
+Beinpresse 85kg 3x10
+Abduktoren 55kg 3x10
+Beinbeuger 20kg 3x10
+Beinstrecker 25kg 3x10
+Adduktoren 55kg 3x10
+
+Mittwoch, 3.12.: Arme & Rücken
+Kreuzheben 20kg 1x5
+Latzug 55kg x8 / 50kg x10 / 45kg x10
+Rudern 50kg x8 / 45kg x10 / 40kg x8
+Face Pulls 22kg 3x10
+Bizeps Curls 6kg 3x10
+Seitheben 4kg 3x10
+Brustpresse 25kg x10
+
+Dienstag, 2.12.: Arme & Rücken
+Kreuzheben 20kg 3x5
+Latzug 50kg 3x10
+Rudern 50kg 3x10
+Bizeps Curls 6kg 3x10
+Seitheben 4kg 3x10
+Unterarm Curls 6kg 3x10
+Butterfly 20kg 3x10
+
+Mittwoch, 26.11.: Legs & Glutes
+Hyperextensions 5kg 3x15
+Smith Machine Squat 5kg 3x8
+Einbeinige Beinpresse 29kg 3x10
+Abduktoren 55kg 3x10`;
+
+// ─── EXERCISE NAME MAP ───────────────────────────────────────────
+const EX_MAP = [
+  // key (lowercase), mapped name
+  ['latzug',              'Lat Pull Down'],
+  ['klimmzug',            'Assisted Pull-Up'],
+  ['rudern',              'Chest-Supported Rowing'],
+  ['t-bar',               'Chest-Supported Rowing'],
+  ['face pull',           'Face Pulls'],
+  ['brustpresse',         'Chest Press Machine'],
+  ['seitheben',           'Lateral Raises'],
+  ['bizeps curl',         'Biceps Curls'],
+  ['unterarm curl',       'Forearm Curls'],
+  ['forearm curl',        'Forearm Curls'],
+  ['trizeps',             'Cable Triceps'],
+  ['triceps',             'Cable Triceps'],
+  ['butterfly',           'Butterfly'],
+  ['smith squat',         'Smith Squat'],
+  ['smith machine squat', 'Smith Squat'],
+  ['hip thrust',          'Hip Thrust'],
+  ['beinpresse',          'Leg Press'],
+  ['beinpress',           'Leg Press'],
+  ['einbeinige beinpresse','Leg Press (Single)'],
+  ['1-bein beinpresse',   'Leg Press (Single)'],
+  ['hyperextension',      'Hyperextensions'],
+  ['beinbeuger',          'Hamstring Curl'],
+  ['beinstrecker',        'Leg Extension'],
+  ['addukt',              'Adductor Machine'],
+  ['abduktor',            'Abductor Machine'],
+  ['bench press',         'Bench Press'],
+  ['bankdrück',           'Bench Press'],
+  ['duale bank',          'Bench Press'],
+  ['rdl',                 'Romanian Deadlift'],
+  ['kreuzheben',          'Deadlift'],
+];
+
+function normalizeName(raw) {
+  const stripped = raw
+    .replace(/\([^)]*\)/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+  const lower = stripped.toLowerCase();
+  for (const [key, val] of EX_MAP) {
+    if (lower === key || lower.startsWith(key) || lower.includes(key)) {
+      return val;
+    }
+  }
+  // Capitalize each word of original
+  return stripped.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+}
+
+const SKIP_RE = [
+  /stairmaster/i, /stepper/i, /cardio/i, /fahrrad/i,
+  /stair\s*master/i, /^\s*>/, /^\s*\(/,
+  /^\s*(training|stairmaster)\s*$/i,
+  /\d+\s*min\s*(stair|stepper|cardio)/i,
+  /^(montag|dienstag|mittwoch|donnerstag|freitag|samstag|sonntag)\s*,/i,
+  /^training$/i,
+];
+
+function shouldSkip(line) {
+  return SKIP_RE.some(r => r.test(line.trim()));
+}
+
+function parseSets(raw) {
+  const sets = [];
+  // Handle "Hip Thrust Machine 3x10 30kg" — weight comes AFTER sets
+  // Normalize: find weight anywhere, find NxM patterns
+  const parts = raw.split('/').map(s => s.trim()).filter(Boolean);
+  let lastKg = null;
+
+  for (const part of parts) {
+    // Find weight (could be "30kg" or "3x10 30kg" format)
+    const wMatch = part.match(/(\d+(?:[,\.]\d+)?)\s*kg/i);
+    if (wMatch) lastKg = parseFloat(wMatch[1].replace(',', '.'));
+    if (!lastKg) continue;
+
+    // NxM patterns
+    const setsReps = [...part.matchAll(/(\d+)\s*x\s*(\d+)/g)];
+    if (setsReps.length > 0) {
+      for (const m of setsReps) {
+        const n = parseInt(m[1]), r = parseInt(m[2]);
+        // Sanity: if n > 6 it's probably sets*reps reversed, keep as-is
+        for (let i = 0; i < n; i++) sets.push({ kg: lastKg, reps: r, done: true });
+      }
+    } else {
+      // "x10" alone = 1 set
+      const xm = part.match(/\bx\s*(\d+)/);
+      if (xm) sets.push({ kg: lastKg, reps: parseInt(xm[1]), done: true });
+    }
+  }
+  return sets;
+}
+
+const HEADER_RE = /^(montag|dienstag|mittwoch|donnerstag|freitag|samstag|sonntag)[,.]?\s*(\d{1,2})\.(\d{1,2})\.?(\d{4})?\s*[:\s]\s*(.+)/i;
+
+function getWorkoutId(desc) {
+  const l = desc.toLowerCase();
+  if (/legs|glutes|bein|squat/.test(l)) return 'leg-day';
+  return 'upper-body';
+}
+
+function inferYear(day, month, prevDate) {
+  const maxDate = new Date('2026-03-29T23:59:00');
+  for (const yr of [2026, 2025, 2024]) {
+    const d = new Date(yr, month - 1, day);
+    if (d > maxDate) continue;
+    if (!prevDate || d <= prevDate) return yr;
+  }
+  return 2025;
+}
+
+function parseExLine(line) {
+  const trimmed = line.trim();
+  // Find first weight occurrence
+  const wi = trimmed.search(/\d+(?:[,\.]\d+)?\s*kg/i);
+  // Also handle "3x10 30kg" format — but let's find earliest NxM or kg
+  const setStart = trimmed.search(/\d+\s*x\s*\d+|\d+(?:[,\.]\d+)?\s*kg/i);
+  if (setStart <= 0) return null;
+
+  let nameRaw = trimmed.slice(0, setStart).replace(/:$/, '').trim();
+  let setData = trimmed.slice(setStart).trim();
+
+  if (!nameRaw || nameRaw.length < 2) return null;
+  return { nameRaw, setData };
+}
+
+function parseNotes(text) {
+  const lines = text.split('\n');
+  const logs = [];
+  let current = null;
+  let prevDate = null;
+
+  for (const rawLine of lines) {
+    const line = rawLine.trim();
+    if (!line) continue;
+
+    // Check header
+    const hm = line.match(HEADER_RE);
+    if (hm) {
+      if (current && current.exercises.length > 0) logs.push(current);
+
+      const day = parseInt(hm[2]);
+      const month = parseInt(hm[3]);
+      const yr = hm[4] ? parseInt(hm[4]) : inferYear(day, month, prevDate);
+      const dateStr = `${yr}-${String(month).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+      prevDate = new Date(yr, month - 1, day);
+
+      current = {
+        workoutId: getWorkoutId(hm[5]),
+        date: dateStr,
+        duration: 60,
+        exercises: [],
+        _label: hm[5].trim(),
+      };
+      continue;
+    }
+
+    if (!current || shouldSkip(line)) continue;
+
+    const parsed = parseExLine(line);
+    if (!parsed) continue;
+
+    const { nameRaw, setData } = parsed;
+    if (shouldSkip(nameRaw)) continue;
+
+    const name = normalizeName(nameRaw);
+    const sets = parseSets(setData);
+    if (sets.length === 0) continue;
+
+    const existing = current.exercises.find(e => e.name === name);
+    if (existing) {
+      existing.sets.push(...sets);
+    } else {
+      current.exercises.push({ name, sets });
+    }
+  }
+
+  if (current && current.exercises.length > 0) logs.push(current);
+
+  // Return oldest-first
+  return logs.reverse();
+}
+
+// ─── RUN PARSER ─────────────────────────────────────────────────
+const logs = parseNotes(RAW_NOTES);
+
+// ─── RENDER STATS ───────────────────────────────────────────────
+const totalSets = logs.reduce((a, l) => a + l.exercises.reduce((b, e) => b + e.sets.length, 0), 0);
+const upper = logs.filter(l => l.workoutId === 'upper-body').length;
+const legs = logs.filter(l => l.workoutId === 'leg-day').length;
+const exNames = new Set(logs.flatMap(l => l.exercises.map(e => e.name)));
+
+document.getElementById('stats').innerHTML = [
+  { val: logs.length,       label: 'SESSIONS' },
+  { val: upper,             label: 'UPPER BODY' },
+  { val: legs,              label: 'LEG DAY' },
+  { val: totalSets,         label: 'TOTAL SETS' },
+  { val: exNames.size,      label: 'EXERCISES' },
+].map(s => `<div class="stat"><div class="stat-val">${s.val}</div><div class="stat-label">${s.label}</div></div>`).join('');
+
+// ─── RENDER TABLE ───────────────────────────────────────────────
+const tbody = document.getElementById('tbody');
+[...logs].reverse().forEach((log, i) => {
+  const cls = log.workoutId === 'upper-body' ? 'upper' : 'legs';
+  const label = log.workoutId === 'upper-body' ? 'UPPER BODY' : 'LEG DAY';
+  const sets = log.exercises.reduce((a, e) => a + e.sets.length, 0);
+  const exList = log.exercises.map(e =>
+    `<span class="ex-name">${e.name}</span> <span class="sets-count">(${e.sets.length} sets)</span>`
+  ).join('<br>');
+  tbody.innerHTML += `<tr>
+    <td>${logs.length - i}</td>
+    <td>${log.date}</td>
+    <td><span class="${cls}">${label}</span></td>
+    <td><div class="ex-list">${exList}</div></td>
+    <td>${sets}</td>
+  </tr>`;
+});
+
+// ─── COPY JSON ──────────────────────────────────────────────────
+const exportLogs = logs.map(({ _label, ...l }) => l); // remove internal _label
+
+function copyJSON() {
+  const json = JSON.stringify(exportLogs, null, 2);
+  navigator.clipboard.writeText(json).then(() => {
+    const el = document.getElementById('copied');
+    el.style.display = 'block';
+    setTimeout(() => el.style.display = 'none', 2500);
+  });
+}
+
+function toggleRaw() {
+  const el = document.getElementById('raw');
+  if (el.style.display === 'none') {
+    el.style.display = 'block';
+    el.textContent = JSON.stringify(exportLogs, null, 2);
+  } else {
+    el.style.display = 'none';
+  }
+}
+</script>
+</body>
+</html>

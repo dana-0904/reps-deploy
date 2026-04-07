@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>REPS. Splash Concepts</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;0,800;0,900;1,900&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{background:#111;color:#fff;font-family:'Inter',sans-serif;padding:32px 16px 60px;}
+h1{font-family:'Barlow Condensed',sans-serif;font-size:2rem;font-weight:900;color:#c6f135;text-align:center;letter-spacing:.08em;margin-bottom:6px;}
+p.sub{text-align:center;color:#555;font-size:.8rem;margin-bottom:36px;}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:16px;max-width:1200px;margin:0 auto;}
+.tile{background:#0d0d0d;border-radius:16px;overflow:hidden;cursor:pointer;border:2px solid transparent;transition:border-color .15s,transform .1s;display:flex;flex-direction:column;}
+.tile:hover{border-color:#c6f135;transform:scale(1.02);}
+.tile.picked{border-color:#c6f135;}
+.screen{width:100%;aspect-ratio:9/16;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;background:#0d0d0d;}
+.tile-meta{padding:8px 10px 10px;background:#141414;}
+.tile-num{font-size:.62rem;color:#444;font-weight:700;letter-spacing:.1em;}
+.tile-name{font-size:.75rem;color:#888;margin-top:2px;line-height:1.3;}
+
+/* ── GLOBAL ANIMATIONS ── */
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes spin-r{to{transform:rotate(-360deg)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
+@keyframes pulse2{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.18);opacity:.7}}
+@keyframes fadein{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes dash{0%{stroke-dashoffset:283}100%{stroke-dashoffset:0}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+@keyframes slide-up{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes orbit{from{transform:rotate(0deg) translateX(22px)}to{transform:rotate(360deg) translateX(22px)}}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes wave{0%{transform:scaleY(.3)}25%{transform:scaleY(1)}75%{transform:scaleY(.5)}100%{transform:scaleY(.3)}}
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+@keyframes expand{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes ring-fill{0%{stroke-dashoffset:188}100%{stroke-dashoffset:0}}
+@keyframes tick{0%,89%{opacity:0}90%,100%{opacity:1}}
+@keyframes dots3{0%,80%,100%{opacity:.15;transform:scale(.7)}40%{opacity:1;transform:scale(1)}}
+@keyframes sweep{0%{transform:rotate(-90deg)}100%{transform:rotate(270deg)}}
+@keyframes flicker{0%,19%,21%,23%,25%,54%,56%,100%{opacity:1}20%,22%,24%,55%{opacity:.4}}
+
+/* Gradient text */
+.g-lime-cyan{background:linear-gradient(90deg,#c6f135,#00d4f0);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.g-pink-lime{background:linear-gradient(90deg,#ff4d6a,#c6f135);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.g-full{background:linear-gradient(90deg,#ff4d6a,#c6f135,#00d4f0);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.logo{font-family:'Barlow Condensed',sans-serif;font-weight:900;letter-spacing:.04em;}
+</style>
+</head>
+<body>
+<h1>REPS. — 50 Splash Concepts</h1>
+<p class="sub">Click to select · All fully animated</p>
+<div class="grid">
+
+<!-- ─── 1 ─── Spinning arc + lime wordmark -->
+<div class="tile" onclick="pick(this)">
+<div class="screen">
+  <div style="display:flex;flex-direction:column;align-items:center;gap:20px;">
+    <div class="logo" style="font-size:52px;color:#c6f135;animation:fadein .6s ease both;">REPS.</div>
+    <svg width="36" height="36" viewBox="0 0 36 36" style="animation:spin 1s linear infinite">
+      <circle cx="18" cy="18" r="14" fill="none" stroke="#222" stroke-width="3"/>
+      <circle cx="18" cy="18" r="14" fill="none" stroke="#c6f135" stroke-width="3" stroke-dasharray="22 66" stroke-linecap="round"/>
+    </svg>
+  </div>
+</div>
+<div class="tile-meta"><div class="tile-num">#1</div><div class="tile-name">Spinning Arc</div></div>
+</div>
+
+<!-- ─── 2 ─── Pulsing circle behind logo -->
+<div class="tile" onclick="pick(this)">
+<div class="screen">
+  <div style="position:relative;display:flex;align-items:center;justify-content:center;">
+    <div style="position:absolute;width:100px;height:100px;border-radius:50%;background:rgba(198,241,53,.07);animation:pulse2 1.6s ease-in-out infinite;"></div>
+    <div style="position:absolute;width:70px;height:70px;border-radius:50%;background:rgba(198,241,53,.12);animation:pulse2 1.6s ease-in-out infinite .3s;"></div>
+    <div class="logo" style="font-size:44px;color:#c6f135;position:relative;">REPS.</div>
+  </div>
+</div>
+<div class="tile-meta"><div class="tile-num">#2</div><div class="tile-name">Pulse Rings</div></div>
+</div>
+
+<!-- ─── 3 ─── Progress bar bottom -->
+<div class="tile" onclick="pick(this)">
+<div class="screen" style="flex-direction:column;gap:0;justify-content:center;">
+  <div class="logo" style="font-size:52px;color:#fff;animation:fadein .5s ease both;">REPS.</div>
+  <div style="font-size:11px;letter-spacing:.18em;color:#555;margin-top:4px;font-family:'Barlow Condensed',sans-serif;">WORKOUT TRACKER</div>
+  <div style="position:absolute;bottom:28px;left:20px;right:20px;">
+    <div style="height:3px;background:#1a1a1a;border-radius:2px;overflow:hidden;">
+      <div style="height:100%;background:#c6f135;border-radius:2px;animation:grow 1.8s ease-out both;transform-origin:left;"></div>
+    </div>
+  </div>
+</div>
+<div class="tile-meta"><div class="tile-num">#3</div><div class="tile-name">Progress Bar</div></div>
+</div>
+
+<!-- ─── 4 ─── Three bouncing dots -->
+<div class="tile" onclick="pick(this)">
+<div class="screen" style="flex-direction:column;gap:24px;">
+  <div class="logo" style="font-size:52px;color:#c6f135;">REPS.</div>
+  <div style="display:flex;gap:8px;align-items:center;">
+    <div style="width:8px;height:8px;border-radius:50%;background:#c6f135;animation:bounce .8s ease-in-out infinite;"></div>
+    <div style="width:8px;height:8px;border-radius:50%;background:#c6f135;animation:bounce .8s ease-in-out infinite .15s;"></div>
+    <div style="width:8px;height:8px;border-radius:50%;background:#c6f135;animation:bounce .8s ease-in-out infinite .3s;"></div>
+  </div>
+</div>
+<div class="tile-meta"><div class="tile-num">#4</div><div class="tile-name">Bouncing Dots</div></div>
+</div>
+
+<!-- ─── 5 ─── Ring draw animation -->
+<div class="tile" onclick="pick(this)">
+<div class="screen" style="flex-direction:column;gap:16px;">
+  <svg width="80" height="80" viewBox="0 0 80 80">
+    <circle cx="40" cy="40" r="34" fill="none" stroke="#1a1a1a" stroke-width="5"/>
+    <circle cx="40" cy="40" r="34" fill="none" stroke="#c6f135" stroke-width="5" stroke-linecap="round"
+      stroke-dasharray="213" stroke-dashoffset="213"
+      style="animation:ring-fill 1.4s ease-out .3s both;transform-origin:center;transform:rotate(-90deg);"/>
+    <text x="40" y="46" font-family="'Barlow Condensed',sans-serif" font-size="20" font-weight="900" fill="#fff" text-anchor="middle">REPS.</text>
+  </svg>
+</div>
+<div class="tile-meta"><div class="tile-num">#5</div><div class="tile-name">Ring Draw</div></div>
+</div>
+
+<!-- ─── 6 ─── Gradient logo + spin ring -->
+<div class="tile" onclick="pick(this)">
+<div class="screen" style="flex-direction:column;gap:18px;">
+  <div class="logo g-pink-lime" style="font-size:52px;">REPS.</div>
+  <svg width="32" height="32" viewBox="0 0 32 32" style="animation:spin 1s linear infinite">
+    <circle cx="16" cy="16" r="12" fill="none" stroke="#333" stroke-width="3"/>
+    <circle cx="16" cy="16" r="12" fill="none" stroke="#ff4d6a" stroke-width="3" stroke-dasharray="18 57" stroke-linecap="round"/>
+  </svg>
+</div>
+<div class="tile-meta"><div class="tile-num">#6</div><div class="tile-name">Pink Spinner</div></div>
+</div>
+
+<!-- ─── 7 ─── Barbell animation -->
+<div class="tile" onclick="pick(this)">
+<div class="screen" style="flex-direction:column;gap:20px;">
+  <svg width="90" height="28" viewBox="0 0 90 28" style="animation:fadein .8s ease both">
+    <rect x="20" y="11" width="50" height="6" rx="3" fill="#333"/>
+    <rect x="10" y="6" width="12" height="16" rx="3" fill="#c6f135"/>
+    <rect x="4" y="9" width="8" height="10" rx="2" fill="#c6f135" opacity=".7"/>
+    <rect x="68" y="6" width="12" height="16" rx="3" fill="#c6f135"/>
+    <rect x="78" y="9" width="8" height="10" rx="2" fill="#c6f135" opacity=".7"/>
+  </svg>
+  <div class="logo" style="font-size:44px;color:#c6f135;animation:fadein .6s .3s ease both;opacity:0;">REPS.</div>
+</div>
+<div class="tile-meta"><div class="tile-num">#7</div><div class="tile-name">Barbell First</div></div>
+</div>
+
+<!-- ─── 8 ─── Wave bars loader -->
+<div class="tile" onclick="pick(this)">
+<div class="screen" style="flex-direction:column;gap:22px;">
+  <div class="logo" style="font-size:52px;color:#fff;">REPS.</div>
+  <div style="display:flex;gap:5px;align-items:flex-end;height:22px;">
+    <div style="width:5px;background:#c6f135;border-radius:3px;animation:wave .9s ease-in-out infinite 0s;"></div>
+    <div style="width:5px;background:#c6f135;border-radius:3px;animation:wave .9s ease-in-out infinite .1s;"></div>
+    <div style="width:5px;background:#c6f135;border-radius:3px;animation:wave .9s ease-in-out infinite .2s;"></div>
+    <div style="width:5px;background:#c6f135;border-radius:3px;animation:wave .9s ease-in-out infinite .3s;"></div>
+    <div style="width:5px;background:#c6f135;border-radius:3px;animation:wave .9s ease-in-out infinite .4s;"></div>
+  </div>
+</div>
+<div class="tile-meta"><div class="tile-num">#8</div><div class="tile-name">Wave Bars</div></div>
+</div>
+
+<!-- ─── 9 ─── Full screen lime flash -->
+<div class="tile" onclick="pick(this)">
+<div class="screen" style="background:#c6f135;flex-direction:column;gap:16px;">
+  <div class="logo" style="font-size:58px;color:#0d0d0d;animation:expand .5s cubic-bezier(.34,1.56,.64,1) both;">REPS.</div>
+  <svg width="28" height="28" viewBox="0 0 28 28" style="animation:spin .9s linear infinite;margin-top:8px">
+    <circle cx="14" cy="14" r="10" fill="none" stroke="rgba(0,0,0,.2)" stroke-width="3"/>
+    <circle cx="14" cy="14" r="10" fill="none" stroke="#0d0d0d" stroke-width="3" stroke-dasharray="16 47" stroke-linecap="round"/>
+  </svg>
+</div>
+<div class="tile-meta"><div class="tile-num">#9</div><div class="tile-name">Lime BG Dark Text</div></div>
+</div>
+
+<!-- ─── 10 ─── Neon glow pulse -->
+<div class="tile" onclick="pick(this)">
+<div class="screen" style="flex-direction:column;gap:18px;">
+  <div class="logo" style="font-size:52px;color:#c6f135;text-shadow:0 0 20px rgba(198,241,53,.6),0 0 60px rgba(198,241,53,.3);animation:flicker 3s ease-in-out infinite;">REPS.</div>
+  <svg width="32" height="32" viewBox="0 0 32 32" style="animation:spin 1.2s linear infinite;filter:drop-shadow(0 0 4px #c6f135)">
+    <circle cx="16" cy="16" r="12" fill="none" stroke="#1a1a1a" stroke-width="3"/>
+    <circle cx="16" cy="16" r="12" fill="none" stroke="#c6f135" stroke-width="3" stroke-dasharray="20 56" stroke-linecap="round"/>
+  </svg>
+</div>
+<div class="tile-meta"><div class="tile-num">#10</div><div class="tile-name">Neon Flicker</div></div>
+</div>
+
+<!-- ─── 11 ─── Dots orbiting -->
+<div class="tile" onclick="pick(this)">
+<div class="screen" style="flex-direction:column;gap:20px;">
+  <div class="logo" style="font-size:52px;color:#fff;">REPS.</div>
+  <div style="position:relative;width:44px;height:44px;">
+    <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
+      <div style="width:7px;height:7px;border-radius:50%;background:#c6f135;animation:orbit 1s linear infinite;"></div>
+    </div>
+    <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
+      <div style="width:5px;height:5px;border-radius:50%;background:#00d4f0;animation:orbit 1s linear infinite .5s;"></div>
+    </div>
+  </div>
+</div>
+<div class="tile-meta"><div class="tile-num">#11</div><div class="tile-name">Orbiting Dots</div></div>
+</div>
+
+<!-- ─── 12 ─── Italic italic huge fade -->
+<div class="tile" onclick="pick(this)">
+<div class="screen">
+  <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-style:italic;font-size:72px;color:#c6f135;animation:pulse2 2s ease-in-out infinite;letter-spacing:-.01em;">REPS.</div>
+</div>
+<div class="tile-meta"><div class="tile-num">#12</div><div class="tile-name">Huge Italic Pulse</div></div>
+</div>
+
+<!-- ─── 13 ─── Stacked R / spinner below -->
+<div class="tile" onclick="pick(this)">
+<div class="screen" style="flex-direction:column;gap:0;">
+  <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:90px;color:#c6f135;line-height:.85;animation:expand .6s cubic-bezier(.34,1.56,.64,1) both;">R</div>
+  <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;letter-spacing:.3em;color:#555;margin-top:4px;">EPS.</div>
+  <svg width="28" height="28" viewBox="0 0 28 28" style="margin-top:24px;animation:spin 1s linear infinite">
+    <circle cx="14" cy="14" r="10" fill="none" stroke="#222" stroke-width="2.5"/>
+    <circle cx="14" cy="14" r="10" fill="none" stroke="#c6f135" stroke-width="2.5" stroke-dasharray="16 47" stroke-linecap="round"/>
+  </svg>
+</div>
+<div class="tile-meta"><div class="tile-num">#13</div><div class="tile-name">Giant R + EPS.</div></div>
+</div>
+
+<!-- ─── 14 ─── Shimmer text effect -->
+<div class="tile" onclick="pick(this)">
+<div class="screen" style="flex-direction:column;gap:20px;">
+  <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:52px;letter-spacing:.04em;
+    background:linear-gradient(90deg,#555 0%,#c6f135 30%,#fff 50%,#c6f135 70%,#555 100%);
+    background-size:200% auto;
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+    animation:shimmer 2s linear infinite;">REPS.</div>
+  <div style="width:40px;height:3px;background:#1a1a1a;border-radius:2px;overflow:hidden;">
+    <div style="height:100%;width:40px;background:#c6f135;border-radius:2px;animation:grow 1.4s ease-out infinite alternate;transform-origin:left;"></div>
+  </div>
+</div>
+<div class="tile-meta"><div class="tile-num">#14</div><div class="tile-name">Shimmer Text</div></div>
+</div>
+
+<!-- ─── 15 ─── Hexagon spinner -->
+<div class="tile" onclick="pick(this)">
+<div class="screen" style="flex-direction:column;gap:18px;">
+  <div class="logo" style="font-size:48px;color:#c6f135;">REPS.</div>
+  <svg width="36" height="36" viewBox="0 0 36 36" style="animation:spin 1.4s linear infinite">
+    <polygon points="18,2 32,10 32,26 18,34 4,26 4,10" fill="none" stroke="#1e1e1e" stroke-width="2.5"/>
+    <polygon points="18,2 32,10 32,26 18,34 4,26 4,10" fill="none" stroke="#c6f135" stroke-width="2.5" stroke-dasharray="20 76" stroke-linecap="round"/>
+  </svg>
+</div>
+<div class="tile-meta"><div class="tile-num">#15</div><div class="tile-name">Hex Spinner</div></div>
+</div>
+
+<!-- ─── 16 ─── Cyan accent spinner -->
+<div class="tile" onclick="pick(this)">
+<div class="screen" style="flex-direction:column;gap:18px;">
+  <div class="logo" style="font-size:52px;color:#fff;">REPS.</div>
+  <svg width="32" height="32" viewBox="0 0 32 32" style="animation:spin 1s linear infinite">
+    <circle cx="16" cy="16" r="12" fill="none" stroke="#1a1a1a" stroke-width="3"/>
+    <circle cx="16" cy="16" r="12" fill="none" stroke="#00d4f0" stroke-width="3" stroke-dasharray="18 57" stroke-linecap="round"/>
+  </svg>
+</div>
+<div class="tile-meta"><div class="tile-num">#16</div><div class="tile-name">Cyan Spinner</div></div>
+</div>
+
+<!-- ─── 17 ─── Center circle icon style -->
+<div class="tile" onclick="pick(this)">
+<div class="screen" style="flex-direction:column;gap:20px;">
+  <div style="position:relative;width:90px;height:90px;">
+    <svg width="90" height="90" viewBox="0 0 90 90" style="position:absolute;inset:0;animation:spin-r 3s linear infinite">
+      <circle cx="45" cy="45" r="40" fill="none" stroke="#1a1a1a" stroke-width="4"/>
+      <circle cx="45" cy="45" r="40" fill="none" stroke="#c6f135" stroke-width="4" stroke-dasharray="50 201" stroke-linecap="round"/>
+    </svg>
+    <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
+      <div class="logo" style="font-size:24px;color:#c6f135;">REPS.</div>
+    </div>
+  </div>
+</div>
+<div class="tile-meta"><div class="tile-num">#17</div><div class="tile-name">Circle Icon</div></div>
+</div>
+
+<!-- ─── 18 ─── Typing cursor blink -->
+<div class="tile" onclick="pick(this)">
+<div class="screen" style="flex-direction:column;gap:16px;">
+  <div class="logo" style="font-size:52px;color:#c6f135;animation:fadein .4s ease both;">REPS.</div>
+  <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;letter-spacing:.2em;color:#555;">
+    LOADING<span style="animation:blink .8s step-end infinite;color:#c6f135;">_</span>
+  </div>
+</div>
+<div class="tile-meta"><div class="tile-num">#18</div><div class="tile-name">Cursor Blink</div></div>
+</div>
+
+<!-- ─── 19 ─── Heartbeat / pulse line -->
+<div class="tile" onclick="pick(this)">
+<div class="screen" style="flex-direction:column;gap:20px;">
+  <div class="logo" style="font-size:52px;color:#c6f135;">REPS.</div>
+  <svg width="90" height="28" viewBox="0 0 90 28" style="overflow:visible">
+    <polyline points="0,14 18,14 24,4 30,24 36,8 42,20 48,14 90,14"
+      fill="none" stroke="#c6f135" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
+      stroke-dasharray="120" stroke-dashoffset="120"
+      style="animation:dash 1.2s ease-out .3s both;"/>
+  </svg>
+</div>
+<div class="tile-meta"><div class="tile-num">#19</div><div class="tile-name">Heartbeat Line</div></div>
+</div>
+
+<!-- ─── 20 ─── Lightning bolt + spin -->
+<div class="tile" onclick="pick(this)">
+<div class="screen" style="flex-direction:column;gap:16px;">
+  <svg width="40" height="56" viewBox="0 0 40 56" style="animation:expand .5s cubic-bezier(.34,1.56,.64,1) both">
+    <polygon points="24,2 8,30 20,30 16,54 34,24 20,24" fill="#c6f135"/>
+  </svg>
+  <div class="logo" style="font-size:44px;color:#fff;animation:slide-up .5s .3s ease both;opacity:0;">REPS.</div>
+  <svg width="24" height="24" viewBox="0 0 24 24" style="animation:spin 1s linear infinite;margin-top:4px">
+    <circle cx="12" cy="12" r="9" fill="none" stroke="#333" stroke-width="2.5"/>
+    <circle cx="12" cy="12" r="9" fill="none" stroke="#c6f135" stroke-width="2.5" stroke-dasharray="14 43" stroke-linecap="round"/>
+  </svg>
+</div>
+<div class="tile-meta"><div class="tile-num">#20</div><div class="tile-name">Bolt + Spinner</div></div>
+</div>
+
+<!-- ─── 21 ─── Countdown dots (3-dot pulse) -->
+<div class="tile" onclick="pick(this)">
+<div class="screen" style="flex-direction:column;gap:22px;">
+  <div class="logo" style="font-size:52px;color:#c6f135;">REPS.</div>
+  <div style="display:flex;gap:10px;">
+    <div style="width:10px;height:10px;border-radius:50%;background:#c6f135;animation:dots3 1.2s ease-in-out infinite 0s;"></div>
+    <div style="width:10px;height:10px;border-radius:50%;background:#c6f135;animation:dots3 1.2s ease-in-out infinite .2s;"></div>
+    <div style="width:10px;height:10px;border-radius:50%;background:#c6f135;animation:dots3 1.2s ease-in-out infinite .4s;"></div>
+  </div>
+</div>
+<div class="tile-meta"><div class="tile-num">#21</div><div class="tile-name">Fade Dots</div></div>
+</div>
+
+<!-- ─── 22 ─── Double ring counter-rotate -->
+<div class="tile" onclick="pick(this)">
+<div class="screen" style="flex-direction:column;gap:16px;">
+  <div class="logo" style="font-size:48px;color:#fff;">REPS.</div>
+  <div style="position:relative;width:48px;height:48px;">
+    <svg width="48" height="48" viewBox="0 0 48 48" style="position:absolute;animation:spin 1.4s linear infinite">
+      <circle cx="24" cy="24" r="20" fill="none" stroke="#c6f135" stroke-width="3" stroke-dasharray="30 96" stroke-linecap="round"/>
+    </svg>
+    <svg width="48" height="48" viewBox="0 0 48 48" style="position:absolute;animation:spin-r 2s linear infinite">
+      <circle cx="24" cy="24" r="12" fill="none" stroke="#00d4f0" stroke-width="2.5" stroke-dasharray="18 57" stroke-linecap="round"/>
+    </svg>
+  </div>
+</div>
+<div class="tile-meta"><div class="tile-num">#22</div><div class="tile-name">Counter-Rotate</div></div>
+</div>
+
+<!-- ─── 23 ─── Minimal dark — just logo + thin line sweep -->
+<div class="tile" onclick="pick(this)">
+<div class="screen" style="flex-direction:column;gap:14px;">
+  <div class="logo" style="font-size:52px;color:#c6f135;animation:fadein .7s ease both;">REPS.</div>
+  <div style="width:60px;height:2px;background:#1a1a1a;border-radius:1px;overflow:hidden;position:relative;">
+    <div style="height:100%;width:100%;background:linear-gradient(90deg,transparent,#c6f135,transparent);animation:shimmer 1.2s linear infinite;background-size:200%;"></div>
+  </div>
+</div>
+<div class="tile-meta"><div class="tile-num">#23</div><div class="tile-name">Shimmer Line</div></div>
+</div>
+
+<!-- ─── 24 ─── Vertical text stack + spinner -->
+<div class="tile" onclick="pick(this)">
+<div class="screen" style="flex-direction:column;gap:6px;">
+  <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:18px;letter-spacing:.3em;color:#555;animation:fadein .4s ease both;">R</div>
+  <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:18px;letter-spacing:.3em;color:#666;animation:fadein .4s .1s ease both;opacity:0;">E</div>
+  <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:18px;letter-spacing:.3em;color:#888;animation:fadein .4s .2s ease both;opacity:0;">P</div>
+  <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:18px;letter-spacing:.3em;color:#c6f135;animation:fadein .4s .3s ease both;opacity:0;">S.</div>
+  <svg width="24" height="24" viewBox="0 0 24 24" style="margin-top:16px;animation:spin .9s linear infinite">
+    <circle cx="12" cy="12" r="9" fill="none" stroke="#222" stroke-width="2.5"/>
+    <circle cx="12" cy="12" r="9" fill="none" stroke="#c6f135" stroke-width="2.5" stroke-dasharray="14 43" stroke-linecap="round"/>
+  </svg>
+</div>
+<div class="tile-meta"><div class="tile-num">#24</div><div class="tile-name">Letter Cascade</div></div>
+</div>
+
+<!-- ─── 25 ─── Pink bg with white logo -->
+<div class="tile" onclick="pick(this)">
+<div class="screen" style="background:#ff4d6a;flex-direction:column;gap:18px;">
+  <div class="logo" style="font-size:52px;color:#fff;animation:expand .5s cubic-bezier(.34,1.56,.64,1) both;">REPS.</div>
+  <svg width="28" height="28" viewBox="0 0 28 28" style="animation:spin 1s linear infinite">
+    <circle cx="14" cy="14" r="10" fill="none" stroke="rgba(255,255,255,.2)" stroke-width="3"/>
+    <circle cx="14" cy="14" r="10" fill="none" stroke="#fff" stroke-width="3" stroke-dasharray="16 47" stroke-linecap="round"/>
+  </svg>
+</div>
+<div class="tile-meta"><div class="tile-num">#25</div><div class="tile-name">Pink BG</div></div>
+</div>
+
+<!-- ─── 26 ─── Gradient bg diagonal -->
+<div class="tile" onclick="pick(this)">
+<div class="screen" style="background:linear-gradient(135deg,#0d0d0d 0%,#1a0d00 100%);flex-direction:column;gap:18px;">
+  <div class="logo g-pink-lime" style="font-size:52px;animation:fadein .6s ease both;">REPS.</div>
+  <svg width="32" height="32" viewBox="0 0 32 32" style="animation:spin 1s linear infinite">
+    <circle cx="16" cy="16" r="12" fill="none" stroke="#2a1a0a" stroke-width="3"/>
+    <circle cx="16" cy="16" r="12" fill="none" stroke="#ff4d6a" stroke-width="3" stroke-dasharray="18 57" stroke-linecap="round"/>
+  </svg>
+</div>
+<div class="tile-meta"><div class="tile-num">#26</div><div class="tile-name">Warm Gradient BG</div></div>
+</div>
+
+<!-- ─── 27 ─── Square icon center grow -->
+<div class="tile" onclick="pick(this)">
+<div class="screen" style="flex-direction:column;gap:0;">
+  <div style="width:100px;height:100px;border-radius:22px;background:#0d0d0d;border:4px solid;border-image:linear-gradient(135deg,#ff4d6a,#c6f135) 1;display:flex;align-items:center;justify-content:center;animation:expand .6s cubic-bezier(.34,1.56,.64,1) both;margin-bottom:18px;">
+    <div class="logo" style="font-size:28px;color:#c6f135;">REPS.</div>
+  </div>
+  <svg width="28" height="28" viewBox="0 0 28 28" style="animation:spin 1s linear infinite">
+    <circle cx="14" cy="14" r="10" fill="none" stroke="#1a1a1a" stroke-width="3"/>
+    <circle cx="14" cy="14" r="10" fill="none" stroke="#c6f135" stroke-width="3" stroke-dasharray="16 47" stroke-linecap="round"/>
+  </svg>
+</div>
+<div class="tile-meta"><div class="tile-num">#27</div><div class="tile-name">App Icon Grow</div></div>
+</div>
+
+<!-- ─── 28 ─── Dumbbell + pulse -->
+<div class="tile" onclick="pick(this)">
+<div class="screen" style="flex-direction:column;gap:18px;">
+  <svg width="70" height="22" viewBox="0 0 70 22" style="animation:bounce 1.2s ease-in-out infinite">
+    <rect x="16" y="8" width="38" height="6" rx="3" fill="#333"/>
+    <rect x="8" y="4" width="10" height="14" rx="3" fill="#c6f135"/>
+    <rect x="2" y="7" width="7" height="8" rx="2" fill="#c6f135" opacity=".7"/>
+    <rect x="52" y="4" width="10" height="14" rx="3" fill="#c6f135"/>
+    <rect x="61" y="7" width="7" height="8" rx="2" fill="#c6f135" opacity=".7"/>
+  </svg>
+  <div class="logo" style="font-size:44px;color:#c6f135;">REPS.</div>
+  <div style="display:flex;gap:7px;">
+    <div style="width:7px;height:7px;border-radius:50%;background:#c6f135;animation:dots3 1s ease-in-out infinite 0s;"></div>
+    <div style="width:7px;height:7px;border-radius:50%;background:#c6f135;animation:dots3 1s ease-in-out infinite .18s;"></div>
+    <div style="width:7px;height:7px;border-radius:50%;background:#c6f135;animation:dots3 1s ease-in-out infinite .36s;"></div>
+  </div>
+</div>
+<div class="tile-meta"><div class="tile-num">#28</div><div class="tile-name">Bouncing Dumbbell</div></div>
+</div>
+
+<!-- ─── 29 ─── Full gradient fill with white -->
+<div class="tile" onclick="pick(this)">
+<div class="screen" style="background:linear-gradient(135deg,#ff4d6a,#c6f135);flex-direction:column;gap:18px;">
+  <div class="logo" style="font-size:58px;color:#0d0d0d;animation:expand .5s cubic-bezier(.34,1.56,.64,1) both;">REPS.</div>
+  <svg width="30" height="30" viewBox="0 0 30 30" style="animation:spin 1s linear infinite">
+    <circle cx="15" cy="15" r="11" fill="none" stroke="rgba(0,0,0,.2)" stroke-width="3"/>
+    <circle cx="15" cy="15" r="11" fill="none" stroke="#0d0d0d" stroke-width="3" stroke-dasharray="17 52" stroke-linecap="round"/>
+  </svg>
+</div>
+<div class="tile-meta"><div class="tile-num">#29</div><div class="tile-name">Pink→Lime BG</div></div>
+</div>
+
+<!-- ─── 30 ─── Single rotating square -->
+<div class="tile" onclick="pick(this)">
+<div class="screen" style="flex-direction:column;gap:20px;">
+  <div class="logo" style="font-size:50px;color:#c6f135;">REPS.</div>
+  <div style="width:22px;height:22px;border:3px solid #c6f135;border-top-color:transparent;border-radius:3px;animation:spin .8s linear infinite;"></div>
+</div>
+<div class="tile-meta"><div class="tile-num">#30</div><div class="tile-name">Spinning Square</div></div>
+</div>
+
+<!-- ─── 31 ─── Radar sweep -->
+<div class="tile" onclick="pick(this)">
+<div class="screen" style="flex-direction:column;gap:18px;">
+  <div class="logo" style="font-size:50px;color:#c6f135;">REPS.</div>
+  <div style="position:relative;width:44px;height:44px;">
+    <svg width="44" height="44" viewBox="0 0 44 44" style="position:absolute;">
+      <circle cx="22" cy="22" r="18" fill="none" stroke="#1a1a1a" stroke-width="1.5"/>
+      <circle cx="22" cy="22" r="12" fill="none" stroke="#1a1a1a" stroke-width="1"/>
+      <circle cx="22" cy="22" r="6" fill="none" stroke="#1a1a1a" stroke-width="1"/>
+      <circle cx="22" cy="22" r="2" fill="#c6f135"/>
+    </svg>
+    <svg width="44" height="44" viewBox="0 0 44 44" style="position:absolute;animation:sweep 1.5s linear infinite;transform-origin:22px 22px;">
+      <path d="M22 22 L22 4" stroke="#c6f135" stroke-width="1.5" stroke-linecap="round" opacity=".8"/>
+      <path d="M22 22 L22 4" stroke="#c6f135" stroke-width="6" stroke-linecap="round" opacity=".15"/>
+    </svg>
+  </div>
+</div>
+<div class="tile-meta"><div class="tile-num">#31</div><div class="tile-name">Radar Sweep</div></div>
+</div>
+
+<!-- ─── 32 ─── Skeleton lines -->
+<div class="tile" onclick="pick(this)">
+<div class="screen" style="flex-direction:column;gap:20px;padding:20px;">
+  <div class="logo" style="font-size:50px;color:#c6f135;margin-bottom:4px;">REPS.</div>
+  <div style="width:100%;height:8px;border-radius:4px;background:linear-gradient(90deg,#1a1a1a 25%,#252525 50%,#1a1a1a 75%);background-size:200%;animation:shimmer 1.2s infinite;"></div>
+  <div style="width:70%;height:8px;border-radius:4px;background:linear-gradient(90deg,#1a1a1a 25%,#252525 50%,#1a1a1a 75%);background-size:200%;animation:shimmer 1.2s .15s infinite;"></div>
+  <div style="width:85%;height:8px;border-radius:4px;background:linear-gradient(90deg,#1a1a1a 25%,#252525 50%,#1a1a1a 75%);background-size:200%;animation:shimmer 1.2s .3s infinite;"></div>
+</div>
+<div class="tile-meta"><div class="tile-num">#32</div><div class="tile-name">Skeleton Loader</div></div>
+</div>
+
+<!-- ─── 33 ─── Countdown number -->
+<div class="tile" onclick="pick(this)">
+<div class="screen" style="flex-direction:column;gap:12px;">
+  <div class="logo" style="font-size:44px;color:#c6f135;">REPS.</div>
+  <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:56px;color:#fff;animation:pulse2 1s ease-in-out infinite;line-height:1;">3</div>
+  <div style="font-size:10px;letter-spacing:.2em;color:#555;font-family:'Barlow Condensed',sans-serif;">GET READY</div>
+</div>
+<div class="tile-meta"><div class="tile-num">#33</div><div class="tile-name">Countdown</div></div>
+</div>
+
+<!-- ─── 34 ─── Thin circle with lime dot -->
+<div class="tile" onclick="pick(this)">
+<div class="screen" style="flex-direction:column;gap:20px;">
+  <div class="logo" style="font-size:50px;color:#fff;">REPS.</div>
+  <div style="position:relative;width:36px;height:36px;">
+    <div style="position:absolute;inset:0;border:2px solid #222;border-radius:50%;"></div>
+    <div style="position:absolute;inset:0;border:2px solid transparent;border-top-color:#c6f135;border-radius:50%;animation:spin .7s linear infinite;"></div>
+    <div style="position:absolute;inset:5px;border:2px solid transparent;border-bottom-color:#00d4f0;border-radius:50%;animation:spin-r 1s linear infinite;"></div>
+  </div>
+</div>
+<div class="tile-meta"><div class="tile-num">#34</div><div class="tile-name">Dual Border Spin</div></div>
+</div>
+
+<!-- ─── 35 ─── Rep counter ticking -->
+<div class="tile" onclick="pick(this)">
+<div class="screen" style="flex-direction:column;gap:14px;">
+  <div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:.22em;color:#555;">YOUR WORKOUT</div>
+  <div class="logo" style="font-size:60px;color:#c6f135;">REPS.</div>
+  <div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:.22em;color:#555;">IS LOADING</div>
+  <div style="margin-top:8px;display:flex;gap:5px;align-items:flex-end;height:20px;">
+    <div style="width:4px;background:#c6f135;border-radius:2px;animation:wave .8s ease-in-out infinite 0s;"></div>
+    <div style="width:4px;background:#c6f135;border-radius:2px;animation:wave .8s ease-in-out infinite .08s;"></div>
+    <div style="width:4px;background:#c6f135;border-radius:2px;animation:wave .8s ease-in-out infinite .16s;"></div>
+    <div style="width:4px;background:#c6f135;border-radius:2px;animation:wave .8s ease-in-out infinite .24s;"></div>
+    <div style="width:4px;background:#c6f135;border-radius:2px;animation:wave .8s ease-in-out infinite .32s;"></div>
+    <div style="width:4px;background:#c6f135;border-radius:2px;animation:wave .8s ease-in-out infinite .4s;"></div>
+  </div>
+</div>
+<div class="tile-meta"><div class="tile-num">#35</div><div class="tile-name">Sub-Text Wave</div></div>
+</div>
+
+<!-- ─── 36 ─── Full screen black + centered ring icon -->
+<div class="tile" onclick="pick(this)">
+<div class="screen">
+  <div style="position:relative;width:110px;height:110px;">
+    <svg width="110" height="110" viewBox="0 0 110 110" style="position:absolute;inset:0;animation:spin-r 4s linear infinite">
+      <circle cx="55" cy="55" r="50" fill="none" stroke="#1a1a1a" stroke-width="4"/>
+      <circle cx="55" cy="55" r="50" fill="none" stroke="#c6f135" stroke-width="4" stroke-dasharray="60 254" stroke-linecap="round"/>
+    </svg>
+    <svg width="110" height="110" viewBox="0 0 110 110" style="position:absolute;inset:0;animation:spin 2.5s linear infinite">
+      <circle cx="55" cy="55" r="50" fill="none" stroke="#00d4f0" stroke-width="2" stroke-dasharray="20 254" stroke-linecap="round" opacity=".5"/>
+    </svg>
+    <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
+      <div class="logo" style="font-size:26px;color:#fff;">REPS.</div>
+    </div>
+  </div>
+</div>
+<div class="tile-meta"><div class="tile-num">#36</div><div class="tile-name">Triple Ring</div></div>
+</div>
+
+<!-- ─── 37 ─── Stacked bold subtext -->
+<div class="tile" onclick="pick(this)">
+<div class="screen" style="flex-direction:column;gap:4px;">
+  <div class="logo" style="font-size:64px;color:#c6f135;animation:slide-up .6s ease both;">REPS.</div>
+  <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:.3em;color:#444;animation:fadein .6s .2s ease both;opacity:0;">TRACK · BUILD · GROW</div>
+  <svg width="28" height="28" viewBox="0 0 28 28" style="margin-top:22px;animation:spin .9s linear infinite">
+    <circle cx="14" cy="14" r="10" fill="none" stroke="#222" stroke-width="2.5"/>
+    <circle cx="14" cy="14" r="10" fill="none" stroke="#c6f135" stroke-width="2.5" stroke-dasharray="16 47" stroke-linecap="round"/>
+  </svg>
+</div>
+<div class="tile-meta"><div class="tile-num">#37</div><div class="tile-name">Tagline Fade</div></div>
+</div>
+
+<!-- ─── 38 ─── Glitch RGB load -->
+<div class="tile" onclick="pick(this)">
+<div class="screen" style="flex-direction:column;gap:20px;">
+  <div style="position:relative;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:52px;letter-spacing:.04em;">
+    <span style="position:absolute;color:#ff4d6a;animation:pulse 2s .05s infinite;opacity:.7;">REPS.</span>
+    <span style="position:absolute;color:#00d4f0;animation:pulse 2s .1s infinite;opacity:.7;">REPS.</span>
+    <span style="color:#fff;position:relative;">REPS.</span>
+  </div>
+  <svg width="32" height="32" viewBox="0 0 32 32" style="margin-top:58px;animation:spin 1s linear infinite">
+    <circle cx="16" cy="16" r="12" fill="none" stroke="#1a1a1a" stroke-width="3"/>
+    <circle cx="16" cy="16" r="12" fill="none" stroke="#c6f135" stroke-width="3" stroke-dasharray="18 57" stroke-linecap="round"/>
+  </svg>
+</div>
+<div class="tile-meta"><div class="tile-num">#38</div><div class="tile-name">Glitch RGB</div></div>
+</div>
+
+<!-- ─── 39 ─── Circular progress with % -->
+<div class="tile" onclick="pick(this)">
+<div class="screen" style="flex-direction:column;gap:16px;">
+  <div class="logo" style="font-size:48px;color:#c6f135;">REPS.</div>
+  <div style="position:relative;width:56px;height:56px;">
+    <svg width="56" height="56" viewBox="0 0 56 56">
+      <circle cx="28" cy="28" r="24" fill="none" stroke="#1a1a1a" stroke-width="4"/>
+      <circle cx="28" cy="28" r="24" fill="none" stroke="#c6f135" stroke-width="4" stroke-linecap="round"
+        stroke-dasharray="150" stroke-dashoffset="150"
+        style="animation:ring-fill 1.8s ease-out .2s both;transform-origin:center;transform:rotate(-90deg);"/>
+    </svg>
+    <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:11px;color:#c6f135;">100%</div>
+  </div>
+</div>
+<div class="tile-meta"><div class="tile-num">#39</div><div class="tile-name">Progress Circle</div></div>
+</div>
+
+<!-- ─── 40 ─── Large background R watermark -->
+<div class="tile" onclick="pick(this)">
+<div class="screen" style="flex-direction:column;gap:16px;overflow:hidden;">
+  <div style="position:absolute;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:180px;color:rgba(198,241,53,.04);line-height:1;top:10px;left:50%;transform:translateX(-50%);">R</div>
+  <div class="logo" style="font-size:52px;color:#c6f135;position:relative;animation:fadein .7s ease both;">REPS.</div>
+  <svg width="32" height="32" viewBox="0 0 32 32" style="position:relative;animation:spin 1s linear infinite">
+    <circle cx="16" cy="16" r="12" fill="none" stroke="#1a1a1a" stroke-width="3"/>
+    <circle cx="16" cy="16" r="12" fill="none" stroke="#c6f135" stroke-width="3" stroke-dasharray="18 57" stroke-linecap="round"/>
+  </svg>
+</div>
+<div class="tile-meta"><div class="tile-num">#40</div><div class="tile-name">Watermark R</div></div>
+</div>
+
+<!-- ─── 41 ─── Typing text effect -->
+<div class="tile" onclick="pick(this)">
+<div class="screen" style="flex-direction:column;gap:16px;">
+  <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:52px;color:#c6f135;overflow:hidden;white-space:nowrap;border-right:3px solid #c6f135;width:0;animation:grow 0s .3s both,blink .6s step-end infinite;">REPS.</div>
+</div>
+<div class="tile-meta"><div class="tile-num">#41</div><div class="tile-name">Typewriter</div></div>
+</div>
+
+<!-- ─── 42 ─── Pill / status bar loader -->
+<div class="tile" onclick="pick(this)">
+<div class="screen" style="flex-direction:column;gap:20px;">
+  <div class="logo" style="font-size:52px;color:#c6f135;">REPS.</div>
+  <div style="width:80px;height:6px;background:#1a1a1a;border-radius:3px;overflow:hidden;">
+    <div style="height:100%;background:linear-gradient(90deg,#c6f135,#00d4f0);border-radius:3px;animation:grow 1.6s ease-in-out infinite alternate;transform-origin:left;"></div>
+  </div>
+</div>
+<div class="tile-meta"><div class="tile-num">#42</div><div class="tile-name">Pill Loader</div></div>
+</div>
+
+<!-- ─── 43 ─── Cross / plus expanding -->
+<div class="tile" onclick="pick(this)">
+<div class="screen" style="flex-direction:column;gap:18px;">
+  <div class="logo" style="font-size:50px;color:#fff;">REPS.</div>
+  <svg width="32" height="32" viewBox="0 0 32 32" style="animation:spin .7s linear infinite">
+    <line x1="16" y1="2" x2="16" y2="30" stroke="#c6f135" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="2" y1="16" x2="30" y2="16" stroke="#c6f135" stroke-width="2.5" stroke-linecap="round" opacity=".4"/>
+  </svg>
+</div>
+<div class="tile-meta"><div class="tile-num">#43</div><div class="tile-name">Spinning Plus</div></div>
+</div>
+
+<!-- ─── 44 ─── Spiral dots -->
+<div class="tile" onclick="pick(this)">
+<div class="screen" style="flex-direction:column;gap:18px;">
+  <div class="logo" style="font-size:50px;color:#c6f135;">REPS.</div>
+  <svg width="36" height="36" viewBox="0 0 36 36" style="animation:spin 1s linear infinite">
+    <circle cx="18" cy="4" r="2.5" fill="#c6f135"/>
+    <circle cx="30" cy="10" r="2.2" fill="#c6f135" opacity=".8"/>
+    <circle cx="32" cy="22" r="1.9" fill="#c6f135" opacity=".6"/>
+    <circle cx="24" cy="32" r="1.6" fill="#c6f135" opacity=".4"/>
+    <circle cx="12" cy="33" r="1.4" fill="#c6f135" opacity=".3"/>
+    <circle cx="4" cy="25" r="1.2" fill="#c6f135" opacity=".2"/>
+    <circle cx="4" cy="13" r="1" fill="#c6f135" opacity=".1"/>
+  </svg>
+</div>
+<div class="tile-meta"><div class="tile-num">#44</div><div class="tile-name">Comet Trail</div></div>
+</div>
+
+<!-- ─── 45 ─── Icon badge pop-in -->
+<div class="tile" onclick="pick(this)">
+<div class="screen" style="flex-direction:column;gap:18px;">
+  <div style="width:80px;height:80px;background:#0d0d0d;border-radius:18px;display:flex;align-items:center;justify-content:center;border:3px solid;
+    border-image:linear-gradient(135deg,#ff4d6a,#c6f135) 1;animation:expand .6s cubic-bezier(.34,1.56,.64,1) both;overflow:hidden;position:relative;">
+    <div class="logo" style="font-size:22px;color:#c6f135;">REPS.</div>
+  </div>
+  <div class="logo" style="font-size:26px;color:#555;animation:fadein .5s .4s ease both;opacity:0;">WORKOUT TRACKER</div>
+  <svg width="26" height="26" viewBox="0 0 26 26" style="animation:spin .9s linear infinite;margin-top:4px">
+    <circle cx="13" cy="13" r="9" fill="none" stroke="#222" stroke-width="2.5"/>
+    <circle cx="13" cy="13" r="9" fill="none" stroke="#c6f135" stroke-width="2.5" stroke-dasharray="14 43" stroke-linecap="round"/>
+  </svg>
+</div>
+<div class="tile-meta"><div class="tile-num">#45</div><div class="tile-name">Badge Pop-In</div></div>
+</div>
+
+<!-- ─── 46 ─── Dark grid bg + logo -->
+<div class="tile" onclick="pick(this)">
+<div class="screen" style="background-image:radial-gradient(circle,#1e1e1e 1px,transparent 1px);background-size:18px 18px;flex-direction:column;gap:18px;">
+  <div class="logo" style="font-size:52px;color:#c6f135;animation:expand .5s cubic-bezier(.34,1.56,.64,1) both;">REPS.</div>
+  <svg width="28" height="28" viewBox="0 0 28 28" style="animation:spin 1s linear infinite">
+    <circle cx="14" cy="14" r="10" fill="none" stroke="#2a2a2a" stroke-width="3"/>
+    <circle cx="14" cy="14" r="10" fill="none" stroke="#c6f135" stroke-width="3" stroke-dasharray="16 47" stroke-linecap="round"/>
+  </svg>
+</div>
+<div class="tile-meta"><div class="tile-num">#46</div><div class="tile-name">Dot Grid BG</div></div>
+</div>
+
+<!-- ─── 47 ─── Minimal white on black -->
+<div class="tile" onclick="pick(this)">
+<div class="screen">
+  <div style="display:flex;flex-direction:column;align-items:center;gap:32px;">
+    <div class="logo" style="font-size:56px;color:#fff;font-style:italic;animation:fadein .8s ease both;">REPS.</div>
+    <div style="width:20px;height:20px;border-radius:50%;border:2.5px solid transparent;border-top-color:#fff;animation:spin .6s linear infinite;"></div>
+  </div>
+</div>
+<div class="tile-meta"><div class="tile-num">#47</div><div class="tile-name">Pure Minimal</div></div>
+</div>
+
+<!-- ─── 48 ─── Concentric grow rings -->
+<div class="tile" onclick="pick(this)">
+<div class="screen" style="flex-direction:column;gap:16px;">
+  <div class="logo" style="font-size:50px;color:#c6f135;">REPS.</div>
+  <div style="position:relative;width:48px;height:48px;">
+    <div style="position:absolute;inset:0;border:2px solid rgba(198,241,53,.6);border-radius:50%;animation:pulse2 1.4s ease-out infinite;"></div>
+    <div style="position:absolute;inset:8px;border:2px solid rgba(198,241,53,.4);border-radius:50%;animation:pulse2 1.4s ease-out infinite .2s;"></div>
+    <div style="position:absolute;inset:16px;border:2px solid rgba(198,241,53,.2);border-radius:50%;animation:pulse2 1.4s ease-out infinite .4s;"></div>
+    <div style="position:absolute;inset:21px;background:#c6f135;border-radius:50%;"></div>
+  </div>
+</div>
+<div class="tile-meta"><div class="tile-num">#48</div><div class="tile-name">Sonar Rings</div></div>
+</div>
+
+<!-- ─── 49 ─── Fitness stat appear -->
+<div class="tile" onclick="pick(this)">
+<div class="screen" style="flex-direction:column;gap:10px;padding:16px;">
+  <div class="logo" style="font-size:52px;color:#c6f135;margin-bottom:6px;">REPS.</div>
+  <div style="display:flex;justify-content:center;gap:24px;animation:fadein .6s .4s ease both;opacity:0;">
+    <div style="text-align:center;">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:24px;color:#fff;">0</div>
+      <div style="font-size:8px;letter-spacing:.15em;color:#555;font-family:'Barlow Condensed',sans-serif;">WORKOUTS</div>
+    </div>
+    <div style="text-align:center;">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:24px;color:#00d4f0;">0</div>
+      <div style="font-size:8px;letter-spacing:.15em;color:#555;font-family:'Barlow Condensed',sans-serif;">SETS</div>
+    </div>
+    <div style="text-align:center;">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:24px;color:#ff4d6a;">0</div>
+      <div style="font-size:8px;letter-spacing:.15em;color:#555;font-family:'Barlow Condensed',sans-serif;">STREAK</div>
+    </div>
+  </div>
+  <svg width="28" height="28" viewBox="0 0 28 28" style="margin-top:12px;animation:spin .9s linear infinite">
+    <circle cx="14" cy="14" r="10" fill="none" stroke="#222" stroke-width="2.5"/>
+    <circle cx="14" cy="14" r="10" fill="none" stroke="#c6f135" stroke-width="2.5" stroke-dasharray="16 47" stroke-linecap="round"/>
+  </svg>
+</div>
+<div class="tile-meta"><div class="tile-num">#49</div><div class="tile-name">Stats Appear</div></div>
+</div>
+
+<!-- ─── 50 ─── Gradient ring icon + tagline -->
+<div class="tile" onclick="pick(this)">
+<div class="screen" style="flex-direction:column;gap:14px;">
+  <div style="position:relative;width:90px;height:90px;animation:expand .6s cubic-bezier(.34,1.56,.64,1) both;">
+    <svg width="90" height="90" viewBox="0 0 90 90" style="position:absolute;inset:0">
+      <defs>
+        <linearGradient id="rg" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#ff4d6a"/>
+          <stop offset="100%" stop-color="#c6f135"/>
+        </linearGradient>
+      </defs>
+      <circle cx="45" cy="45" r="40" fill="#0d0d0d" stroke="url(#rg)" stroke-width="5"/>
+    </svg>
+    <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
+      <div class="logo g-pink-lime" style="font-size:26px;">REPS.</div>
+    </div>
+    <svg width="90" height="90" viewBox="0 0 90 90" style="position:absolute;inset:0;animation:spin 2s linear infinite">
+      <circle cx="45" cy="45" r="40" fill="none" stroke="rgba(198,241,53,.2)" stroke-width="5" stroke-dasharray="25 226" stroke-linecap="round"/>
+    </svg>
+  </div>
+  <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:.3em;color:#555;animation:fadein .6s .5s ease both;opacity:0;">LOADING YOUR STATS</div>
+</div>
+<div class="tile-meta"><div class="tile-num">#50</div><div class="tile-name">Gradient Icon Spin</div></div>
+</div>
+
+</div>
+<div id="picked" style="display:none;position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#c6f135;color:#0d0d0d;padding:12px 28px;border-radius:999px;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:1.1rem;letter-spacing:0.08em;box-shadow:0 4px 24px rgba(198,241,53,0.4);white-space:nowrap;">
+  Selected: <span id="picked-label"></span>
+</div>
+<script>
+function pick(el){
+  document.querySelectorAll('.tile').forEach(t=>t.classList.remove('picked'));
+  el.classList.add('picked');
+  const num=el.querySelector('.tile-num').textContent;
+  const name=el.querySelector('.tile-name').textContent;
+  const bar=document.getElementById('picked');
+  bar.style.display='block';
+  document.getElementById('picked-label').textContent=num+' — '+name;
+}
+</script>
+</body>
+</html>

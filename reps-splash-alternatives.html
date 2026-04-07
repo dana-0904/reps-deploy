@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>REPS. Splash Alternatives</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@900&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#111;color:#fff;font-family:'Inter',sans-serif;padding:32px 20px 80px;}
+h1{font-family:'Barlow Condensed',sans-serif;font-size:2rem;font-weight:900;color:#c6f135;letter-spacing:.08em;margin-bottom:4px;}
+p.sub{color:#555;font-size:.8rem;margin-bottom:32px;}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;}
+.card{background:#0d0d0d;border-radius:16px;padding:20px 12px 14px;display:flex;flex-direction:column;align-items:center;gap:14px;border:1px solid #1a1a1a;transition:border-color .2s;cursor:pointer;}
+.card:hover{border-color:#c6f135;}
+.card-inner{display:flex;flex-direction:column;align-items:center;gap:10px;flex:1;justify-content:center;}
+.logo{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:1.4rem;letter-spacing:.1em;color:#fff;}
+.num{font-size:.62rem;color:#444;letter-spacing:.08em;font-weight:600;}
+.name{font-size:.65rem;color:#666;letter-spacing:.06em;text-align:center;margin-top:2px;}
+
+/* ── ANIMATIONS ── */
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes spin-ccw{to{transform:rotate(-360deg)}}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.18);opacity:.6}}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+@keyframes fade{0%,100%{opacity:.15}50%{opacity:1}}
+@keyframes bar{0%,100%{transform:scaleY(.25)}50%{transform:scaleY(1)}}
+@keyframes expand{0%{transform:scale(.2);opacity:.8}100%{transform:scale(2.2);opacity:0}}
+@keyframes fill-up{0%{clip-path:inset(100% 0 0 0)}100%{clip-path:inset(0% 0 0 0)}}
+@keyframes draw{0%{stroke-dashoffset:200}100%{stroke-dashoffset:0}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+@keyframes orbit{0%{transform:rotate(0deg) translateX(14px) rotate(0deg)}100%{transform:rotate(360deg) translateX(14px) rotate(-360deg)}}
+@keyframes wave{0%,100%{transform:scaleY(1)}50%{transform:scaleY(2.2)}}
+@keyframes slide-r{0%{transform:translateX(-20px);opacity:0}50%{opacity:1}100%{transform:translateX(20px);opacity:0}}
+@keyframes morph{0%,100%{border-radius:50%}33%{border-radius:30% 70% 70% 30%/30% 30% 70% 70%}66%{border-radius:70% 30% 30% 70%/70% 70% 30% 30%}}
+@keyframes stripe{0%{background-position:0 0}100%{background-position:40px 0}}
+@keyframes tick-dash{0%{stroke-dashoffset:56}100%{stroke-dashoffset:0}}
+@keyframes glow{0%,100%{filter:drop-shadow(0 0 2px #c6f135)}50%{filter:drop-shadow(0 0 10px #c6f135) drop-shadow(0 0 20px #c6f135)}}
+@keyframes glitch{0%,100%{clip-path:inset(0 0 100% 0)}10%{clip-path:inset(20% 0 60% 0)}20%{clip-path:inset(50% 0 30% 0)}30%{clip-path:inset(70% 0 10% 0)}40%{clip-path:inset(10% 0 80% 0)}50%{clip-path:inset(0 0 0 0)}}
+@keyframes seg-fill{0%{stroke-dashoffset:100}100%{stroke-dashoffset:0}}
+@keyframes comet{0%{stroke-dashoffset:0}100%{stroke-dashoffset:-200}}
+@keyframes ripple{0%{r:2;opacity:1}100%{r:17;opacity:0}}
+</style>
+</head>
+<body>
+<h1>REPS. — Splash Alternatives</h1>
+<p class="sub">50 loading animations · same color palette · click to preview fullscreen</p>
+<div class="grid" id="grid"></div>
+
+<div id="preview" style="display:none;position:fixed;inset:0;background:#0d0d0d;z-index:999;align-items:center;justify-content:center;flex-direction:column;gap:16px;cursor:pointer;" onclick="this.style.display='none'">
+  <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:3rem;letter-spacing:.12em;color:#fff;" id="prev-logo">REPS.</div>
+  <div id="prev-anim"></div>
+  <div style="position:absolute;bottom:40px;color:#333;font-size:.75rem;letter-spacing:.1em;">TAP TO CLOSE</div>
+</div>
+
+<script>
+const L='#c6f135', P='#ff4d6a', C='#00d4f0', D='#222', M='#555';
+
+const items = [
+
+// ── 1-10: RING / ARC VARIANTS ──────────────────────────────
+{name:'Arc Spinner', html:`
+<svg width="38" height="38" viewBox="0 0 38 38" style="animation:spin 1s linear infinite">
+  <circle cx="19" cy="19" r="15" fill="none" stroke="${D}" stroke-width="3.5"/>
+  <circle cx="19" cy="19" r="15" fill="none" stroke="${P}" stroke-width="3.5" stroke-dasharray="24 70" stroke-linecap="round"/>
+</svg>`},
+
+{name:'Gradient Arc', html:`
+<svg width="38" height="38" viewBox="0 0 38 38" style="animation:spin 1s linear infinite">
+  <defs><linearGradient id="g1" x1="0" y1="0" x2="1" y2="1"><stop stop-color="${L}"/><stop offset="1" stop-color="${C}"/></linearGradient></defs>
+  <circle cx="19" cy="19" r="15" fill="none" stroke="${D}" stroke-width="3.5"/>
+  <circle cx="19" cy="19" r="15" fill="none" stroke="url(#g1)" stroke-width="3.5" stroke-dasharray="32 63" stroke-linecap="round"/>
+</svg>`},
+
+{name:'Dual Ring', html:`
+<div style="position:relative;width:38px;height:38px;">
+  <svg width="38" height="38" viewBox="0 0 38 38" style="position:absolute;animation:spin .9s linear infinite">
+    <circle cx="19" cy="19" r="15" fill="none" stroke="${L}" stroke-width="2.5" stroke-dasharray="20 75" stroke-linecap="round"/>
+  </svg>
+  <svg width="38" height="38" viewBox="0 0 38 38" style="position:absolute;animation:spin-ccw 1.2s linear infinite">
+    <circle cx="19" cy="19" r="8" fill="none" stroke="${P}" stroke-width="2.5" stroke-dasharray="14 37" stroke-linecap="round"/>
+  </svg>
+</div>`},
+
+{name:'Dashed Ring', html:`
+<svg width="38" height="38" viewBox="0 0 38 38" style="animation:spin 1.5s linear infinite">
+  <circle cx="19" cy="19" r="15" fill="none" stroke="${L}" stroke-width="3" stroke-dasharray="6 6" stroke-linecap="round"/>
+</svg>`},
+
+{name:'Triple Arc', html:`
+<div style="position:relative;width:42px;height:42px;">
+  <svg width="42" height="42" viewBox="0 0 42 42" style="position:absolute;animation:spin .7s linear infinite">
+    <circle cx="21" cy="21" r="17" fill="none" stroke="${L}" stroke-width="2" stroke-dasharray="18 88" stroke-linecap="round"/>
+  </svg>
+  <svg width="42" height="42" viewBox="0 0 42 42" style="position:absolute;animation:spin 1s linear infinite">
+    <circle cx="21" cy="21" r="11" fill="none" stroke="${C}" stroke-width="2" stroke-dasharray="14 55" stroke-linecap="round"/>
+  </svg>
+  <svg width="42" height="42" viewBox="0 0 42 42" style="position:absolute;animation:spin 1.4s linear infinite">
+    <circle cx="21" cy="21" r="5" fill="none" stroke="${P}" stroke-width="2" stroke-dasharray="7 25" stroke-linecap="round"/>
+  </svg>
+</div>`},
+
+{name:'Pulsing Ring', html:`
+<svg width="38" height="38" viewBox="0 0 38 38" style="animation:pulse 1.2s ease-in-out infinite">
+  <circle cx="19" cy="19" r="15" fill="none" stroke="${L}" stroke-width="2.5"/>
+</svg>`},
+
+{name:'Neon Glow Ring', html:`
+<svg width="38" height="38" viewBox="0 0 38 38" style="animation:spin 1.2s linear infinite">
+  <circle cx="19" cy="19" r="15" fill="none" stroke="${D}" stroke-width="3.5"/>
+  <circle cx="19" cy="19" r="15" fill="none" stroke="${L}" stroke-width="3" stroke-dasharray="28 67" stroke-linecap="round" style="filter:drop-shadow(0 0 4px ${L})"/>
+</svg>`},
+
+{name:'Segment Fill', html:`
+<svg width="38" height="38" viewBox="0 0 38 38" style="animation:spin 2s steps(8,end) infinite">
+  ${[0,1,2,3,4,5,6,7].map(i=>{
+    const a=i*45*Math.PI/180;
+    const x1=19+15*Math.cos(a), y1=19+15*Math.sin(a);
+    const x2=19+15*Math.cos(a+0.4), y2=19+15*Math.sin(a+0.4);
+    return `<path d="M${x1},${y1} A15,15 0 0,1 ${x2},${y2}" stroke="${i<3?L:D}" stroke-width="4" fill="none" stroke-linecap="round" opacity="${1-i*0.1}"/>`;
+  }).join('')}
+</svg>`},
+
+{name:'Comet Trail', html:`
+<svg width="38" height="38" viewBox="0 0 38 38" style="animation:spin .8s linear infinite">
+  <circle cx="19" cy="19" r="15" fill="none" stroke="url(#comet-g)" stroke-width="3.5" stroke-dasharray="50 50" stroke-linecap="round"/>
+  <defs><linearGradient id="comet-g" gradientUnits="userSpaceOnUse" x1="38" y1="19" x2="4" y2="19"><stop stop-color="${L}"/><stop offset="1" stop-color="${L}" stop-opacity="0"/></linearGradient></defs>
+</svg>`},
+
+{name:'Ripple Rings', html:`
+<svg width="42" height="42" viewBox="0 0 42 42">
+  <circle cx="21" cy="21" r="2" fill="${L}" opacity="1" style="animation:ripple 1.4s ease-out infinite"/>
+  <circle cx="21" cy="21" r="2" fill="none" stroke="${L}" stroke-width="1.5" opacity=".8" style="animation:ripple 1.4s ease-out .4s infinite"/>
+  <circle cx="21" cy="21" r="2" fill="none" stroke="${L}" stroke-width="1" opacity=".5" style="animation:ripple 1.4s ease-out .8s infinite"/>
+</svg>`},
+
+// ── 11-20: DOT / PARTICLE VARIANTS ────────────────────────
+{name:'Three Dots Bounce', html:`
+<div style="display:flex;gap:6px;align-items:center;height:24px;">
+  ${[0,.15,.3].map(d=>`<div style="width:8px;height:8px;border-radius:50%;background:${L};animation:bounce .7s ease-in-out ${d}s infinite"></div>`).join('')}
+</div>`},
+
+{name:'Dot Pulse', html:`
+<div style="display:flex;gap:6px;align-items:center;height:24px;">
+  ${[0,.2,.4].map((d,i)=>`<div style="width:${6+i*2}px;height:${6+i*2}px;border-radius:50%;background:${[P,C,L][i]};animation:pulse .9s ease-in-out ${d}s infinite"></div>`).join('')}
+</div>`},
+
+{name:'Orbit Dot', html:`
+<div style="position:relative;width:38px;height:38px;">
+  <svg width="38" height="38" viewBox="0 0 38 38" style="position:absolute">
+    <circle cx="19" cy="19" r="14" fill="none" stroke="${D}" stroke-width="1"/>
+  </svg>
+  <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
+    <div style="width:38px;height:38px;animation:spin 1s linear infinite;display:flex;align-items:flex-start;justify-content:center;">
+      <div style="width:7px;height:7px;border-radius:50%;background:${L};margin-top:1px;box-shadow:0 0 6px ${L}"></div>
+    </div>
+  </div>
+  <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
+    <div style="width:8px;height:8px;border-radius:50%;background:${P}"></div>
+  </div>
+</div>`},
+
+{name:'Four Orbit', html:`
+<div style="position:relative;width:38px;height:38px;">
+  ${[0,90,180,270].map((deg,i)=>`
+  <div style="position:absolute;inset:0;animation:spin ${1+i*.2}s linear infinite;animation-delay:${i*-.25}s">
+    <div style="position:absolute;top:1px;left:50%;transform:translateX(-50%);width:7px;height:7px;border-radius:50%;background:${[L,C,P,L][i]};opacity:${1-i*.15}"></div>
+  </div>`).join('')}
+</div>`},
+
+{name:'Fade Ring Dots', html:`
+<svg width="38" height="38" viewBox="0 0 38 38" style="animation:spin 1.2s linear infinite">
+  ${Array.from({length:8},(_,i)=>{
+    const a=i/8*2*Math.PI, x=19+14*Math.cos(a), y=19+14*Math.sin(a);
+    return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${2.5}" fill="${L}" opacity="${(i+1)/8}"/>`;
+  }).join('')}
+</svg>`},
+
+{name:'Grid Fade', html:`
+<div style="display:grid;grid-template-columns:repeat(3,10px);gap:4px;">
+  ${Array.from({length:9},(_,i)=>`<div style="width:10px;height:10px;border-radius:3px;background:${i%2===0?L:C};animation:fade .9s ease-in-out ${i*.1}s infinite"></div>`).join('')}
+</div>`},
+
+{name:'Snake Dots', html:`
+<svg width="38" height="6" viewBox="0 0 38 6">
+  ${[0,1,2,3].map(i=>`<circle cx="${4+i*10}" cy="3" r="3" fill="${L}" style="animation:fade .8s ease-in-out ${i*.2}s infinite"/>`).join('')}
+</svg>`},
+
+{name:'Binary Pulse', html:`
+<div style="display:flex;gap:3px;align-items:flex-end;height:24px;">
+  ${Array.from({length:7},(_,i)=>`<div style="width:4px;border-radius:2px;background:${i%3===0?L:i%3===1?C:P};height:${Math.random()*16+4}px;animation:bar .6s ease-in-out ${i*.08}s infinite"></div>`).join('')}
+</div>`},
+
+{name:'Typing Dots', html:`
+<div style="display:flex;gap:5px;align-items:center;height:20px;">
+  ${[0,.25,.5].map(d=>`<div style="width:7px;height:7px;border-radius:50%;background:${L};animation:fade .9s ease ${d}s infinite"></div>`).join('')}
+</div>`},
+
+{name:'Cluster Pulse', html:`
+<div style="position:relative;width:38px;height:38px;">
+  ${[[-10,-10],[10,-10],[0,12],[-10,10],[10,10]].map(([x,y],i)=>`<div style="position:absolute;top:50%;left:50%;width:7px;height:7px;border-radius:50%;background:${[L,C,P,L,C][i]};transform:translate(calc(-50% + ${x}px),calc(-50% + ${y}px));animation:pulse ${.8+i*.1}s ease-in-out ${i*.12}s infinite"></div>`).join('')}
+</div>`},
+
+// ── 21-30: BAR / LINE VARIANTS ────────────────────────────
+{name:'Equalizer Bars', html:`
+<div style="display:flex;gap:4px;align-items:flex-end;height:28px;">
+  ${[L,C,L,P,L].map((c,i)=>`<div style="width:6px;background:${c};border-radius:3px 3px 0 0;animation:bar .6s ease-in-out ${i*.1}s infinite;transform-origin:bottom"></div>`).join('')}
+</div>`},
+
+{name:'Wave Bars', html:`
+<div style="display:flex;gap:3px;align-items:center;height:28px;">
+  ${Array.from({length:7},(_,i)=>`<div style="width:4px;height:${8+Math.sin(i)*10}px;background:${i%2?L:C};border-radius:2px;animation:wave .6s ease-in-out ${i*.09}s infinite;transform-origin:center"></div>`).join('')}
+</div>`},
+
+{name:'Progress Bar', html:`
+<div style="width:80px;height:4px;background:${D};border-radius:2px;overflow:hidden;">
+  <div style="height:100%;background:linear-gradient(90deg,${P},${L});border-radius:2px;animation:slide-r 1.2s ease-in-out infinite;width:40px;"></div>
+</div>`},
+
+{name:'Striped Bar', html:`
+<div style="width:80px;height:5px;border-radius:3px;overflow:hidden;background:repeating-linear-gradient(90deg,${L} 0,${L} 8px,${D} 8px,${D} 16px);animation:stripe .6s linear infinite;background-size:40px 100%;"></div>`},
+
+{name:'Heartbeat', html:`
+<svg width="80" height="28" viewBox="0 0 80 28">
+  <polyline points="0,14 16,14 22,4 28,24 34,4 40,24 46,14 80,14" fill="none" stroke="${L}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="stroke-dasharray:200;animation:draw 1.2s linear infinite"/>
+</svg>`},
+
+{name:'Slide Line', html:`
+<div style="width:80px;height:2px;background:${D};border-radius:1px;overflow:hidden;position:relative;">
+  <div style="position:absolute;height:100%;width:30px;background:linear-gradient(90deg,transparent,${L},transparent);animation:slide-r .9s ease-in-out infinite;"></div>
+</div>`},
+
+{name:'Dual Line', html:`
+<div style="display:flex;flex-direction:column;gap:5px;">
+  <div style="width:70px;height:3px;background:${D};border-radius:1.5px;overflow:hidden;position:relative;"><div style="position:absolute;height:100%;width:24px;background:${L};animation:slide-r .8s ease-in-out infinite;border-radius:1.5px;"></div></div>
+  <div style="width:50px;height:3px;background:${D};border-radius:1.5px;overflow:hidden;position:relative;"><div style="position:absolute;height:100%;width:18px;background:${P};animation:slide-r .8s ease-in-out .2s infinite;border-radius:1.5px;"></div></div>
+</div>`},
+
+{name:'Oscillator', html:`
+<svg width="80" height="28" viewBox="0 0 80 28">
+  <path id="osc" fill="none" stroke="${C}" stroke-width="2" stroke-linecap="round"/>
+  <animate xlink:href="#osc" attributeName="d" dur=".8s" repeatCount="indefinite"
+    values="M0,14 Q10,14 20,14 Q30,14 40,14 Q50,14 60,14 Q70,14 80,14;
+            M0,14 Q10,2 20,14 Q30,26 40,14 Q50,2 60,14 Q70,26 80,14;
+            M0,14 Q10,14 20,14 Q30,14 40,14 Q50,14 60,14 Q70,14 80,14"/>
+</svg>`},
+
+{name:'Loading Brackets', html:`
+<div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:1.1rem;letter-spacing:.1em;color:${L};display:flex;align-items:center;gap:4px;">
+  <span>[</span>
+  <div style="display:flex;gap:3px;">
+    ${[0,.15,.3].map(d=>`<span style="animation:blink .9s ${d}s infinite">▪</span>`).join('')}
+  </div>
+  <span>]</span>
+</div>`},
+
+{name:'Checkmark Draw', html:`
+<svg width="38" height="38" viewBox="0 0 38 38" style="animation:spin 2s linear infinite">
+  <circle cx="19" cy="19" r="15" fill="none" stroke="${D}" stroke-width="3"/>
+  <circle cx="19" cy="19" r="15" fill="none" stroke="${L}" stroke-width="3" stroke-dasharray="95" stroke-dashoffset="95" stroke-linecap="round" style="animation:draw 1s ease-in-out infinite alternate"/>
+</svg>`},
+
+// ── 31-40: SHAPE / GEOMETRY ────────────────────────────────
+{name:'Spinning Square', html:`
+<div style="width:24px;height:24px;border:3px solid transparent;border-top-color:${L};border-right-color:${C};animation:spin .8s linear infinite;border-radius:4px;"></div>`},
+
+{name:'Diamond Pulse', html:`
+<div style="width:22px;height:22px;background:${L};transform:rotate(45deg);animation:pulse .9s ease-in-out infinite;"></div>`},
+
+{name:'Morphing Blob', html:`
+<div style="width:26px;height:26px;background:${L};animation:morph 2s ease-in-out infinite;"></div>`},
+
+{name:'Hexagon Spin', html:`
+<svg width="38" height="38" viewBox="0 0 38 38" style="animation:spin 1.5s linear infinite">
+  <polygon points="19,3 33,11 33,27 19,35 5,27 5,11" fill="none" stroke="${L}" stroke-width="2.5" stroke-linejoin="round" stroke-dasharray="8 5"/>
+</svg>`},
+
+{name:'Cross Fade', html:`
+<div style="position:relative;width:38px;height:38px;">
+  <div style="position:absolute;inset:0;border-radius:50%;background:${L};animation:pulse 1s ease-in-out infinite;"></div>
+  <div style="position:absolute;inset:6px;border-radius:50%;background:#0d0d0d;"></div>
+  <div style="position:absolute;inset:12px;border-radius:50%;background:${P};animation:pulse 1s ease-in-out .3s infinite;"></div>
+</div>`},
+
+{name:'Infinity Trace', html:`
+<svg width="60" height="30" viewBox="0 0 60 30">
+  <path d="M15,15 C15,8 8,5 5,10 C0,17 8,25 15,20 C22,15 38,15 45,20 C52,25 60,17 55,10 C52,5 45,8 45,15 C45,22 52,25 55,20 C60,13 52,5 45,10 C38,15 22,15 15,10 C8,5 0,13 5,20 C8,25 15,22 15,15" fill="none" stroke="${L}" stroke-width="2.5" stroke-linecap="round" style="stroke-dasharray:200;animation:comet 2s linear infinite"/>
+</svg>`},
+
+{name:'Circle Fill', html:`
+<svg width="38" height="38" viewBox="0 0 38 38">
+  <circle cx="19" cy="19" r="15" fill="none" stroke="${D}" stroke-width="3.5"/>
+  <circle cx="19" cy="19" r="15" fill="none" stroke="${L}" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="0 94" style="animation:seg-fill 1.2s ease-in-out infinite alternate;transform-origin:50% 50%;transform:rotate(-90deg)"/>
+</svg>`},
+
+{name:'Split Ring', html:`
+<div style="position:relative;width:38px;height:38px;">
+  <svg width="38" height="38" viewBox="0 0 38 38" style="position:absolute;animation:spin .7s linear infinite">
+    <circle cx="19" cy="19" r="14" fill="none" stroke="${L}" stroke-width="3" stroke-dasharray="22 66" stroke-linecap="round"/>
+  </svg>
+  <svg width="38" height="38" viewBox="0 0 38 38" style="position:absolute;animation:spin-ccw .7s linear infinite">
+    <circle cx="19" cy="19" r="14" fill="none" stroke="${P}" stroke-width="3" stroke-dasharray="22 66" stroke-dashoffset="44" stroke-linecap="round"/>
+  </svg>
+</div>`},
+
+{name:'Rotating Dumbbell', html:`
+<svg width="48" height="18" viewBox="0 0 48 18" style="animation:spin 1.5s ease-in-out infinite">
+  <rect x="18" y="7" width="12" height="4" rx="2" fill="${D}"/>
+  <rect x="18" y="4" width="4" height="10" rx="2" fill="${L}"/>
+  <rect x="26" y="4" width="4" height="10" rx="2" fill="${L}"/>
+  <rect x="14" y="5" width="5" height="8" rx="2" fill="${P}"/>
+  <rect x="29" y="5" width="5" height="8" rx="2" fill="${P}"/>
+  <rect x="9" y="6" width="6" height="6" rx="2" fill="${C}"/>
+  <rect x="33" y="6" width="6" height="6" rx="2" fill="${C}"/>
+</svg>`},
+
+{name:'Rep Counter', html:`
+<div style="display:flex;gap:4px;align-items:center;">
+  ${[1,2,3,4,5].map((n,i)=>`<div style="width:8px;height:8px;border-radius:2px;background:${i<3?L:D};border:1.5px solid ${i<3?L:M};animation:fade .8s ease-in-out ${i*.15}s infinite"></div>`).join('')}
+</div>`},
+
+// ── 41-50: SPECIAL / CREATIVE ─────────────────────────────
+{name:'Glitch Logo', html:`
+<div style="position:relative;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:1.2rem;letter-spacing:.1em;color:${L};">
+  <span>REPS.</span>
+  <span style="position:absolute;inset:0;color:${P};animation:glitch 2s steps(1) infinite;clip-path:inset(0 0 100% 0)">REPS.</span>
+</div>`},
+
+{name:'Neon Bars', html:`
+<div style="display:flex;gap:4px;align-items:flex-end;height:28px;">
+  ${[L,C,L,P,C,L].map((c,i)=>`<div style="width:5px;border-radius:2.5px 2.5px 0 0;background:${c};box-shadow:0 0 6px ${c};animation:bar .5s ease-in-out ${i*.1}s infinite;transform-origin:bottom;height:${14+Math.sin(i)*8}px"></div>`).join('')}
+</div>`},
+
+{name:'Glow Ring', html:`
+<svg width="38" height="38" viewBox="0 0 38 38" style="animation:spin 1.4s linear infinite">
+  <circle cx="19" cy="19" r="15" fill="none" stroke="${D}" stroke-width="3.5"/>
+  <circle cx="19" cy="19" r="15" fill="none" stroke="${C}" stroke-width="2.5" stroke-dasharray="30 65" stroke-linecap="round" style="filter:drop-shadow(0 0 6px ${C}) drop-shadow(0 0 12px ${C})"/>
+</svg>`},
+
+{name:'Scan Line', html:`
+<div style="position:relative;width:60px;height:36px;border:1.5px solid ${L}22;border-radius:4px;overflow:hidden;">
+  <div style="position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 4px,${L}08 4px,${L}08 5px)"></div>
+  <div style="position:absolute;width:100%;height:2px;background:linear-gradient(90deg,transparent,${L},transparent);box-shadow:0 0 8px ${L};animation:bounce 1s ease-in-out infinite;"></div>
+</div>`},
+
+{name:'Target Lock', html:`
+<div style="position:relative;width:38px;height:38px;">
+  <svg width="38" height="38" viewBox="0 0 38 38" style="position:absolute;animation:spin 2s linear infinite">
+    <circle cx="19" cy="19" r="15" fill="none" stroke="${L}" stroke-width="1.5" stroke-dasharray="4 8" stroke-linecap="round"/>
+  </svg>
+  <svg width="38" height="38" viewBox="0 0 38 38" style="position:absolute;animation:spin-ccw 1.5s linear infinite">
+    <circle cx="19" cy="19" r="9" fill="none" stroke="${P}" stroke-width="1.5" stroke-dasharray="4 5" stroke-linecap="round"/>
+  </svg>
+  <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
+    <div style="width:6px;height:6px;border-radius:50%;background:${L};animation:pulse .8s ease-in-out infinite;box-shadow:0 0 8px ${L}"></div>
+  </div>
+</div>`},
+
+{name:'Signal Bars', html:`
+<div style="display:flex;gap:3px;align-items:flex-end;height:24px;">
+  ${[8,14,20,26].map((h,i)=>`<div style="width:6px;height:${h}px;border-radius:2px;background:${[D,C,C,L][i]};animation:pulse ${.6+i*.1}s ease-in-out ${i*.1}s infinite"></div>`).join('')}
+</div>`},
+
+{name:'DNA Dots', html:`
+<svg width="40" height="32" viewBox="0 0 40 32">
+  ${Array.from({length:5},(_,i)=>{
+    const x=i*10, y1=16+Math.sin(i)*10, y2=16-Math.sin(i)*10;
+    return `<circle cx="${x}" cy="${y1}" r="3" fill="${L}" style="animation:fade .6s ease-in-out ${i*.12}s infinite"/>
+            <circle cx="${x}" cy="${y2}" r="3" fill="${P}" style="animation:fade .6s ease-in-out ${(5-i)*.12}s infinite"/>
+            <line x1="${x}" y1="${y1}" x2="${x}" y2="${y2}" stroke="${D}" stroke-width="1.5"/>`;
+  }).join('')}
+</svg>`},
+
+{name:'Power Button', html:`
+<svg width="38" height="38" viewBox="0 0 38 38" style="animation:glow 1.5s ease-in-out infinite">
+  <circle cx="19" cy="19" r="13" fill="none" stroke="${L}" stroke-width="2.5" stroke-dasharray="66 10" stroke-dashoffset="33" stroke-linecap="round"/>
+  <line x1="19" y1="6" x2="19" y2="16" stroke="${L}" stroke-width="2.5" stroke-linecap="round"/>
+</svg>`},
+
+{name:'Countdown Ticks', html:`
+<div style="position:relative;width:38px;height:38px;">
+  <svg width="38" height="38" viewBox="0 0 38 38" style="position:absolute;animation:spin-ccw 3s linear infinite">
+    ${Array.from({length:12},(_,i)=>{
+      const a=i/12*2*Math.PI, x1=19+11*Math.cos(a), y1=19+11*Math.sin(a), x2=19+14*Math.cos(a), y2=19+14*Math.sin(a);
+      return `<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" stroke="${i%3===0?L:D}" stroke-width="${i%3===0?2:1}" stroke-linecap="round"/>`;
+    }).join('')}
+  </svg>
+  <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
+    <div style="width:6px;height:6px;border-radius:50%;background:${P};animation:pulse .8s ease-in-out infinite"></div>
+  </div>
+</div>`},
+
+{name:'Bolt Pulse', html:`
+<svg width="24" height="32" viewBox="0 0 24 32" style="animation:glow 1s ease-in-out infinite">
+  <polygon points="14,0 4,18 12,18 10,32 20,14 12,14" fill="${L}" stroke="none"/>
+</svg>`},
+];
+
+const grid = document.getElementById('grid');
+items.forEach((item, idx) => {
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.innerHTML = `
+    <div class="card-inner">
+      <div class="logo">REPS.</div>
+      ${item.html}
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:2px;">
+      <div class="num">#${String(idx+1).padStart(2,'0')}</div>
+      <div class="name">${item.name}</div>
+    </div>`;
+  card.addEventListener('click', ()=>{
+    const prev = document.getElementById('preview');
+    document.getElementById('prev-anim').innerHTML = `<div style="transform:scale(2.2);transform-origin:center">${item.html}</div>`;
+    prev.style.display = 'flex';
+  });
+  grid.appendChild(card);
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>REPS. Icons v3</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;900&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#0d0d0d;color:#fff;font-family:'Inter',sans-serif;padding:28px 16px 80px;}
+h1{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:2.2rem;color:#c6f135;text-align:center;letter-spacing:.08em;margin-bottom:4px;}
+p.sub{text-align:center;color:#555;font-size:.8rem;margin-bottom:32px;}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;}
+.row{background:#1a1a1a;border-radius:14px;display:flex;align-items:center;gap:12px;padding:10px 12px 10px 10px;cursor:pointer;border:2px solid transparent;transition:border-color .15s,background .15s;}
+.row:hover{border-color:#c6f135;}
+.row.picked{border-color:#c6f135;background:#1e2210;}
+.thumb{width:54px;height:54px;flex-shrink:0;}
+.info{flex:1;min-width:0;}
+.name{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.85rem;letter-spacing:.04em;color:#ddd;line-height:1.2;}
+.cat{font-size:.62rem;color:#555;margin-top:2px;letter-spacing:.06em;}
+</style>
+</head>
+<body>
+<h1>REPS. — Icons v3</h1>
+<p class="sub">18 Exercises · Grüne Männchen · Click to select</p>
+<div class="grid" id="root"></div>
+
+<script>
+// ── Palette ──────────────────────────────────────────────
+const L='#c6f135', EQ='#555', PA='#00d4f0', LA='#ff4d6a', CA='#a78bfa';
+
+// ── Primitives ───────────────────────────────────────────
+let _n=0;
+function wrap(c){
+  const id='g'+(++_n);
+  return `<svg viewBox="0 0 60 60" width="54" height="54">
+  <defs><radialGradient id="${id}" cx="50%" cy="40%" r="55%">
+    <stop offset="0%" stop-color="#262626"/>
+    <stop offset="100%" stop-color="#0d0d0d"/>
+  </radialGradient></defs>
+  <rect width="60" height="60" rx="10" fill="url(#${id})"/>
+  ${c}</svg>`;
+}
+const h=(cx,cy,r=5)=>`<circle cx="${cx}" cy="${cy}" r="${r}" fill="${L}"/>`;
+const p=(d,c=L,w=3.5)=>`<path d="${d}" stroke="${c}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" fill="none"/>`;
+const rc=(x,y,w,hh,rx=2,c=EQ)=>`<rect x="${x}" y="${y}" width="${w}" height="${hh}" rx="${rx}" fill="${c}"/>`;
+const ln=(x1,y1,x2,y2,c=EQ,w=2)=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c}" stroke-width="${w}" stroke-linecap="round"/>`;
+const bb=(y,c=EQ)=>rc(8,y-1.5,44,3,1.5,c)+rc(6,y-5,4,10,1,c)+rc(50,y-5,4,10,1,c);
+const db=(cx,cy,a=0,c=EQ)=>{const r=a*Math.PI/180,dx=Math.cos(r)*6,dy=Math.sin(r)*6;return rc(cx-dx-2,cy-dy-2,4,4,1,c)+ln(cx-dx,cy-dy,cx+dx,cy+dy,c,2)+rc(cx+dx-2,cy+dy-2,4,4,1,c);};
+const gnd=(c=EQ)=>rc(4,54,52,2,1,c);
+const cab=(x1,y1,x2,y2,c=PA)=>ln(x1,y1,x2,y2,c,1.5);
+
+// ── Icons ────────────────────────────────────────────────
+const ICONS = {};
+
+// ── BICEPS CURLS ─────────────────────────────────────────
+// Standing, right arm curled up, dumbbell
+ICONS['Biceps Curls'] = wrap(
+  gnd() +
+  h(30,10) +
+  p('M30,15 L30,28', L, 9) +                    // torso
+  p('M30,18 L40,26 L36,14', L, 3.5) +           // right arm curling
+  p('M30,18 L22,30', L, 3.5) +                  // left arm resting
+  p('M30,28 L26,42 L24,53', L, 4) +             // left leg
+  p('M30,28 L34,42 L36,53', L, 4) +             // right leg
+  db(35,12, 0, PA)
+);
+
+// ── FOREARM CURLS ────────────────────────────────────────
+// Seated, forearms resting on thighs, wrist curling down
+ICONS['Forearm Curls'] = wrap(
+  gnd() +
+  rc(8,34,44,6,2,EQ) +                          // bench seat
+  h(30,12) +
+  p('M30,17 L30,32', L, 9) +                    // torso upright
+  p('M30,22 L16,32 L8,36', L, 3.5) +            // left forearm on thigh
+  p('M30,22 L44,32 L52,36', L, 3.5) +           // right forearm on thigh
+  p('M28,32 L20,32', L, 4) +                    // left thigh
+  p('M32,32 L40,32', L, 4) +                    // right thigh
+  rc(4,34,8,3,1.5,PA) +                         // dumbbell left (cyan accent)
+  rc(48,34,8,3,1.5,PA)                          // dumbbell right
+);
+
+// ── LATERAL RAISES ───────────────────────────────────────
+// Standing, arms out to sides at shoulder height
+ICONS['Lateral Raises'] = wrap(
+  gnd() +
+  h(30,10) +
+  p('M30,15 L30,28', L, 9) +
+  p('M30,20 L10,22', L, 3.5) +                  // arms wide out
+  p('M30,20 L50,22', L, 3.5) +
+  p('M30,28 L26,42 L24,53', L, 4) +
+  p('M30,28 L34,42 L36,53', L, 4) +
+  db(8,22) + db(52,22)
+);
+
+// ── FACE PULLS ───────────────────────────────────────────
+// Standing, cable from behind pulling to face level
+ICONS['Face Pulls'] = wrap(
+  rc(48,14,8,34,2,EQ) +                         // machine post right
+  cab(36,26,48,24) + cab(36,30,48,28) +          // dual cable
+  gnd() +
+  h(18,12) +
+  p('M18,17 L18,34', L, 9) +
+  p('M18,22 L28,22 L36,26', L, 3.5) +           // arms pulling
+  p('M18,22 L28,26 L36,30', L, 3.5) +
+  p('M18,34 L14,46 L12,53', L, 4) +
+  p('M18,34 L22,46 L24,53', L, 4)
+);
+
+// ── LAT PULL DOWN ────────────────────────────────────────
+// Seated, cable from top, wide grip pulling down
+ICONS['Lat Pull Down'] = wrap(
+  rc(4,0,52,5,2,EQ) +                           // top frame
+  cab(14,5,14,18) + cab(46,5,46,18) +            // cables (cyan)
+  rc(10,18,40,4,2,PA) +                          // bar (pull accent)
+  rc(10,44,40,8,2,EQ) +                          // seat
+  h(30,24) +
+  p('M30,29 L30,42', L, 9) +
+  p('M30,29 L16,22 L14,18', L, 3.5) +           // arms up to bar
+  p('M30,29 L44,22 L46,18', L, 3.5) +
+  p('M28,42 L22,54', L, 4) + p('M32,42 L38,54', L, 4)
+);
+
+// ── CHEST-SUPPORTED ROWING ───────────────────────────────
+// Lying face-down on incline bench, arms pulling dumbbells up
+ICONS['Chest-Supported Rowing'] = wrap(
+  rc(6,40,18,5,2,EQ) +                          // bench leg
+  p('M10,42 L50,22', EQ, 7) +                   // incline bench surface
+  h(50,18) +
+  p('M48,22 L14,38', L, 9) +                    // body lying on bench
+  p('M28,32 L24,20', L, 3.5) +                  // left arm pulling up
+  p('M38,28 L38,16', L, 3.5) +                  // right arm pulling up
+  db(24,18, 0, PA) + db(38,14, 0, PA)
+);
+
+// ── PULL UP MACHINE ──────────────────────────────────────
+// Assisted pull-up machine: bar at top, knees on pad, pulling up
+ICONS['Pull Up Machine'] = wrap(
+  rc(0,4,60,5,2,EQ) +                           // top bar housing
+  rc(4,4,52,4,2,EQ) +                           // pull-up bar
+  rc(6,40,8,16,2,EQ) + rc(46,40,8,16,2,EQ) +   // side frame posts
+  rc(16,44,28,5,2,EQ) +                         // knee pad
+  h(30,16) +
+  p('M30,21 L30,34', L, 9) +                    // torso
+  p('M30,21 L18,12 L18,8', L, 3.5) +           // arms up to bar
+  p('M30,21 L42,12 L42,8', L, 3.5) +
+  p('M28,34 L24,44 L24,46', L, 4) +            // knees on pad
+  p('M32,34 L36,44 L36,46', L, 4)
+);
+
+// ── BUTTERFLY ────────────────────────────────────────────
+// Pec deck butterfly machine: seated, arms pressing together
+ICONS['Butterfly'] = wrap(
+  rc(0,0,4,60,0,EQ) + rc(56,0,4,60,0,EQ) +     // side frames
+  rc(4,22,12,8,2,EQ) + rc(44,22,12,8,2,EQ) +   // arm pads
+  rc(12,44,36,8,2,EQ) +                         // seat
+  h(30,12) +
+  p('M30,17 L30,32', L, 9) +
+  p('M25,22 L16,28', L, 3.5) +                 // left arm pressing
+  p('M35,22 L44,28', L, 3.5) +                 // right arm pressing
+  p('M28,32 L26,46', L, 4) + p('M32,32 L34,46', L, 4)
+);
+
+// ── BENCH PRESS HORIZONTAL ───────────────────────────────
+// Lying on flat bench, bar above chest
+ICONS['Bench Press'] = wrap(
+  rc(6,36,48,5,2,EQ) +                          // bench
+  h(46,26) +
+  p('M10,30 L44,30', L, 9) +                    // lying torso
+  p('M22,28 L20,14', L, 3.5) +                  // arms pushing up
+  p('M34,28 L36,14', L, 3.5) +
+  bb(12)
+);
+
+// ── CABLE TRICEPS ────────────────────────────────────────
+// Standing, cable from above, pushing down
+ICONS['Cable Triceps'] = wrap(
+  gnd() +
+  rc(22,0,16,6,2,EQ) +                          // pulley housing
+  cab(30,6,30,18, PA) +
+  rc(18,18,24,3,1.5,PA) +                       // cable bar handle
+  h(30,10) +
+  p('M30,15 L30,28', L, 9) +
+  p('M30,18 L22,22 L22,18', L, 3.5) +           // left arm pushing down
+  p('M30,18 L38,22 L38,18', L, 3.5) +           // right arm pushing down
+  p('M30,28 L26,42 L24,53', L, 4) +
+  p('M30,28 L34,42 L36,53', L, 4)
+);
+
+// ── SMITH SQUAT MACHINE ──────────────────────────────────
+// Squat inside smith machine (vertical guide rails)
+ICONS['Smith Squat'] = wrap(
+  rc(4,0,4,60,0,EQ) + rc(52,0,4,60,0,EQ) +     // smith machine rails
+  rc(2,18,8,3,1.5,EQ) + rc(50,18,8,3,1.5,EQ) + // rail hooks
+  gnd(LA) +
+  h(30,10) +
+  p('M30,15 L30,26', L, 9) +
+  p('M30,18 L18,16', L, 3.5) +                  // arms holding bar
+  p('M30,18 L42,16', L, 3.5) +
+  rc(8,17,44,3,1.5,LA) +                        // bar (legs accent)
+  p('M30,26 L20,42 L16,53', L, 4) +             // wide squat legs
+  p('M30,26 L40,42 L44,53', L, 4)
+);
+
+// ── LEG PRESS ────────────────────────────────────────────
+// Reclined, pushing footplate forward on machine
+ICONS['Leg Press'] = wrap(
+  rc(32,4,24,52,3,EQ) +                         // machine frame
+  rc(28,8,24,10,2,LA) +                         // footplate (legs accent)
+  rc(4,36,22,6,2,EQ) +                          // seat
+  rc(4,18,6,20,2,EQ) +                          // backrest
+  h(12,10) +
+  p('M12,15 L14,34', L, 9) +                    // reclined torso
+  p('M14,22 L26,14 L28,10', L, 3.5) +           // legs pushing plate
+  p('M14,22 L20,12', L, 3.5) +
+  p('M12,34 L8,42', L, 4)
+);
+
+// ── ABDUCTORS ────────────────────────────────────────────
+// Seated, legs pushing outward against pads
+ICONS['Abductors'] = wrap(
+  rc(4,40,52,5,2,EQ) +                          // seat base
+  rc(10,30,10,12,2,EQ) + rc(40,30,10,12,2,EQ) + // outer pads
+  h(30,12) +
+  p('M30,17 L30,34', L, 9) +
+  p('M30,24 L22,28', L, 3.5) + p('M30,24 L38,28', L, 3.5) + // arms
+  p('M26,34 L10,38', L, 5) +                   // left leg pushing OUT
+  p('M34,34 L50,38', L, 5) +                   // right leg pushing OUT
+  rc(8,36,6,4,1,LA) + rc(46,36,6,4,1,LA)       // inner leg contact (legs accent)
+);
+
+// ── ADDUCTOR ─────────────────────────────────────────────
+// Seated, legs squeezing inward against pads
+ICONS['Adductor'] = wrap(
+  rc(4,40,52,5,2,EQ) +
+  rc(8,30,10,12,2,EQ) + rc(42,30,10,12,2,EQ) + // inner pads
+  h(30,12) +
+  p('M30,17 L30,34', L, 9) +
+  p('M30,24 L22,28', L, 3.5) + p('M30,24 L38,28', L, 3.5) +
+  p('M26,34 L14,34', L, 5) +                   // left leg squeezing IN
+  p('M34,34 L46,34', L, 5) +                   // right leg squeezing IN
+  rc(12,30,6,4,1,LA) + rc(42,30,6,4,1,LA)      // outer leg contact (legs accent)
+);
+
+// ── HYPEREXTENSIONS ──────────────────────────────────────
+// On 45° hyperextension bench, body bent forward then extending back
+ICONS['Hyperextensions'] = wrap(
+  gnd(LA) +
+  rc(26,32,16,20,3,EQ) +                        // pad block
+  p('M22,52 L36,52', EQ, 4) +                   // foot support
+  h(10,24) +
+  p('M12,28 L30,36', L, 9) +                    // torso bending down
+  p('M30,36 L46,44 L50,52', L, 5) +             // hips + legs on machine
+  p('M10,24 L8,28', L, 3.5) +                   // arms crossed at chest
+  p('M12,28 L14,26', L, 3.5)
+);
+
+// ── LEG EXTENSION ────────────────────────────────────────
+// Seated on machine, lower leg extending forward
+ICONS['Leg Extension'] = wrap(
+  rc(4,18,28,38,4,EQ) +                         // machine body
+  rc(28,32,22,5,2,EQ) +                         // shin pad
+  h(14,8) +
+  p('M14,13 L14,24', L, 9) +
+  p('M14,26 L4,28', L, 4) +                     // seated thigh left
+  p('M14,26 L36,26 L50,28', L, 4) +             // extending leg (straight)
+  p('M14,13 L10,20', L, 3.5)
+);
+
+// ── HIP THRUST ───────────────────────────────────────────
+// Upper back on bench, hips raised, bar on hips
+ICONS['Hip Thrust'] = wrap(
+  gnd(LA) +
+  rc(4,24,20,10,2,EQ) +                         // bench
+  h(12,16) +
+  p('M18,26 L36,30', L, 9) +                    // torso (hips up)
+  bb(28,LA) +                                    // bar on hips (legs accent)
+  p('M36,30 L28,44 L24,53', L, 4) +
+  p('M36,30 L42,44 L46,53', L, 4) +
+  p('M14,26 L8,28', L, 3.5)
+);
+
+// ── LEG CURL ─────────────────────────────────────────────
+// Lying prone, lower leg curling up toward glutes
+ICONS['Leg Curl'] = wrap(
+  rc(4,10,36,22,4,EQ) +                         // machine
+  rc(34,28,14,5,2,EQ) +                         // shin pad
+  h(14,8) +
+  p('M14,13 L50,16', L, 9) +                    // prone body
+  p('M44,16 L38,24 L34,30', L, 4) +             // leg curling
+  p('M14,13 L12,9', L, 3.5)                     // arm
+);
+
+// ── Render ───────────────────────────────────────────────
+const EXERCISES = [
+  { name:'Biceps Curls',         cat:'PULL' },
+  { name:'Forearm Curls',        cat:'PULL' },
+  { name:'Lateral Raises',       cat:'PUSH' },
+  { name:'Face Pulls',           cat:'PULL' },
+  { name:'Lat Pull Down',        cat:'PULL' },
+  { name:'Chest-Supported Rowing', cat:'PULL' },
+  { name:'Pull Up Machine',      cat:'PULL' },
+  { name:'Butterfly',            cat:'PUSH' },
+  { name:'Bench Press',          cat:'PUSH' },
+  { name:'Cable Triceps',        cat:'PUSH' },
+  { name:'Smith Squat',          cat:'LEGS' },
+  { name:'Leg Press',            cat:'LEGS' },
+  { name:'Abductors',            cat:'LEGS' },
+  { name:'Adductor',             cat:'LEGS' },
+  { name:'Hyperextensions',      cat:'LEGS' },
+  { name:'Leg Extension',        cat:'LEGS' },
+  { name:'Hip Thrust',           cat:'LEGS' },
+  { name:'Leg Curl',             cat:'LEGS' },
+];
+
+const CAT_COLORS = { PUSH:'#c6f135', PULL:'#00d4f0', LEGS:'#ff4d6a', CORE:'#a78bfa' };
+
+document.getElementById('root').innerHTML = EXERCISES.map(ex => `
+  <div class="row" onclick="this.classList.toggle('picked')">
+    <div class="thumb">${ICONS[ex.name] || ''}</div>
+    <div class="info">
+      <div class="name">${ex.name}</div>
+      <div class="cat" style="color:${CAT_COLORS[ex.cat]}">${ex.cat}</div>
+    </div>
+  </div>
+`).join('');
+</script>
+</body>
+</html>

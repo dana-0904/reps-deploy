@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>REPS. Workout Card Photos v2</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:#111; color:#fff; font-family:sans-serif; padding:20px; }
+  h1 { text-align:center; color:#c6f135; margin-bottom:6px; font-size:18px; letter-spacing:4px; }
+  .subtitle { text-align:center; color:#444; font-size:11px; letter-spacing:2px; margin-bottom:6px; }
+  .note { text-align:center; color:#333; font-size:10px; margin-bottom:24px; }
+  .section { color:#555; font-size:10px; letter-spacing:3px; text-transform:uppercase; margin:24px 0 12px; padding-left:10px; border-left:2px solid #c6f135; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:14px; }
+
+  .card {
+    background:#0d0d0d; border-radius:18px; overflow:hidden;
+    cursor:pointer; border:1px solid #1e1e1e; transition:border-color .2s, transform .15s;
+  }
+  .card:hover { border-color:#c6f135; transform:translateY(-2px); }
+
+  .img-area {
+    position:relative; height:148px; overflow:hidden; background:#141414;
+  }
+  .img-area img {
+    width:100%; height:100%; object-fit:cover; display:block;
+    filter:grayscale(100%) brightness(0.72) contrast(1.25);
+    transition:filter .3s, transform .3s;
+  }
+  .card:hover .img-area img {
+    filter:grayscale(100%) brightness(0.85) contrast(1.2);
+    transform:scale(1.04);
+  }
+  .img-area::after {
+    content:''; position:absolute; inset:0;
+    background:linear-gradient(to bottom, transparent 30%, rgba(0,0,0,0.8) 100%);
+    pointer-events:none;
+  }
+  .badge {
+    position:absolute; top:10px; left:12px; z-index:2;
+    font-size:10px; font-weight:700; letter-spacing:.1em;
+    padding:4px 10px; border-radius:20px;
+  }
+  .lime { background:rgba(198,241,53,0.18); color:#c6f135; border:1px solid rgba(198,241,53,0.5); }
+  .pink { background:rgba(255,77,106,0.18); color:#ff4d6a; border:1px solid rgba(255,77,106,0.5); }
+
+  .card-meta { padding:10px 14px 12px; }
+  .card-num { font-size:10px; color:#444; font-family:monospace; }
+  .card-name { font-size:11px; color:#666; margin-top:2px; letter-spacing:1px; text-transform:uppercase; }
+
+  /* fullscreen preview — styled like actual app card */
+  .overlay {
+    display:none; position:fixed; inset:0;
+    background:rgba(0,0,0,0.96); z-index:200;
+    flex-direction:column; align-items:center; justify-content:center;
+    cursor:pointer; gap:14px; padding:20px;
+  }
+  .overlay.active { display:flex; }
+  .ov-card {
+    width:min(88vw,390px); background:#0d0d0d;
+    border-radius:22px; overflow:hidden; border:1px solid #2a2a2a;
+  }
+  .ov-img { position:relative; height:220px; overflow:hidden; background:#141414; }
+  .ov-img img {
+    width:100%; height:100%; object-fit:cover;
+    filter:grayscale(100%) brightness(0.78) contrast(1.25);
+  }
+  .ov-img::after {
+    content:''; position:absolute; inset:0;
+    background:linear-gradient(to bottom, transparent 25%, rgba(0,0,0,0.75) 100%);
+  }
+  .ov-badge { position:absolute; top:14px; left:16px; z-index:2; font-size:11px; font-weight:700; letter-spacing:.1em; padding:5px 12px; border-radius:20px; }
+  .ov-detail { padding:18px 18px 20px; }
+  .ov-wk-name { font-size:26px; font-weight:900; letter-spacing:.04em; color:#fff; font-family:'Arial Black','Impact',sans-serif; }
+  .ov-stats { display:flex; gap:24px; margin-top:10px; }
+  .ov-stat-label { font-size:10px; color:#555; letter-spacing:.12em; text-transform:uppercase; }
+  .ov-stat-val { font-size:16px; font-weight:700; color:#fff; margin-top:2px; }
+  .ov-hint { color:#2a2a2a; font-size:11px; letter-spacing:2px; margin-top:4px; }
+</style>
+</head>
+<body>
+
+<h1>WORKOUT CARD PHOTOS v2</h1>
+<div class="subtitle">50 PROPOSALS · B&W · LOREMFLICKR (CC)</div>
+<div class="note">Similar style to #3, #4, #24 · Black & White · Click for app preview</div>
+
+<div class="section">Upper Body (1–25)</div>
+<div class="grid" id="g-upper"></div>
+
+<div class="section">Leg Day (26–50)</div>
+<div class="grid" id="g-leg"></div>
+
+<div class="overlay" id="overlay" onclick="closeOverlay()">
+  <div class="ov-card" onclick="event.stopPropagation()">
+    <div class="ov-img">
+      <img id="ov-img" src="" alt=""/>
+      <div class="ov-badge" id="ov-badge"></div>
+    </div>
+    <div class="ov-detail">
+      <div class="ov-wk-name" id="ov-wk-name"></div>
+      <div class="ov-stats">
+        <div><div class="ov-stat-label">Duration</div><div class="ov-stat-val" id="ov-dur"></div></div>
+        <div><div class="ov-stat-label">Exercises</div><div class="ov-stat-val" id="ov-sets"></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="ov-hint">tap outside to close</div>
+</div>
+
+<script>
+const F = 'https://loremflickr.com/800/480/';
+
+const upper = [
+  { n:'01', kw:'barbell,gym,lifting',           label:'Barbell Lifting'     },
+  { n:'02', kw:'weightlifting,power,gym',        label:'Weightlifting'       },
+  { n:'03', kw:'bench,press,iron',              label:'Bench Press'         },
+  { n:'04', kw:'athlete,fitness,muscle',         label:'Athletic Muscle'     },
+  { n:'05', kw:'bodybuilder,gym,dark',           label:'Bodybuilder'         },
+  { n:'06', kw:'muscle,definition,body',         label:'Muscle Definition'   },
+  { n:'07', kw:'powerlifting,barbell,heavy',     label:'Powerlifting'        },
+  { n:'08', kw:'gym,training,sweat',             label:'Gym Training'        },
+  { n:'09', kw:'pullup,calisthenics,bar',        label:'Calisthenics'        },
+  { n:'10', kw:'dumbbell,arm,workout',           label:'Dumbbell Arms'       },
+  { n:'11', kw:'chest,press,muscular',           label:'Chest Press'         },
+  { n:'12', kw:'fitness,strength,iron',          label:'Iron Strength'       },
+  { n:'13', kw:'gym,dark,shadow,muscle',         label:'Dark Gym'            },
+  { n:'14', kw:'shoulder,deltoid,muscular',      label:'Shoulder Power'      },
+  { n:'15', kw:'deadlift,barbell,lift',          label:'Barbell Pull'        },
+  { n:'16', kw:'crossfit,athlete,workout',       label:'CrossFit Athlete'    },
+  { n:'17', kw:'bicep,arms,flex,muscle',         label:'Bicep Flex'          },
+  { n:'18', kw:'gym,back,muscles,row',           label:'Back Muscles'        },
+  { n:'19', kw:'weight,plates,iron,gym',         label:'Weight Plates'       },
+  { n:'20', kw:'training,intensity,sweat',       label:'Training Intensity'  },
+  { n:'21', kw:'athletic,body,physique',         label:'Athletic Physique'   },
+  { n:'22', kw:'gym,equipment,rack,weights',     label:'Gym Equipment'       },
+  { n:'23', kw:'power,gym,strongman',            label:'Strongman'           },
+  { n:'24', kw:'fitness,portrait,muscle',        label:'Fitness Portrait'    },
+  { n:'25', kw:'workout,determination,gym',      label:'Determination'       },
+];
+
+const legs = [
+  { n:'26', kw:'squat,barbell,legs,gym',         label:'Barbell Squat'       },
+  { n:'27', kw:'leg,day,training,gym',           label:'Leg Day'             },
+  { n:'28', kw:'powerlifter,squat,heavy',        label:'Power Squat'         },
+  { n:'29', kw:'deadlift,floor,gym,heavy',       label:'Heavy Deadlift'      },
+  { n:'30', kw:'legs,athlete,muscle,sport',      label:'Athletic Legs'       },
+  { n:'31', kw:'hip,thrust,glute,gym',           label:'Hip Thrust'          },
+  { n:'32', kw:'hamstring,glutes,posterior',     label:'Posterior Chain'     },
+  { n:'33', kw:'lunge,step,gym,workout',         label:'Power Lunge'         },
+  { n:'34', kw:'leg,press,machine,gym',          label:'Leg Press'           },
+  { n:'35', kw:'sprint,run,legs,track',          label:'Sprint Power'        },
+  { n:'36', kw:'quad,thigh,muscle,gym',          label:'Quad Strength'       },
+  { n:'37', kw:'kettlebell,swing,legs',          label:'Kettlebell'          },
+  { n:'38', kw:'gym,iron,plates,barbell,dark',   label:'Iron & Dark'         },
+  { n:'39', kw:'sumo,deadlift,wide,stance',      label:'Sumo Pull'           },
+  { n:'40', kw:'box,jump,explosive,plyometric',  label:'Explosive Jump'      },
+  { n:'41', kw:'calf,legs,muscle,gym',           label:'Calf Training'       },
+  { n:'42', kw:'squat,depth,bottom,gym',         label:'Deep Squat'          },
+  { n:'43', kw:'strength,legs,power,sport',      label:'Leg Power'           },
+  { n:'44', kw:'hip,hinge,lift,gym',             label:'Hip Hinge'           },
+  { n:'45', kw:'gym,chalk,barbell,raw',          label:'Chalk & Iron'        },
+  { n:'46', kw:'fitness,legs,body,physique',     label:'Leg Physique'        },
+  { n:'47', kw:'rack,squat,power,cage',          label:'Power Cage'          },
+  { n:'48', kw:'athlete,jump,explosive,sport',   label:'Explosive Athlete'   },
+  { n:'49', kw:'training,heavy,gym,grit',        label:'Grit & Heavy'        },
+  { n:'50', kw:'gym,floor,perspective,weights',  label:'Gym Perspective'     },
+];
+
+function build(items, gridId, cat, wkName, dur, sets) {
+  const g = document.getElementById(gridId);
+  items.forEach((c, i) => {
+    // Use a seed that's unique per card but stable per session
+    const seed = (gridId === 'g-upper' ? 100 : 200) + i + 1;
+    const url = F + encodeURIComponent(c.kw) + '?random=' + seed;
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+      <div class="img-area">
+        <img src="${url}" alt="${c.label}" loading="lazy" decoding="async"/>
+        <div class="badge ${cat}">${cat === 'lime' ? 'HYPERTROPHY' : 'STRENGTH'}</div>
+      </div>
+      <div class="card-meta">
+        <div class="card-num">#${c.n}</div>
+        <div class="card-name">${c.label}</div>
+      </div>`;
+    card.onclick = () => {
+      document.getElementById('ov-img').src = url;
+      const badge = document.getElementById('ov-badge');
+      badge.textContent = cat === 'lime' ? 'HYPERTROPHY' : 'STRENGTH';
+      badge.className = 'ov-badge ' + cat;
+      document.getElementById('ov-wk-name').textContent = wkName;
+      document.getElementById('ov-dur').textContent = dur;
+      document.getElementById('ov-sets').textContent = sets;
+      document.getElementById('overlay').classList.add('active');
+    };
+    g.appendChild(card);
+  });
+}
+
+build(upper, 'g-upper', 'lime', 'UPPER BODY', '75 MIN', '27 SETS');
+build(legs,  'g-leg',   'pink', 'LEG DAY',    '60 MIN', '24 SETS');
+
+function closeOverlay() { document.getElementById('overlay').classList.remove('active'); }
+document.addEventListener('keydown', e => { if(e.key==='Escape') closeOverlay(); });
+</script>
+</body>
+</html>

@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>REPS. Splash Text Animations</title>
+<style>
+  :root {
+    --lime: #c6f135;
+    --pink: #ff4d6a;
+    --cyan: #00d4f0;
+    --dark: #0d0d0d;
+    --mid: #1a1a1a;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #111; color: #fff; font-family: sans-serif; padding: 20px; }
+  h1 { text-align: center; color: var(--lime); margin-bottom: 24px; font-size: 18px; letter-spacing: 4px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
+  .card {
+    background: var(--dark);
+    border-radius: 16px;
+    border: 1px solid #222;
+    height: 160px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .card:hover { border-color: var(--lime); }
+  .card-num {
+    position: absolute;
+    top: 10px; left: 14px;
+    font-size: 11px;
+    color: #444;
+    font-family: monospace;
+  }
+  .card-name {
+    position: absolute;
+    bottom: 10px;
+    font-size: 10px;
+    color: #555;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  /* BASE FONT */
+  .reps {
+    font-family: 'Impact', 'Arial Black', 'Barlow Condensed', sans-serif;
+    font-size: 52px;
+    font-weight: 900;
+    letter-spacing: 2px;
+  }
+
+  /* ─── 01 GRADIENT SWEEP ─── */
+  @keyframes grad-sweep {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  .a01 {
+    background: linear-gradient(90deg, var(--lime), var(--pink), var(--cyan), var(--lime));
+    background-size: 300% 300%;
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    animation: grad-sweep 2s linear infinite;
+  }
+
+  /* ─── 02 PULSE SCALE ─── */
+  @keyframes pulse-scale {
+    0%, 100% { transform: scale(1); color: var(--lime); }
+    50% { transform: scale(1.12); color: var(--pink); }
+  }
+  .a02 { color: var(--lime); animation: pulse-scale 1.2s ease-in-out infinite; }
+
+  /* ─── 03 LETTER BOUNCE ─── */
+  @keyframes letter-bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-14px); }
+  }
+  .a03 { display: flex; }
+  .a03 span { color: var(--lime); animation: letter-bounce 0.6s ease-in-out infinite; display: inline-block; }
+  .a03 span:nth-child(1) { animation-delay: 0s; }
+  .a03 span:nth-child(2) { animation-delay: 0.1s; }
+  .a03 span:nth-child(3) { animation-delay: 0.2s; }
+  .a03 span:nth-child(4) { animation-delay: 0.3s; }
+  .a03 span:nth-child(5) { animation-delay: 0.4s; }
+
+  /* ─── 04 NEON FLICKER ─── */
+  @keyframes neon-flicker {
+    0%,19%,21%,23%,25%,54%,56%,100% {
+      text-shadow: 0 0 10px var(--lime), 0 0 30px var(--lime), 0 0 60px var(--lime);
+      color: var(--lime);
+    }
+    20%,24%,55% {
+      text-shadow: none; color: #444;
+    }
+  }
+  .a04 { color: var(--lime); animation: neon-flicker 3s infinite; }
+
+  /* ─── 05 GLITCH ─── */
+  @keyframes glitch-1 {
+    0%,100% { clip-path: inset(0 0 90% 0); transform: translate(-4px,0); }
+    20% { clip-path: inset(30% 0 50% 0); transform: translate(4px,0); }
+    40% { clip-path: inset(60% 0 20% 0); transform: translate(-2px,0); }
+    60% { clip-path: inset(80% 0 5% 0); transform: translate(2px,0); }
+    80% { clip-path: inset(10% 0 70% 0); transform: translate(-4px,0); }
+  }
+  @keyframes glitch-2 {
+    0%,100% { clip-path: inset(80% 0 0% 0); transform: translate(4px,0); }
+    20% { clip-path: inset(50% 0 30% 0); transform: translate(-4px,0); }
+    60% { clip-path: inset(10% 0 80% 0); transform: translate(2px,0); }
+  }
+  .a05 { position: relative; color: var(--lime); }
+  .a05::before { content:'REPS.'; position:absolute; color:var(--pink); animation: glitch-1 2s infinite steps(1); }
+  .a05::after  { content:'REPS.'; position:absolute; color:var(--cyan); animation: glitch-2 2s infinite steps(1); }
+
+  /* ─── 06 COLOR CYCLE ─── */
+  @keyframes color-cycle {
+    0%   { color: var(--lime); }
+    33%  { color: var(--pink); }
+    66%  { color: var(--cyan); }
+    100% { color: var(--lime); }
+  }
+  .a06 { animation: color-cycle 2s linear infinite; }
+
+  /* ─── 07 TYPEWRITER ─── */
+  @keyframes type-reveal {
+    0%  { width: 0; }
+    60% { width: 100%; }
+    85% { width: 100%; }
+    100%{ width: 0; }
+  }
+  .a07-wrap { overflow: hidden; white-space: nowrap; border-right: 3px solid var(--lime); animation: type-reveal 2.5s steps(5) infinite; }
+  .a07 { color: var(--lime); }
+
+  /* ─── 08 FADE STAGGER ─── */
+  @keyframes fade-stag {
+    0%,100% { opacity: 0; transform: translateY(8px); }
+    30%,70% { opacity: 1; transform: translateY(0); }
+  }
+  .a08 { display: flex; }
+  .a08 span { color: var(--lime); animation: fade-stag 2s ease-in-out infinite; display: inline-block; }
+  .a08 span:nth-child(1) { animation-delay: 0s; }
+  .a08 span:nth-child(2) { animation-delay: 0.15s; }
+  .a08 span:nth-child(3) { animation-delay: 0.3s; }
+  .a08 span:nth-child(4) { animation-delay: 0.45s; }
+  .a08 span:nth-child(5) { animation-delay: 0.6s; }
+
+  /* ─── 09 OUTLINE FILL ─── */
+  @keyframes outline-fill {
+    0%,100% { -webkit-text-stroke: 2px var(--lime); -webkit-text-fill-color: transparent; }
+    50% { -webkit-text-stroke: 2px var(--lime); -webkit-text-fill-color: var(--lime); }
+  }
+  .a09 { animation: outline-fill 2s ease-in-out infinite; }
+
+  /* ─── 10 ROTATE 3D ─── */
+  @keyframes rot3d {
+    0%   { transform: rotateY(0deg); color: var(--lime); }
+    50%  { transform: rotateY(90deg); color: transparent; }
+    51%  { transform: rotateY(90deg); color: var(--pink); }
+    100% { transform: rotateY(0deg); color: var(--pink); }
+  }
+  .a10 { animation: rot3d 2s ease-in-out infinite; }
+
+  /* ─── 11 WAVE ─── */
+  @keyframes wave-y {
+    0%,100% { transform: translateY(0) rotate(0deg); }
+    25% { transform: translateY(-10px) rotate(-2deg); }
+    75% { transform: translateY(10px) rotate(2deg); }
+  }
+  .a11 { color: var(--lime); animation: wave-y 1.5s ease-in-out infinite; }
+
+  /* ─── 12 SHIMMER ─── */
+  @keyframes shimmer {
+    0%   { background-position: -200% center; }
+    100% { background-position: 200% center; }
+  }
+  .a12 {
+    background: linear-gradient(90deg, var(--lime) 25%, #fff 50%, var(--lime) 75%);
+    background-size: 200% auto;
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    animation: shimmer 2s linear infinite;
+  }
+
+  /* ─── 13 ELASTIC ─── */
+  @keyframes elastic {
+    0%   { transform: scale(1,1); }
+    10%  { transform: scale(1.2,0.8); }
+    20%  { transform: scale(0.9,1.1); }
+    30%  { transform: scale(1.05,0.95); }
+    40%  { transform: scale(1,1); }
+    100% { transform: scale(1,1); }
+  }
+  .a13 { color: var(--lime); animation: elastic 1.8s ease-in-out infinite; }
+
+  /* ─── 14 GLOW PULSE ─── */
+  @keyframes glow-pulse {
+    0%,100% { text-shadow: 0 0 5px var(--lime), 0 0 10px var(--lime); color: var(--lime); }
+    50% { text-shadow: 0 0 20px var(--pink), 0 0 50px var(--pink), 0 0 80px var(--pink); color: var(--pink); }
+  }
+  .a14 { animation: glow-pulse 1.8s ease-in-out infinite; }
+
+  /* ─── 15 SPLIT REVEAL ─── */
+  @keyframes split-top { 0%,100%{transform:translateY(-30px);opacity:0} 30%,70%{transform:translateY(0);opacity:1} }
+  @keyframes split-bot { 0%,100%{transform:translateY(30px);opacity:0} 30%,70%{transform:translateY(0);opacity:1} }
+  .a15 { position:relative; height: 60px; width:130px; }
+  .a15-t { position:absolute;top:0;left:0;right:0;color:var(--lime);overflow:hidden;height:50%;clip-path:inset(0 0 0 0);animation:split-top 2.5s ease-in-out infinite; text-align:center; font-family:Impact,sans-serif; font-size:52px; font-weight:900; letter-spacing:2px; line-height:60px; }
+  .a15-b { position:absolute;bottom:0;left:0;right:0;color:var(--pink);overflow:hidden;height:50%;clip-path:inset(0 0 0 0);animation:split-bot 2.5s ease-in-out infinite; text-align:center; font-family:Impact,sans-serif; font-size:52px; font-weight:900; letter-spacing:2px; bottom:-2px; line-height: 0px; }
+
+  /* ─── 16 SHADOW TRAIL ─── */
+  @keyframes shadow-trail {
+    0%   { text-shadow: 4px 4px 0 var(--pink), 8px 8px 0 var(--cyan); }
+    50%  { text-shadow: -4px -4px 0 var(--cyan), -8px -8px 0 var(--pink); }
+    100% { text-shadow: 4px 4px 0 var(--pink), 8px 8px 0 var(--cyan); }
+  }
+  .a16 { color: var(--lime); animation: shadow-trail 1.5s ease-in-out infinite; }
+
+  /* ─── 17 SCALE LETTERS ─── */
+  @keyframes scale-letter {
+    0%,100% { transform: scaleX(1); color: var(--lime); }
+    50% { transform: scaleX(1.3); color: var(--pink); }
+  }
+  .a17 { display:flex; }
+  .a17 span { display:inline-block; animation: scale-letter 1s ease-in-out infinite; }
+  .a17 span:nth-child(1){animation-delay:0s}
+  .a17 span:nth-child(2){animation-delay:0.12s}
+  .a17 span:nth-child(3){animation-delay:0.24s}
+  .a17 span:nth-child(4){animation-delay:0.36s}
+  .a17 span:nth-child(5){animation-delay:0.48s}
+
+  /* ─── 18 BLUR IN ─── */
+  @keyframes blur-in {
+    0%,100% { filter: blur(12px); opacity: 0; }
+    30%,70% { filter: blur(0); opacity: 1; }
+  }
+  .a18 { color: var(--lime); animation: blur-in 2.5s ease-in-out infinite; }
+
+  /* ─── 19 ROTATE TILT ─── */
+  @keyframes tilt {
+    0%,100% { transform: rotate(-5deg); color: var(--lime); }
+    50% { transform: rotate(5deg); color: var(--pink); }
+  }
+  .a19 { animation: tilt 1.2s ease-in-out infinite; }
+
+  /* ─── 20 COLOR BARS ─── */
+  @keyframes bar-fill {
+    0%   { background-position: -100% center; }
+    100% { background-position: 200% center; }
+  }
+  .a20 {
+    background: linear-gradient(90deg, var(--pink) 0%, var(--lime) 30%, var(--cyan) 60%, var(--pink) 100%);
+    background-size: 300% auto;
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    animation: bar-fill 1.5s linear infinite;
+  }
+
+  /* ─── 21 LETTER FLIP ─── */
+  @keyframes flip-letter {
+    0%,40%,100% { transform: rotateX(0deg); }
+    20% { transform: rotateX(90deg); color: transparent; }
+    21% { transform: rotateX(90deg); color: var(--pink); }
+  }
+  .a21 { display:flex; perspective:200px; }
+  .a21 span { display:inline-block; color:var(--lime); animation: flip-letter 2s ease-in-out infinite; }
+  .a21 span:nth-child(1){animation-delay:0s}
+  .a21 span:nth-child(2){animation-delay:0.2s}
+  .a21 span:nth-child(3){animation-delay:0.4s}
+  .a21 span:nth-child(4){animation-delay:0.6s}
+  .a21 span:nth-child(5){animation-delay:0.8s}
+
+  /* ─── 22 STRETCH COMPRESS ─── */
+  @keyframes stretch {
+    0%,100% { transform: scaleY(1); color: var(--lime); }
+    50% { transform: scaleY(1.4); color: var(--cyan); }
+  }
+  .a22 { animation: stretch 1.2s ease-in-out infinite; }
+
+  /* ─── 23 TYPING CURSOR ─── */
+  @keyframes cursor-blink { 0%,100%{opacity:1} 50%{opacity:0} }
+  @keyframes type-out {
+    0%{width:0} 40%{width:100%} 60%{width:100%} 80%{width:0} 100%{width:0}
+  }
+  .a23-wrap { display:flex; align-items:center; gap:2px; }
+  .a23 { color: var(--lime); overflow:hidden; white-space:nowrap; animation: type-out 3s steps(5) infinite; }
+  .cursor { display:inline-block; width:4px; height:52px; background:var(--lime); animation: cursor-blink 0.7s infinite; }
+
+  /* ─── 24 ZOOM FADE ─── */
+  @keyframes zoom-fade {
+    0%   { transform:scale(0.5); opacity:0; color:var(--pink); }
+    40%  { transform:scale(1);   opacity:1; color:var(--lime); }
+    70%  { transform:scale(1);   opacity:1; }
+    100% { transform:scale(1.5); opacity:0; color:var(--cyan); }
+  }
+  .a24 { animation: zoom-fade 2s ease-in-out infinite; }
+
+  /* ─── 25 NEON STROBE ─── */
+  @keyframes strobe {
+    0%,100% { color:var(--lime); text-shadow: 0 0 15px var(--lime); }
+    25%     { color:var(--pink); text-shadow: 0 0 15px var(--pink); }
+    50%     { color:#fff;        text-shadow: 0 0 30px #fff; }
+    75%     { color:var(--cyan); text-shadow: 0 0 15px var(--cyan); }
+  }
+  .a25 { animation: strobe 1s steps(1) infinite; }
+
+  /* ─── 26 WORD SLIDE UP ─── */
+  @keyframes slide-up {
+    0%   { transform: translateY(60px); opacity:0; }
+    30%  { transform: translateY(0);    opacity:1; }
+    70%  { transform: translateY(0);    opacity:1; }
+    100% { transform: translateY(-60px); opacity:0; }
+  }
+  .a26 { color:var(--lime); animation: slide-up 2.2s ease-in-out infinite; }
+
+  /* ─── 27 RAINBOW LETTERS ─── */
+  .a27 { display:flex; }
+  @keyframes rainbow { 0%,100%{color:var(--lime)} 33%{color:var(--pink)} 66%{color:var(--cyan)} }
+  .a27 span { display:inline-block; animation: rainbow 2s linear infinite; }
+  .a27 span:nth-child(1){animation-delay:0s;color:var(--lime)}
+  .a27 span:nth-child(2){animation-delay:0.4s;color:var(--pink)}
+  .a27 span:nth-child(3){animation-delay:0.8s;color:var(--cyan)}
+  .a27 span:nth-child(4){animation-delay:1.2s;color:var(--lime)}
+  .a27 span:nth-child(5){animation-delay:1.6s;color:var(--pink)}
+
+  /* ─── 28 ITALIC WAVE ─── */
+  @keyframes italic-wave {
+    0%,100% { font-style: normal; transform: skewX(0deg); color: var(--lime); }
+    50%     { font-style: italic; transform: skewX(-12deg); color: var(--pink); }
+  }
+  .a28 { animation: italic-wave 1.5s ease-in-out infinite; }
+
+  /* ─── 29 SPLIT COLORS ─── */
+  @keyframes split-l { 0%,100%{transform:translateX(0)} 50%{transform:translateX(-8px)} }
+  @keyframes split-r { 0%,100%{transform:translateX(0)} 50%{transform:translateX(8px)} }
+  .a29 { position:relative; color:transparent; }
+  .a29::before { content:'REPS.'; position:absolute; color:var(--pink); animation: split-l 1.2s ease-in-out infinite; }
+  .a29::after  { content:'REPS.'; position:absolute; color:var(--lime); mix-blend-mode:screen; animation: split-r 1.2s ease-in-out infinite; }
+
+  /* ─── 30 DROP SHADOW MOVE ─── */
+  @keyframes shadow-move {
+    0%   { text-shadow: 0 0 0 transparent; }
+    25%  { text-shadow: 6px 6px 0 var(--pink); }
+    50%  { text-shadow: 0 8px 0 var(--cyan); }
+    75%  { text-shadow: -6px 6px 0 var(--pink); }
+    100% { text-shadow: 0 0 0 transparent; }
+  }
+  .a30 { color: var(--lime); animation: shadow-move 2s linear infinite; }
+
+  /* ─── 31 LETTER SPREAD ─── */
+  @keyframes spread {
+    0%,100% { letter-spacing: 2px; color: var(--lime); }
+    50%     { letter-spacing: 14px; color: var(--pink); }
+  }
+  .a31 { animation: spread 1.8s ease-in-out infinite; }
+
+  /* ─── 32 STRIPES ─── */
+  @keyframes stripe-move {
+    0%   { background-position: 0 0; }
+    100% { background-position: 60px 0; }
+  }
+  .a32 {
+    background: repeating-linear-gradient(90deg, var(--lime) 0px, var(--lime) 20px, var(--pink) 20px, var(--pink) 40px, var(--cyan) 40px, var(--cyan) 60px);
+    background-size: 60px 100%;
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    animation: stripe-move 1s linear infinite;
+  }
+
+  /* ─── 33 WOBBLE ─── */
+  @keyframes wobble {
+    0%,100%  { transform: rotate(0deg) scale(1); }
+    15%  { transform: rotate(-5deg) scale(1.05); }
+    30%  { transform: rotate(4deg) scale(1); }
+    45%  { transform: rotate(-3deg) scale(1.03); }
+    60%  { transform: rotate(2deg) scale(1); }
+    75%  { transform: rotate(-1deg); }
+  }
+  .a33 { color: var(--lime); animation: wobble 1.5s ease-in-out infinite; }
+
+  /* ─── 34 INVERT FLASH ─── */
+  @keyframes invert-flash {
+    0%,90%,100% { color: var(--lime); background: transparent; }
+    92%,98%     { color: var(--dark); background: var(--lime); border-radius: 4px; padding: 0 6px; }
+  }
+  .a34 { animation: invert-flash 3s ease-in-out infinite; }
+
+  /* ─── 35 FIRE GRADIENT ─── */
+  @keyframes fire {
+    0%   { background-position: 0% 100%; }
+    50%  { background-position: 100% 0%; }
+    100% { background-position: 0% 100%; }
+  }
+  .a35 {
+    background: linear-gradient(180deg, var(--lime) 0%, var(--pink) 50%, #ff8c00 100%);
+    background-size: 100% 300%;
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    animation: fire 1.5s ease-in-out infinite;
+  }
+
+  /* ─── 36 LETTER COLOR SWEEP ─── */
+  .a36 { display: flex; }
+  @keyframes col-sweep { 0%,100%{color:#333} 50%{color:var(--lime)} }
+  .a36 span { display:inline-block; animation: col-sweep 1.5s ease-in-out infinite; }
+  .a36 span:nth-child(1){animation-delay:0s}
+  .a36 span:nth-child(2){animation-delay:0.15s}
+  .a36 span:nth-child(3){animation-delay:0.3s}
+  .a36 span:nth-child(4){animation-delay:0.45s}
+  .a36 span:nth-child(5){animation-delay:0.6s}
+
+  /* ─── 37 SHRINK GROW ─── */
+  @keyframes shrink-grow {
+    0%,100% { transform: scale(1); color: var(--lime); opacity:1; }
+    40%     { transform: scale(0.1); color: var(--pink); opacity:0.3; }
+    50%     { transform: scale(0.1); color: var(--cyan); opacity:0.3; }
+  }
+  .a37 { animation: shrink-grow 2s ease-in-out infinite; }
+
+  /* ─── 38 DOUBLE EXPOSURE ─── */
+  @keyframes dbl-exp {
+    0%,100% { text-shadow: 2px 0 var(--pink), -2px 0 var(--cyan); }
+    50%     { text-shadow: -4px 0 var(--cyan), 4px 0 var(--pink); }
+  }
+  .a38 { color: var(--lime); animation: dbl-exp 1s ease-in-out infinite; }
+
+  /* ─── 39 ROLL IN ─── */
+  @keyframes roll-in {
+    0%   { transform: translateX(-80px) rotate(-30deg); opacity:0; color:var(--pink); }
+    30%  { transform: translateX(0)     rotate(0deg);   opacity:1; color:var(--lime); }
+    70%  { transform: translateX(0)     rotate(0deg);   opacity:1; }
+    100% { transform: translateX(80px)  rotate(30deg);  opacity:0; color:var(--cyan); }
+  }
+  .a39 { animation: roll-in 2.5s ease-in-out infinite; }
+
+  /* ─── 40 MORSE BLINK ─── */
+  @keyframes morse {
+    0%,100%  { opacity: 1; }
+    10%,15%  { opacity: 0; }
+    20%,40%  { opacity: 1; }
+    45%,50%  { opacity: 0; }
+    55%,80%  { opacity: 1; }
+    85%,90%  { opacity: 0; }
+    95%      { opacity: 1; }
+  }
+  .a40 { color: var(--lime); animation: morse 2s steps(1) infinite; }
+
+  /* ─── 41 GRADIENT ROTATE ─── */
+  @keyframes grad-rot {
+    0%   { filter: hue-rotate(0deg); }
+    100% { filter: hue-rotate(360deg); }
+  }
+  .a41 {
+    background: linear-gradient(90deg, var(--lime), var(--pink));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    animation: grad-rot 2s linear infinite;
+  }
+
+  /* ─── 42 LETTER RAIN ─── */
+  @keyframes letter-rain {
+    0%   { transform: translateY(-60px); opacity:0; }
+    30%  { transform: translateY(0);     opacity:1; }
+    70%  { transform: translateY(0);     opacity:1; }
+    100% { transform: translateY(60px);  opacity:0; }
+  }
+  .a42 { display:flex; }
+  .a42 span { display:inline-block; color:var(--lime); animation: letter-rain 2s ease-in-out infinite; }
+  .a42 span:nth-child(1){animation-delay:0.2s}
+  .a42 span:nth-child(2){animation-delay:0.05s}
+  .a42 span:nth-child(3){animation-delay:0.35s}
+  .a42 span:nth-child(4){animation-delay:0.1s}
+  .a42 span:nth-child(5){animation-delay:0.25s}
+
+  /* ─── 43 NEON OUTLINE DRAW ─── */
+  @keyframes stroke-draw {
+    0%,100% { -webkit-text-stroke: 2px var(--lime); -webkit-text-fill-color: transparent; text-shadow:none; }
+    50% { -webkit-text-stroke: 2px var(--pink); -webkit-text-fill-color: transparent; text-shadow: 0 0 20px var(--pink); }
+  }
+  .a43 { animation: stroke-draw 2s ease-in-out infinite; }
+
+  /* ─── 44 SHAKE ─── */
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    10% { transform: translateX(-6px); }
+    20% { transform: translateX(6px); }
+    30% { transform: translateX(-4px); }
+    40% { transform: translateX(4px); }
+    50% { transform: translateX(-2px); }
+    60% { transform: translateX(2px); }
+    70% { transform: translateX(0); }
+  }
+  .a44 { color: var(--lime); animation: shake 1.5s ease-in-out infinite; animation-play-state: running; }
+
+  /* ─── 45 VERTICAL SQUEEZE ─── */
+  @keyframes vsqueeze {
+    0%,100% { transform: scaleY(1); color: var(--lime); }
+    30%     { transform: scaleY(0.05); color: var(--pink); }
+    60%     { transform: scaleY(1.1); }
+  }
+  .a45 { animation: vsqueeze 1.5s ease-in-out infinite; }
+
+  /* ─── 46 PLASMA ─── */
+  @keyframes plasma {
+    0%   { background-position: 0% 0%; }
+    25%  { background-position: 100% 0%; }
+    50%  { background-position: 100% 100%; }
+    75%  { background-position: 0% 100%; }
+    100% { background-position: 0% 0%; }
+  }
+  .a46 {
+    background: radial-gradient(ellipse at var(--x,30%) var(--y,50%), var(--cyan), var(--lime), var(--pink));
+    background-size: 300% 300%;
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    animation: plasma 3s ease-in-out infinite;
+  }
+
+  /* ─── 47 LETTER SCALE WAVE ─── */
+  @keyframes scale-wave {
+    0%,100% { transform: scale(1); }
+    50%     { transform: scale(1.5); color: var(--pink); }
+  }
+  .a47 { display:flex; }
+  .a47 span { display:inline-block; color:var(--lime); animation: scale-wave 1.2s ease-in-out infinite; }
+  .a47 span:nth-child(1){animation-delay:0s}
+  .a47 span:nth-child(2){animation-delay:0.12s}
+  .a47 span:nth-child(3){animation-delay:0.24s}
+  .a47 span:nth-child(4){animation-delay:0.36s}
+  .a47 span:nth-child(5){animation-delay:0.48s}
+
+  /* ─── 48 CINEMATIC ─── */
+  @keyframes cinematic {
+    0%   { letter-spacing: -8px; opacity:0; color:var(--lime); }
+    30%  { letter-spacing: 6px; opacity:1; }
+    70%  { letter-spacing: 6px; opacity:1; }
+    100% { letter-spacing: 20px; opacity:0; color:var(--pink); }
+  }
+  .a48 { animation: cinematic 3s ease-in-out infinite; }
+
+  /* ─── 49 DUAL GLOW ─── */
+  @keyframes dual-glow {
+    0%   { text-shadow: -6px 0 8px var(--pink), 6px 0 8px var(--cyan); color: var(--lime); }
+    50%  { text-shadow: 6px 0 8px var(--cyan), -6px 0 8px var(--pink); color: #fff; }
+    100% { text-shadow: -6px 0 8px var(--pink), 6px 0 8px var(--cyan); color: var(--lime); }
+  }
+  .a49 { animation: dual-glow 1.8s ease-in-out infinite; }
+
+  /* ─── 50 MATRIX DECODE ─── */
+  @keyframes matrix-0 { 0%{content:'R'} 10%{content:'X'} 20%{content:'4'} 30%{content:'R'} 40%{content:'R'} 100%{content:'R'} }
+  @keyframes matrix-1 { 0%{content:'E'} 15%{content:'#'} 25%{content:'E'} 35%{content:'E'} 100%{content:'E'} }
+  @keyframes matrix-2 { 0%{content:'P'} 5%{content:'9'} 20%{content:'P'} 35%{content:'!'} 40%{content:'P'} 100%{content:'P'} }
+  @keyframes matrix-3 { 0%{content:'S'} 12%{content:'$'} 22%{content:'S'} 100%{content:'S'} }
+  @keyframes matrix-4 { 0%{content:'.'} 8%{content:'*'} 18%{content:'.'} 100%{content:'.'} }
+  .a50 { display:flex; color: var(--lime); }
+  .a50 span { display:inline-block; }
+  .a50 span:nth-child(1)::before { content:'R'; animation: matrix-0 3s steps(1) infinite; }
+  .a50 span:nth-child(2)::before { content:'E'; animation: matrix-1 3s steps(1) infinite 0.3s; }
+  .a50 span:nth-child(3)::before { content:'P'; animation: matrix-2 3s steps(1) infinite 0.1s; }
+  .a50 span:nth-child(4)::before { content:'S'; animation: matrix-3 3s steps(1) infinite 0.5s; }
+  .a50 span:nth-child(5)::before { content:'.'; animation: matrix-4 3s steps(1) infinite 0.2s; }
+  .a50 span { content: ''; }
+
+  /* ─── FULLSCREEN PREVIEW ─── */
+  .overlay {
+    display: none; position: fixed; inset: 0;
+    background: var(--dark); z-index: 100;
+    align-items: center; justify-content: center;
+    flex-direction: column; gap: 16px;
+    cursor: pointer;
+  }
+  .overlay.active { display: flex; }
+  .overlay .reps { font-size: 120px; }
+  .overlay-hint { color: #333; font-size: 13px; letter-spacing: 2px; margin-top: 20px; }
+  .overlay-name { color: #555; font-size: 12px; letter-spacing: 3px; text-transform: uppercase; }
+</style>
+</head>
+<body>
+<h1>REPS. · TEXT ANIMATIONS · 50 PROPOSALS</h1>
+<div class="grid" id="grid"></div>
+
+<div class="overlay" id="overlay" onclick="closeOverlay()">
+  <div class="overlay-name" id="ov-name"></div>
+  <div id="ov-content"></div>
+  <div class="overlay-hint">tap to close</div>
+</div>
+
+<script>
+const cards = [
+  { n:'01', name:'Gradient Sweep',     html:`<div class="reps a01">REPS.</div>` },
+  { n:'02', name:'Pulse Scale',        html:`<div class="reps a02">REPS.</div>` },
+  { n:'03', name:'Letter Bounce',      html:`<div class="reps a03"><span>R</span><span>E</span><span>P</span><span>S</span><span>.</span></div>` },
+  { n:'04', name:'Neon Flicker',       html:`<div class="reps a04">REPS.</div>` },
+  { n:'05', name:'Glitch',             html:`<div class="reps a05">REPS.</div>` },
+  { n:'06', name:'Color Cycle',        html:`<div class="reps a06">REPS.</div>` },
+  { n:'07', name:'Typewriter',         html:`<div class="a07-wrap"><div class="reps a07">REPS.</div></div>` },
+  { n:'08', name:'Fade Stagger',       html:`<div class="reps a08"><span>R</span><span>E</span><span>P</span><span>S</span><span>.</span></div>` },
+  { n:'09', name:'Outline Fill',       html:`<div class="reps a09">REPS.</div>` },
+  { n:'10', name:'3D Flip',            html:`<div class="reps a10">REPS.</div>` },
+  { n:'11', name:'Wave',               html:`<div class="reps a11">REPS.</div>` },
+  { n:'12', name:'Shimmer',            html:`<div class="reps a12">REPS.</div>` },
+  { n:'13', name:'Elastic',            html:`<div class="reps a13">REPS.</div>` },
+  { n:'14', name:'Glow Pulse',         html:`<div class="reps a14">REPS.</div>` },
+  { n:'15', name:'Split Reveal',       html:`<div class="a15"><div class="a15-t">REPS.</div><div class="a15-b">REPS.</div></div>` },
+  { n:'16', name:'Shadow Trail',       html:`<div class="reps a16">REPS.</div>` },
+  { n:'17', name:'Scale Letters',      html:`<div class="reps a17"><span>R</span><span>E</span><span>P</span><span>S</span><span>.</span></div>` },
+  { n:'18', name:'Blur In',            html:`<div class="reps a18">REPS.</div>` },
+  { n:'19', name:'Tilt',               html:`<div class="reps a19">REPS.</div>` },
+  { n:'20', name:'Color Bars',         html:`<div class="reps a20">REPS.</div>` },
+  { n:'21', name:'Letter Flip',        html:`<div class="reps a21"><span>R</span><span>E</span><span>P</span><span>S</span><span>.</span></div>` },
+  { n:'22', name:'Stretch',            html:`<div class="reps a22">REPS.</div>` },
+  { n:'23', name:'Typing Cursor',      html:`<div class="a23-wrap"><div class="reps a23">REPS.</div><div class="cursor"></div></div>` },
+  { n:'24', name:'Zoom Fade',          html:`<div class="reps a24">REPS.</div>` },
+  { n:'25', name:'Neon Strobe',        html:`<div class="reps a25">REPS.</div>` },
+  { n:'26', name:'Slide Up',           html:`<div class="reps a26">REPS.</div>` },
+  { n:'27', name:'Rainbow Letters',    html:`<div class="reps a27"><span>R</span><span>E</span><span>P</span><span>S</span><span>.</span></div>` },
+  { n:'28', name:'Italic Wave',        html:`<div class="reps a28">REPS.</div>` },
+  { n:'29', name:'Double Exposure',    html:`<div class="reps a29">REPS.</div>` },
+  { n:'30', name:'Shadow Move',        html:`<div class="reps a30">REPS.</div>` },
+  { n:'31', name:'Letter Spread',      html:`<div class="reps a31">REPS.</div>` },
+  { n:'32', name:'Stripes',            html:`<div class="reps a32">REPS.</div>` },
+  { n:'33', name:'Wobble',             html:`<div class="reps a33">REPS.</div>` },
+  { n:'34', name:'Invert Flash',       html:`<div class="reps a34">REPS.</div>` },
+  { n:'35', name:'Fire',               html:`<div class="reps a35">REPS.</div>` },
+  { n:'36', name:'Color Sweep',        html:`<div class="reps a36"><span>R</span><span>E</span><span>P</span><span>S</span><span>.</span></div>` },
+  { n:'37', name:'Shrink Grow',        html:`<div class="reps a37">REPS.</div>` },
+  { n:'38', name:'Double Color',       html:`<div class="reps a38">REPS.</div>` },
+  { n:'39', name:'Roll In',            html:`<div class="reps a39">REPS.</div>` },
+  { n:'40', name:'Morse Blink',        html:`<div class="reps a40">REPS.</div>` },
+  { n:'41', name:'Hue Rotate',         html:`<div class="reps a41">REPS.</div>` },
+  { n:'42', name:'Letter Rain',        html:`<div class="reps a42"><span>R</span><span>E</span><span>P</span><span>S</span><span>.</span></div>` },
+  { n:'43', name:'Neon Outline',       html:`<div class="reps a43">REPS.</div>` },
+  { n:'44', name:'Shake',              html:`<div class="reps a44">REPS.</div>` },
+  { n:'45', name:'Squeeze',            html:`<div class="reps a45">REPS.</div>` },
+  { n:'46', name:'Plasma',             html:`<div class="reps a46">REPS.</div>` },
+  { n:'47', name:'Scale Wave',         html:`<div class="reps a47"><span>R</span><span>E</span><span>P</span><span>S</span><span>.</span></div>` },
+  { n:'48', name:'Cinematic',          html:`<div class="reps a48">REPS.</div>` },
+  { n:'49', name:'Dual Glow',          html:`<div class="reps a49">REPS.</div>` },
+  { n:'50', name:'Matrix Decode',      html:`<div class="reps a50"><span></span><span></span><span></span><span></span><span></span></div>` },
+];
+
+const grid = document.getElementById('grid');
+cards.forEach(c => {
+  const div = document.createElement('div');
+  div.className = 'card';
+  div.innerHTML = `<span class="card-num">#${c.n}</span>${c.html}<span class="card-name">${c.name}</span>`;
+  div.onclick = () => openOverlay(c);
+  grid.appendChild(div);
+});
+
+function openOverlay(c) {
+  document.getElementById('ov-name').textContent = `#${c.n} · ${c.name}`;
+  const content = document.getElementById('ov-content');
+  content.innerHTML = c.html;
+  // Scale up for overlay
+  const el = content.querySelector('.reps, .a07-wrap, .a23-wrap, .a15');
+  if (el) {
+    if (el.classList.contains('reps') || el.classList.contains('a15')) {
+      el.style.fontSize = '120px';
+    }
+  }
+  document.getElementById('overlay').classList.add('active');
+}
+function closeOverlay() {
+  document.getElementById('overlay').classList.remove('active');
+}
+document.addEventListener('keydown', e => { if(e.key==='Escape') closeOverlay(); });
+</script>
+</body>
+</html>

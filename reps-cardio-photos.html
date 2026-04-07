@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>REPS. Cardio Card Photos</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:#111; color:#fff; font-family:sans-serif; padding:20px; }
+  h1 { text-align:center; color:#c6f135; margin-bottom:6px; font-size:18px; letter-spacing:4px; }
+  .subtitle { text-align:center; color:#444; font-size:11px; letter-spacing:2px; margin-bottom:6px; }
+  .note { text-align:center; color:#333; font-size:10px; margin-bottom:24px; }
+  .section { color:#555; font-size:10px; letter-spacing:3px; text-transform:uppercase; margin:24px 0 12px; padding-left:10px; border-left:2px solid #00d4f0; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:14px; }
+
+  .card {
+    background:#0d0d0d; border-radius:18px; overflow:hidden;
+    cursor:pointer; border:1px solid #1e1e1e; transition:border-color .2s, transform .15s;
+  }
+  .card:hover { border-color:#00d4f0; transform:translateY(-2px); }
+
+  .img-area {
+    position:relative; height:148px; overflow:hidden; background:#141414;
+  }
+  .img-area img {
+    width:100%; height:100%; object-fit:cover; display:block;
+    filter:grayscale(100%) brightness(0.72) contrast(1.25);
+    transition:filter .3s, transform .3s;
+  }
+  .card:hover .img-area img {
+    filter:grayscale(100%) brightness(0.85) contrast(1.2);
+    transform:scale(1.04);
+  }
+  .img-area::after {
+    content:''; position:absolute; inset:0;
+    background:linear-gradient(to bottom, transparent 30%, rgba(0,0,0,0.8) 100%);
+    pointer-events:none;
+  }
+  .badge {
+    position:absolute; top:10px; left:12px; z-index:2;
+    font-size:10px; font-weight:700; letter-spacing:.1em;
+    padding:4px 10px; border-radius:20px;
+  }
+  .cyan { background:rgba(0,212,240,0.18); color:#00d4f0; border:1px solid rgba(0,212,240,0.5); }
+
+  .card-meta { padding:10px 14px 12px; }
+  .card-num { font-size:10px; color:#444; font-family:monospace; }
+  .card-name { font-size:11px; color:#666; margin-top:2px; letter-spacing:1px; text-transform:uppercase; }
+
+  .overlay {
+    display:none; position:fixed; inset:0;
+    background:rgba(0,0,0,0.96); z-index:200;
+    flex-direction:column; align-items:center; justify-content:center;
+    cursor:pointer; gap:14px; padding:20px;
+  }
+  .overlay.active { display:flex; }
+  .ov-card {
+    width:min(88vw,390px); background:#0d0d0d;
+    border-radius:22px; overflow:hidden; border:1px solid #2a2a2a;
+  }
+  .ov-img { position:relative; height:220px; overflow:hidden; background:#141414; }
+  .ov-img img {
+    width:100%; height:100%; object-fit:cover;
+    filter:grayscale(100%) brightness(0.78) contrast(1.25);
+  }
+  .ov-img::after {
+    content:''; position:absolute; inset:0;
+    background:linear-gradient(to bottom, transparent 25%, rgba(0,0,0,0.75) 100%);
+  }
+  .ov-badge { position:absolute; top:14px; left:16px; z-index:2; font-size:11px; font-weight:700; letter-spacing:.1em; padding:5px 12px; border-radius:20px; }
+  .ov-detail { padding:18px 18px 20px; }
+  .ov-wk-name { font-size:26px; font-weight:900; letter-spacing:.04em; color:#fff; font-family:'Arial Black','Impact',sans-serif; }
+  .ov-stats { display:flex; gap:24px; margin-top:10px; }
+  .ov-stat-label { font-size:10px; color:#555; letter-spacing:.12em; text-transform:uppercase; }
+  .ov-stat-val { font-size:16px; font-weight:700; color:#fff; margin-top:2px; }
+  .ov-hint { color:#2a2a2a; font-size:11px; letter-spacing:2px; margin-top:4px; }
+</style>
+</head>
+<body>
+
+<h1>CARDIO CARD PHOTOS</h1>
+<div class="subtitle">50 PROPOSALS · B&W · LOREMFLICKR (CC)</div>
+<div class="note">Same style as Upper Body & Leg Day · Black & White · Click for app preview</div>
+
+<div class="section">Stairmaster & Step (1–15)</div>
+<div class="grid" id="g-stair"></div>
+
+<div class="section">Running & Treadmill (16–30)</div>
+<div class="grid" id="g-run"></div>
+
+<div class="section">Cycling & Rowing (31–40)</div>
+<div class="grid" id="g-cycle"></div>
+
+<div class="section">General Cardio & Gym Machines (41–50)</div>
+<div class="grid" id="g-general"></div>
+
+<div class="overlay" id="overlay" onclick="closeOverlay()">
+  <div class="ov-card" onclick="event.stopPropagation()">
+    <div class="ov-img">
+      <img id="ov-img" src="" alt=""/>
+      <div class="ov-badge cyan" id="ov-badge">CARDIO</div>
+    </div>
+    <div class="ov-detail">
+      <div class="ov-wk-name">CARDIO</div>
+      <div class="ov-stats">
+        <div><div class="ov-stat-label">Duration</div><div class="ov-stat-val">30 MIN</div></div>
+        <div><div class="ov-stat-label">Type</div><div class="ov-stat-val">STAIRMASTER</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="ov-hint">tap outside to close</div>
+</div>
+
+<script>
+const F = 'https://loremflickr.com/800/480/';
+
+const stair = [
+  { n:'01', kw:'stairmaster,cardio,gym',          label:'Stairmaster'         },
+  { n:'02', kw:'stair,climber,gym,machine',        label:'Stair Climber'       },
+  { n:'03', kw:'step,mill,cardio,machine',         label:'Step Mill'           },
+  { n:'04', kw:'stairs,workout,gym,sweat',         label:'Stair Workout'       },
+  { n:'05', kw:'cardio,machine,gym,dark',          label:'Cardio Machine'      },
+  { n:'06', kw:'step,athletic,gym,legs',           label:'Step Athletic'       },
+  { n:'07', kw:'gym,equipment,cardio,floor',       label:'Gym Cardio Floor'    },
+  { n:'08', kw:'endurance,fitness,gym,sweat',      label:'Endurance'           },
+  { n:'09', kw:'hiit,training,gym,intensity',      label:'HIIT Training'       },
+  { n:'10', kw:'cardio,burn,gym,athlete',          label:'Cardio Burn'         },
+  { n:'11', kw:'sweat,workout,gym,dark',           label:'Sweat Session'       },
+  { n:'12', kw:'conditioning,gym,fitness',         label:'Conditioning'        },
+  { n:'13', kw:'aerobic,exercise,gym',             label:'Aerobic'             },
+  { n:'14', kw:'fitness,intensity,gym,grit',       label:'Intensity'           },
+  { n:'15', kw:'athletic,cardio,body,gym',         label:'Athletic Cardio'     },
+];
+
+const run = [
+  { n:'16', kw:'treadmill,running,gym',            label:'Treadmill'           },
+  { n:'17', kw:'sprint,treadmill,gym,fast',        label:'Sprint Treadmill'    },
+  { n:'18', kw:'running,athlete,gym,speed',        label:'Running Athlete'     },
+  { n:'19', kw:'track,run,sprint,dark',            label:'Track Sprint'        },
+  { n:'20', kw:'runner,legs,motion,gym',           label:'Runner Legs'         },
+  { n:'21', kw:'jogging,fitness,gym,stride',       label:'Jogging'             },
+  { n:'22', kw:'marathon,training,athlete',        label:'Marathon Training'   },
+  { n:'23', kw:'run,dark,gym,motion',              label:'Dark Run'            },
+  { n:'24', kw:'speed,training,run,legs',          label:'Speed Training'      },
+  { n:'25', kw:'athlete,run,sweat,gym',            label:'Athlete Run'         },
+  { n:'26', kw:'treadmill,pace,gym,fitness',       label:'Treadmill Pace'      },
+  { n:'27', kw:'sprint,track,explosive,legs',      label:'Explosive Sprint'    },
+  { n:'28', kw:'cardio,run,heart,fitness',         label:'Heart Cardio'        },
+  { n:'29', kw:'gym,floor,cardio,run',             label:'Gym Floor Run'       },
+  { n:'30', kw:'endurance,run,dark,athlete',       label:'Endurance Run'       },
+];
+
+const cycle = [
+  { n:'31', kw:'stationary,bike,cycling,gym',      label:'Stationary Bike'     },
+  { n:'32', kw:'spin,bike,gym,cycling',            label:'Spin Bike'           },
+  { n:'33', kw:'rowing,machine,gym,cardio',        label:'Rowing Machine'      },
+  { n:'34', kw:'rower,erg,gym,pull',               label:'Erg Rower'           },
+  { n:'35', kw:'cycle,indoor,gym,legs',            label:'Indoor Cycle'        },
+  { n:'36', kw:'bike,sweat,gym,workout',           label:'Bike Sweat'          },
+  { n:'37', kw:'spin,class,dark,gym',              label:'Spin Dark'           },
+  { n:'38', kw:'rowing,cardio,back,gym',           label:'Rowing Cardio'       },
+  { n:'39', kw:'bike,handlebar,gym,fitness',       label:'Handlebar Fitness'   },
+  { n:'40', kw:'cycling,power,gym,legs',           label:'Cycling Power'       },
+];
+
+const general = [
+  { n:'41', kw:'elliptical,gym,cardio,machine',    label:'Elliptical'          },
+  { n:'42', kw:'jump,rope,cardio,gym',             label:'Jump Rope'           },
+  { n:'43', kw:'battle,rope,gym,cardio',           label:'Battle Rope'         },
+  { n:'44', kw:'sled,push,gym,cardio',             label:'Sled Push'           },
+  { n:'45', kw:'ski,erg,cardio,gym',               label:'Ski Erg'             },
+  { n:'46', kw:'assault,bike,cardio,gym',          label:'Assault Bike'        },
+  { n:'47', kw:'cardio,gym,dark,sweat,machine',    label:'Dark Cardio'         },
+  { n:'48', kw:'fitness,heart,rate,gym',           label:'Heart Rate'          },
+  { n:'49', kw:'cardio,endurance,gym,athlete',     label:'Cardio Endurance'    },
+  { n:'50', kw:'gym,finisher,cardio,grit',         label:'Gym Finisher'        },
+];
+
+function build(items, gridId, seed0){
+  const g = document.getElementById(gridId);
+  items.forEach((c, i) => {
+    const seed = seed0 + i;
+    const url = F + encodeURIComponent(c.kw) + '?random=' + seed;
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+      <div class="img-area">
+        <img src="${url}" alt="${c.label}" loading="lazy" decoding="async"/>
+        <div class="badge cyan">CARDIO</div>
+      </div>
+      <div class="card-meta">
+        <div class="card-num">#${c.n}</div>
+        <div class="card-name">${c.label}</div>
+      </div>`;
+    card.onclick = () => {
+      document.getElementById('ov-img').src = url;
+      document.getElementById('overlay').classList.add('active');
+    };
+    g.appendChild(card);
+  });
+}
+
+build(stair,   'g-stair',   300);
+build(run,     'g-run',     320);
+build(cycle,   'g-cycle',   340);
+build(general, 'g-general', 355);
+
+function closeOverlay(){ document.getElementById('overlay').classList.remove('active'); }
+document.addEventListener('keydown', e => { if(e.key==='Escape') closeOverlay(); });
+</script>
+</body>
+</html>

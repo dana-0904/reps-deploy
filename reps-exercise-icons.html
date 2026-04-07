@@ -1,0 +1,1238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>REPS. Exercise Icons — Realistic</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;900&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{background:#0d0d0d;color:#fff;font-family:'Inter',sans-serif;padding:32px 16px 80px;}
+h1{font-family:'Barlow Condensed',sans-serif;font-size:2rem;font-weight:900;color:#c6f135;text-align:center;letter-spacing:.08em;margin-bottom:6px;}
+p.sub{text-align:center;color:#555;font-size:.8rem;margin-bottom:36px;}
+.cat-section{margin-bottom:36px;}
+.cat-header{display:flex;align-items:center;gap:10px;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,.07);}
+.cat-bar{width:4px;height:22px;border-radius:2px;flex-shrink:0;}
+.cat-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:1.3rem;letter-spacing:.06em;}
+.push .cat-bar,.push .cat-title{background:#c6f135;color:#c6f135;} .push .cat-bar{color:unset;}
+.pull .cat-bar{background:#00d4f0;} .pull .cat-title{color:#00d4f0;}
+.legs .cat-bar{background:#ff4d6a;} .legs .cat-title{color:#ff4d6a;}
+.core .cat-bar{background:#a78bfa;} .core .cat-title{color:#a78bfa;}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;}
+.ex-row{background:#1a1a1a;border-radius:14px;display:flex;align-items:center;gap:12px;padding:10px 12px 10px 10px;cursor:pointer;border:2px solid transparent;transition:border-color .15s;}
+.ex-row:hover{border-color:#c6f135;}
+.ex-row.picked{border-color:#c6f135;background:#1e2210;}
+.ex-thumb{width:56px;height:56px;border-radius:12px;background:linear-gradient(145deg,#1e1e1e,#141414);display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;}
+.ex-info{flex:1;min-width:0;}
+.ex-name{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.82rem;letter-spacing:.04em;line-height:1.2;}
+.ex-cat{font-size:.62rem;color:#555;margin-top:2px;letter-spacing:.06em;}
+</style>
+</head>
+<body>
+<h1>REPS. — Realistic Exercise Icons</h1>
+<p class="sub">Filled silhouettes · 63 exercises · Click any to mark</p>
+
+<div id="root"></div>
+
+<script>
+// ═══════════════════════════════════════
+// DRAWING HELPERS
+// ═══════════════════════════════════════
+const FIG = '#d4d4d4';   // body fill
+const FIG2 = '#b0b0b0';  // secondary body / shadow side
+const BAR = '#aaa';      // barbell bar
+const PLAT = '#888';     // plate rim
+const PLAT2 = '#bbb';    // plate face
+const EQP = '#666';      // machine frame
+const BENCH = '#3a3a3a'; // bench
+const LIME = '#c6f135';
+const CYAN = '#00d4f0';
+const PINK = '#ff4d6a';
+const VIOL = '#a78bfa';
+const GND = '#2a2a2a';   // floor
+
+// Thick line segment (filled rectangle along a vector)
+function seg(x1,y1,x2,y2,w,col){
+  const dx=x2-x1,dy=y2-y1,len=Math.hypot(dx,dy);
+  if(len<0.001) return '';
+  const nx=-dy/len*w/2,ny=dx/len*w/2;
+  return `<polygon points="${x1+nx},${y1+ny} ${x2+nx},${y2+ny} ${x2-nx},${y2-ny} ${x1-nx},${y1-ny}" fill="${col||FIG}"/>`;
+}
+// Tapered segment (w1 at start, w2 at end)
+function tseg(x1,y1,x2,y2,w1,w2,col){
+  const dx=x2-x1,dy=y2-y1,len=Math.hypot(dx,dy);
+  if(len<0.001) return '';
+  const nx=-dy/len,ny=dx/len;
+  const hw1=w1/2,hw2=w2/2;
+  return `<polygon points="${x1+nx*hw1},${y1+ny*hw1} ${x2+nx*hw2},${y2+ny*hw2} ${x2-nx*hw2},${y2-ny*hw2} ${x1-nx*hw1},${y1-ny*hw1}" fill="${col||FIG}"/>`;
+}
+// Circle
+function circ(cx,cy,r,fill,strokeCol,sw){
+  return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${fill||FIG}"${strokeCol?` stroke="${strokeCol}" stroke-width="${sw||1}"`:''}/>`;
+}
+// Rounded rect
+function rr(x,y,w,h,rx,fill){
+  return `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx||2}" fill="${fill||FIG}"/>`;
+}
+// Ellipse
+function ell(cx,cy,rx,ry,fill){
+  return `<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="${fill||FIG}"/>`;
+}
+// Barbell plate (circle + ring cutout)
+function plate(cx,cy,or,ir,fill,rimCol){
+  return `${circ(cx,cy,or,fill||PLAT2)}${circ(cx,cy,ir||or*.4,'#1a1a1a')}${circ(cx,cy,or,rimCol||PLAT,'none',1)}`;
+}
+// Barbell (bar + 2 plates each side)
+function barbell(x1,y1,x2,y2,pW,pH,col){
+  const dx=x2-x1,dy=y2-y1,len=Math.hypot(dx,dy);
+  const ux=dx/len,uy=dy/len;
+  const nx=-uy,ny=ux;
+  const bh=pW||8,pw=pH||5;
+  // bar
+  let out=seg(x1,y1,x2,y2,2.5,col||BAR);
+  // collars
+  const c1x=x1+ux*pw,c1y=y1+uy*pw;
+  const c2x=x2-ux*pw,c2y=y2-uy*pw;
+  out+=seg(c1x-ux*pw*.2,c1y-uy*pw*.2,c2x+ux*pw*.2,c2y+uy*pw*.2,bh,PLAT2);
+  out+=seg(c1x-ux*pw*.2,c1y-uy*pw*.2,c2x+ux*pw*.2,c2y+uy*pw*.2,2.5,col||BAR);
+  // outer plates
+  out+=seg(x1,y1,x1+ux*pw,y1+uy*pw,bh+6,PLAT);
+  out+=seg(x2,y2,x2-ux*pw,y2-uy*pw,bh+6,PLAT);
+  out+=seg(x1,y1,x1+ux*pw*.4,y1+uy*pw*.4,bh+10,PLAT2);
+  out+=seg(x2,y2,x2-ux*pw*.4,y2-uy*pw*.4,bh+10,PLAT2);
+  out+=seg(x1,y1,x2,y2,2.5,col||BAR);
+  return out;
+}
+// Head (detailed silhouette)
+function head(cx,cy,sz,col){
+  sz=sz||5;
+  return ell(cx,cy,sz*.7,sz,col||FIG)+rr(cx-sz*.45,cy+sz*.7,sz*.9,sz*.5,sz*.2,col||FIG);
+}
+// Upper body (torso)
+function torso(cx,cy,w,h,col){
+  const tw=w*.8;
+  return `<polygon points="${cx-w/2},${cy} ${cx+w/2},${cy} ${cx+tw/2},${cy+h} ${cx-tw/2},${cy+h}" fill="${col||FIG}"/>`;
+}
+// Ground line
+function gnd(y){ return rr(2,y,56,2,1,GND); }
+// Bench shape
+function bench(x,y,w,h){ return rr(x,y,w,h,2,BENCH)+rr(x+w*.15,y-h*.6,w*.15,h*.6,1.5,BENCH); }
+
+// Dumbbell
+function dumbbell(cx,cy,len,angle,col){
+  const rad=angle*Math.PI/180;
+  const ux=Math.cos(rad),uy=Math.sin(rad);
+  const hl=len/2;
+  const x1=cx-ux*hl,y1=cy-uy*hl;
+  const x2=cx+ux*hl,y2=cy+uy*hl;
+  return seg(x1,y1,x2,y2,2,col||BAR)+
+    ell(x1,y1,len*.22,len*.14,col||PLAT2)+
+    ell(x2,y2,len*.22,len*.14,col||PLAT2);
+}
+
+// Cable dot
+function cable(x1,y1,x2,y2){
+  return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#555" stroke-width="1.2" stroke-dasharray="2,1"/>`;
+}
+
+// SVG wrapper with dark gradient bg
+function svg(content, accent){
+  return `<svg viewBox="0 0 60 60" width="52" height="52">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="40%" r="65%">
+      <stop offset="0%" stop-color="#222"/>
+      <stop offset="100%" stop-color="#0d0d0d"/>
+    </radialGradient>
+  </defs>
+  <rect width="60" height="60" rx="10" fill="url(#bg)"/>
+  ${content}
+</svg>`;
+}
+
+// ═══════════════════════════════════════
+// PUSH ICONS
+// ═══════════════════════════════════════
+
+const BENCH_PRESS = svg((()=>{
+  let o='';
+  // bench
+  o+=rr(6,36,48,6,2,BENCH);
+  o+=rr(10,30,40,8,2,BENCH);
+  // person lying
+  o+=seg(14,30,46,30,10,FIG2); // body lying
+  o+=head(40,26,5);
+  // arms up
+  o+=tseg(22,30,20,16,5,3.5,FIG);
+  o+=tseg(38,30,40,16,5,3.5,FIG);
+  // barbell
+  o+=barbell(6,14,54,14,6,6);
+  return o;
+})());
+
+const INCLINE_BENCH = svg((()=>{
+  let o='';
+  o+=rr(6,42,18,4,2,BENCH); // base
+  // incline bench surface
+  o+=seg(12,42,46,24,12,BENCH);
+  // person on incline
+  o+=seg(14,38,44,22,9,FIG2);
+  o+=head(48,20,5);
+  o+=tseg(28,32,26,18,4.5,3,FIG);
+  o+=tseg(42,24,40,12,4.5,3,FIG);
+  o+=barbell(8,10,54,10,5,5);
+  return o;
+})());
+
+const DECLINE_BENCH = svg((()=>{
+  let o='';
+  o+=rr(36,40,18,4,2,BENCH);
+  o+=seg(14,26,48,42,12,BENCH);
+  o+=seg(16,28,44,40,9,FIG2);
+  o+=head(12,24,5);
+  o+=tseg(22,30,24,16,4.5,3,FIG);
+  o+=tseg(34,36,36,22,4.5,3,FIG);
+  o+=barbell(8,14,52,14,5,5);
+  return o;
+})());
+
+const DB_BENCH = svg((()=>{
+  let o='';
+  o+=rr(6,36,48,6,2,BENCH);
+  o+=rr(10,30,40,8,2,BENCH);
+  o+=seg(14,30,46,30,10,FIG2);
+  o+=head(40,26,5);
+  o+=tseg(22,30,18,18,5,3.5,FIG);
+  o+=tseg(38,30,42,18,5,3.5,FIG);
+  o+=dumbbell(18,14,14,0);
+  o+=dumbbell(42,14,14,0);
+  return o;
+})());
+
+const INCLINE_BAR_PRESS = svg((()=>{
+  // same as incline bench
+  let o='';
+  o+=rr(6,42,18,4,2,BENCH);
+  o+=seg(12,42,46,24,12,BENCH);
+  o+=seg(14,38,44,22,9,FIG2);
+  o+=head(48,20,5);
+  o+=tseg(28,32,26,18,4.5,3,FIG);
+  o+=tseg(42,24,40,12,4.5,3,FIG);
+  o+=barbell(8,10,54,10,5,5);
+  return o;
+})());
+
+const CABLE_FLYES = svg((()=>{
+  let o='';
+  // frame lines
+  o+=rr(0,0,4,60,0,EQP);
+  o+=rr(56,0,4,60,0,EQP);
+  // cables
+  o+=cable(4,8,18,26);
+  o+=cable(56,8,42,26);
+  // person
+  o+=gnd(54);
+  o+=torso(30,24,12,14,FIG);
+  o+=head(30,18,5);
+  o+=tseg(30,28,12,26,4,3,FIG); // left arm
+  o+=tseg(30,28,48,26,4,3,FIG); // right arm
+  o+=tseg(30,38,26,54,5,4,FIG);
+  o+=tseg(30,38,34,54,5,4,FIG);
+  // handles at wrists
+  o+=circ(12,26,3,LIME);
+  o+=circ(48,26,3,LIME);
+  return o;
+})());
+
+const PEC_DECK_SVG = svg((()=>{
+  let o='';
+  o+=rr(4,4,6,52,3,EQP);
+  o+=rr(50,4,6,52,3,EQP);
+  o+=rr(4,20,12,8,2,BENCH); // left pad
+  o+=rr(44,20,12,8,2,BENCH); // right pad
+  o+=rr(12,42,36,8,2,BENCH); // seat
+  o+=head(30,12,5);
+  o+=torso(30,18,12,16,FIG);
+  o+=tseg(30,22,18,26,4,3,FIG);
+  o+=tseg(30,22,42,26,4,3,FIG);
+  o+=tseg(18,26,16,28,3.5,3,FIG);
+  o+=tseg(42,26,44,28,3.5,3,FIG);
+  o+=tseg(30,34,26,50,5,4,FIG);
+  o+=tseg(30,34,34,50,5,4,FIG);
+  return o;
+})());
+
+const DIPS_SVG = svg((()=>{
+  let o='';
+  o+=rr(6,14,6,42,3,EQP);
+  o+=rr(48,14,6,42,3,EQP);
+  o+=rr(2,12,14,4,2,BAR);
+  o+=rr(44,12,14,4,2,BAR);
+  o+=head(30,10,5);
+  o+=torso(30,18,14,16,FIG);
+  o+=tseg(30,20,12,26,5,4,FIG);
+  o+=tseg(30,20,48,26,5,4,FIG);
+  o+=tseg(12,26,12,16,4,3.5,FIG);
+  o+=tseg(48,26,48,16,4,3.5,FIG);
+  o+=tseg(30,34,24,48,5,4,FIG);
+  o+=tseg(30,34,36,48,5,4,FIG);
+  return o;
+})());
+
+const PUSH_UPS_SVG = svg((()=>{
+  let o='';
+  o+=gnd(50);
+  // plank body
+  o+=seg(14,38,50,26,10,FIG2);
+  o+=head(54,22,5);
+  // arms bent
+  o+=tseg(42,30,40,44,4.5,3.5,FIG);
+  o+=tseg(40,44,34,42,4.5,3.5,FIG);
+  // feet
+  o+=circ(14,44,4,FIG);
+  o+=circ(8,46,3.5,FIG);
+  // hands
+  o+=circ(34,42,3.5,FIG);
+  return o;
+})());
+
+const OHP_SVG = svg((()=>{
+  let o='';
+  o+=gnd(56);
+  o+=torso(30,28,14,16,FIG);
+  o+=head(30,20,5);
+  o+=tseg(30,30,18,24,4.5,3.5,FIG);
+  o+=tseg(18,24,16,12,4,3,FIG);
+  o+=tseg(30,30,42,24,4.5,3.5,FIG);
+  o+=tseg(42,24,44,12,4,3,FIG);
+  o+=tseg(30,44,26,56,6,5,FIG);
+  o+=tseg(30,44,34,56,6,5,FIG);
+  o+=barbell(4,10,56,10,6,5);
+  return o;
+})());
+
+const DB_SHOULDER = svg((()=>{
+  let o='';
+  o+=gnd(56);
+  o+=torso(30,28,14,16,FIG);
+  o+=head(30,20,5);
+  o+=tseg(30,30,16,26,4.5,3.5,FIG);
+  o+=tseg(16,26,14,14,4,3,FIG);
+  o+=tseg(30,30,44,26,4.5,3.5,FIG);
+  o+=tseg(44,26,46,14,4,3,FIG);
+  o+=dumbbell(14,12,12,0);
+  o+=dumbbell(46,12,12,0);
+  o+=tseg(30,44,26,56,6,5,FIG);
+  o+=tseg(30,44,34,56,6,5,FIG);
+  return o;
+})());
+
+const ARNOLD_SVG = svg((()=>{
+  let o='';
+  o+=gnd(56);
+  o+=torso(30,28,14,16,FIG);
+  o+=head(30,20,5);
+  o+=tseg(30,30,14,28,4.5,3.5,FIG);
+  o+=tseg(14,28,12,18,4,3,FIG);
+  o+=tseg(30,30,46,28,4.5,3.5,FIG);
+  o+=tseg(46,28,48,18,4,3,FIG);
+  o+=dumbbell(12,16,12,-20);
+  o+=dumbbell(48,16,12,20);
+  o+=tseg(30,44,26,56,6,5,FIG);
+  o+=tseg(30,44,34,56,6,5,FIG);
+  return o;
+})());
+
+const LAT_RAISES_SVG = svg((()=>{
+  let o='';
+  o+=gnd(56);
+  o+=torso(30,28,14,16,FIG);
+  o+=head(30,20,5);
+  o+=tseg(30,28,10,22,4.5,3.5,FIG);
+  o+=tseg(30,28,50,22,4.5,3.5,FIG);
+  o+=dumbbell(10,22,10,0);
+  o+=dumbbell(50,22,10,0);
+  o+=tseg(30,44,26,56,6,5,FIG);
+  o+=tseg(30,44,34,56,6,5,FIG);
+  return o;
+})());
+
+const FRONT_RAISES_SVG = svg((()=>{
+  let o='';
+  o+=gnd(56);
+  o+=torso(30,30,14,16,FIG);
+  o+=head(30,22,5);
+  o+=tseg(30,30,20,34,4.5,3.5,FIG); // resting arm
+  o+=tseg(30,30,22,22,4.5,3.5,FIG); // raised arm
+  o+=tseg(22,22,20,14,4,3,FIG);
+  o+=dumbbell(20,12,12,0);
+  o+=tseg(30,46,26,56,6,5,FIG);
+  o+=tseg(30,46,34,56,6,5,FIG);
+  return o;
+})());
+
+const UPRIGHT_ROW_SVG = svg((()=>{
+  let o='';
+  o+=gnd(56);
+  o+=torso(30,30,14,14,FIG);
+  o+=head(30,22,5);
+  o+=tseg(30,30,16,22,5,4,FIG);
+  o+=tseg(16,22,14,14,4,3,FIG);
+  o+=tseg(30,30,44,22,5,4,FIG);
+  o+=tseg(44,22,46,14,4,3,FIG);
+  o+=barbell(6,18,54,18,6,5);
+  o+=tseg(30,44,26,56,6,5,FIG);
+  o+=tseg(30,44,34,56,6,5,FIG);
+  return o;
+})());
+
+const TRICEP_PUSHDOWN_SVG = svg((()=>{
+  let o='';
+  o+=gnd(56);
+  o+=rr(24,0,12,6,2,EQP);
+  o+=cable(30,6,30,16);
+  o+=rr(20,16,20,3,1.5,BAR);
+  o+=torso(30,26,12,16,FIG);
+  o+=head(30,18,5);
+  o+=tseg(30,26,20,22,4.5,3.5,FIG);
+  o+=tseg(20,22,20,19,4,3,FIG);
+  o+=tseg(30,26,40,22,4.5,3.5,FIG);
+  o+=tseg(40,22,40,19,4,3,FIG);
+  o+=tseg(30,42,26,56,6,5,FIG);
+  o+=tseg(30,42,34,56,6,5,FIG);
+  return o;
+})());
+
+const SKULL_CRUSHER_SVG = svg((()=>{
+  let o='';
+  o+=rr(4,38,52,6,2,BENCH);
+  o+=rr(8,32,44,8,2,BENCH);
+  o+=seg(10,32,50,32,10,FIG2);
+  o+=head(44,28,5);
+  o+=tseg(26,32,22,22,5,4,FIG);
+  o+=tseg(22,22,24,14,4.5,3.5,FIG);
+  o+=tseg(38,32,42,22,5,4,FIG);
+  o+=tseg(42,22,40,14,4.5,3.5,FIG);
+  o+=barbell(8,12,52,12,5,5);
+  return o;
+})());
+
+const CG_BENCH_SVG = svg((()=>{
+  let o='';
+  o+=rr(6,36,48,6,2,BENCH);
+  o+=rr(10,30,40,8,2,BENCH);
+  o+=seg(14,30,46,30,10,FIG2);
+  o+=head(40,26,5);
+  o+=tseg(26,30,24,16,4.5,3.5,FIG);
+  o+=tseg(34,30,36,16,4.5,3.5,FIG);
+  o+=barbell(8,14,52,14,5,4); // slightly shorter grip
+  return o;
+})());
+
+const OHD_TRICEP_SVG = svg((()=>{
+  let o='';
+  o+=gnd(56);
+  o+=torso(30,30,12,16,FIG);
+  o+=head(30,22,5);
+  o+=tseg(30,28,26,20,4.5,3.5,FIG); // upper arm up
+  o+=tseg(26,20,30,12,4,3,FIG);     // forearm behind head
+  o+=dumbbell(30,10,14,0);
+  o+=tseg(30,28,34,20,4.5,3.5,FIG);
+  o+=tseg(30,46,26,56,6,5,FIG);
+  o+=tseg(30,46,34,56,6,5,FIG);
+  return o;
+})());
+
+// ═══════════════════════════════════════
+// PULL ICONS
+// ═══════════════════════════════════════
+
+const DEADLIFT_SVG = svg((()=>{
+  let o='';
+  o+=gnd(52);
+  o+=barbell(4,44,56,44,10,6);
+  // standing, slight hinge
+  o+=tseg(30,20,28,44,7,6,FIG2); // torso slightly forward
+  o+=head(32,14,5);
+  o+=tseg(30,26,20,34,5,4,FIG); // left arm down to bar
+  o+=tseg(30,26,40,34,5,4,FIG); // right arm
+  o+=tseg(28,44,24,52,7,5,FIG); // left leg
+  o+=tseg(28,44,34,52,7,5,FIG); // right leg
+  return o;
+})());
+
+const PULL_UPS_SVG = svg((()=>{
+  let o='';
+  o+=rr(0,4,60,5,2,EQP);
+  o+=rr(4,4,52,4,2,BAR);
+  o+=head(30,16,5);
+  o+=torso(30,26,12,14,FIG);
+  o+=tseg(30,22,18,12,5,4,FIG);
+  o+=tseg(18,12,16,8,4,3.5,FIG);
+  o+=tseg(30,22,42,12,5,4,FIG);
+  o+=tseg(42,12,44,8,4,3.5,FIG);
+  o+=tseg(30,40,26,52,5,4,FIG);
+  o+=tseg(30,40,34,52,5,4,FIG);
+  return o;
+})());
+
+const WEIGHTED_PU_SVG = svg((()=>{
+  let o='';
+  o+=rr(0,4,60,5,2,EQP);
+  o+=rr(4,4,52,4,2,BAR);
+  o+=head(30,16,5);
+  o+=torso(30,26,12,14,FIG);
+  o+=tseg(30,22,18,12,5,4,FIG);
+  o+=tseg(18,12,16,8,4,3.5,FIG);
+  o+=tseg(30,22,42,12,5,4,FIG);
+  o+=tseg(42,12,44,8,4,3.5,FIG);
+  o+=tseg(30,40,26,52,5,4,FIG);
+  o+=tseg(30,40,34,52,5,4,FIG);
+  o+=circ(30,48,5,PLAT2);
+  o+=circ(30,48,2.5,'#1a1a1a');
+  o+=circ(30,48,5,PLAT,'none',1);
+  return o;
+})());
+
+const CHIN_UPS_SVG = svg((()=>{
+  let o='';
+  o+=rr(0,4,60,5,2,EQP);
+  o+=rr(4,4,52,4,2,BAR);
+  o+=head(30,16,5);
+  o+=torso(30,26,12,14,FIG);
+  o+=tseg(30,22,14,14,5,4,FIG);
+  o+=tseg(14,14,16,8,4,3.5,FIG);
+  o+=tseg(30,22,46,14,5,4,FIG);
+  o+=tseg(46,14,44,8,4,3.5,FIG);
+  o+=tseg(30,40,26,52,5,4,FIG);
+  o+=tseg(30,40,34,52,5,4,FIG);
+  return o;
+})());
+
+const LAT_PULLDOWN_SVG = svg((()=>{
+  let o='';
+  o+=rr(22,0,16,5,2,EQP);
+  o+=rr(4,0,52,4,2,EQP);
+  o+=cable(14,4,14,14);
+  o+=cable(46,4,46,14);
+  o+=rr(10,14,40,4,2,BAR);
+  o+=rr(10,42,40,8,2,BENCH); // seat
+  o+=head(30,22,5);
+  o+=torso(30,30,14,14,FIG);
+  o+=tseg(30,28,16,20,5,4,FIG);
+  o+=tseg(16,20,14,16,4,3.5,FIG);
+  o+=tseg(30,28,44,20,5,4,FIG);
+  o+=tseg(44,20,46,16,4,3.5,FIG);
+  o+=tseg(30,44,26,50,6,5,FIG);
+  o+=tseg(30,44,34,50,6,5,FIG);
+  return o;
+})());
+
+const SEATED_ROW_SVG = svg((()=>{
+  let o='';
+  o+=rr(44,4,12,52,3,EQP);
+  o+=cable(36,30,44,28);
+  o+=rr(4,38,26,5,2,BENCH);
+  o+=rr(4,28,10,14,2,BENCH); // backrest
+  o+=head(18,14,5);
+  o+=torso(18,24,14,14,FIG);
+  o+=tseg(18,26,32,28,5,4,FIG);
+  o+=tseg(32,28,40,30,4.5,3.5,FIG);
+  o+=tseg(18,38,12,50,6,5,FIG);
+  o+=tseg(18,38,24,50,6,5,FIG);
+  o+=circ(40,30,3,LIME);
+  return o;
+})());
+
+const CABLE_ROW_SVG = svg((()=>{
+  let o='';
+  o+=rr(46,4,10,52,3,EQP);
+  o+=cable(38,28,46,26);
+  o+=gnd(54);
+  o+=head(16,12,5);
+  o+=tseg(16,18,16,34,7,6,FIG2);
+  o+=tseg(16,22,30,26,5,4,FIG);
+  o+=tseg(30,26,38,28,4.5,3.5,FIG);
+  o+=tseg(16,34,10,54,6,5,FIG);
+  o+=tseg(16,34,22,54,6,5,FIG);
+  o+=circ(38,28,3,LIME);
+  return o;
+})());
+
+const BENT_ROW_SVG = svg((()=>{
+  let o='';
+  o+=gnd(54);
+  o+=barbell(4,40,56,40,8,6);
+  o+=head(42,12,5);
+  o+=tseg(42,18,26,32,8,7,FIG2);
+  o+=tseg(34,24,32,40,5,4,FIG);
+  o+=tseg(26,32,24,54,6,5,FIG);
+  o+=tseg(26,32,32,54,6,5,FIG);
+  return o;
+})());
+
+const DB_ROW_SVG = svg((()=>{
+  let o='';
+  o+=gnd(54);
+  o+=rr(4,26,20,18,2,BENCH);
+  o+=head(42,10,5);
+  o+=tseg(42,16,26,24,8,6,FIG2);
+  o+=tseg(16,28,12,26,4,3.5,FIG); // arm on bench
+  o+=tseg(42,16,44,34,5,4,FIG); // pulling arm
+  o+=dumbbell(44,38,14,0);
+  o+=tseg(38,28,34,54,6,5,FIG);
+  o+=tseg(38,28,44,54,6,5,FIG);
+  return o;
+})());
+
+const TBAR_ROW_SVG = svg((()=>{
+  let o='';
+  o+=gnd(54);
+  o+=seg(8,54,36,22,3,BAR);
+  o+=seg(32,30,48,30,4,BAR);
+  o+=plate(8,52,8,4,PLAT2,PLAT);
+  o+=head(44,10,5);
+  o+=tseg(44,16,36,28,8,7,FIG2);
+  o+=tseg(40,22,38,30,5,4,FIG);
+  o+=tseg(36,28,30,54,6,5,FIG);
+  o+=tseg(36,28,40,54,6,5,FIG);
+  return o;
+})());
+
+const FACE_PULL_SVG = svg((()=>{
+  let o='';
+  o+=rr(48,14,8,32,2,EQP);
+  o+=cable(36,24,48,24);
+  o+=cable(36,28,48,26);
+  o+=gnd(54);
+  o+=head(18,12,5);
+  o+=torso(18,24,14,16,FIG);
+  o+=tseg(18,22,28,20,4.5,3.5,FIG);
+  o+=tseg(28,20,36,24,4,3,FIG);
+  o+=tseg(18,22,28,26,4.5,3.5,FIG);
+  o+=tseg(28,26,36,28,4,3,FIG);
+  o+=tseg(18,40,14,54,6,5,FIG);
+  o+=tseg(18,40,22,54,6,5,FIG);
+  return o;
+})());
+
+const REV_FLYES_SVG = svg((()=>{
+  let o='';
+  o+=gnd(54);
+  o+=head(46,12,5);
+  o+=tseg(46,18,30,28,8,7,FIG2);
+  o+=tseg(38,22,12,18,5,4,FIG);
+  o+=tseg(38,22,56,14,5,4,FIG);
+  o+=dumbbell(12,18,10,0);
+  o+=dumbbell(56,14,10,0);
+  o+=tseg(30,28,26,54,6,5,FIG);
+  o+=tseg(30,28,34,54,6,5,FIG);
+  return o;
+})());
+
+const SHRUGS_SVG = svg((()=>{
+  let o='';
+  o+=gnd(54);
+  o+=barbell(4,36,56,36,9,6);
+  o+=torso(30,22,16,14,FIG);
+  o+=head(30,12,6);
+  // shoulders up exaggerated
+  o+=tseg(30,24,16,20,7,5,FIG);
+  o+=tseg(30,24,44,20,7,5,FIG);
+  o+=tseg(16,20,14,36,5,4,FIG);
+  o+=tseg(44,20,46,36,5,4,FIG);
+  o+=tseg(30,36,26,54,7,6,FIG);
+  o+=tseg(30,36,34,54,7,6,FIG);
+  return o;
+})());
+
+const BICEP_CURL_SVG = svg((()=>{
+  let o='';
+  o+=gnd(54);
+  o+=torso(30,28,12,16,FIG);
+  o+=head(30,20,5);
+  o+=tseg(30,28,40,32,4.5,3.5,FIG); // upper arm right
+  o+=tseg(40,32,36,22,4,3,FIG);    // forearm curled
+  o+=dumbbell(34,20,12,0);
+  o+=tseg(30,28,20,34,4.5,3.5,FIG); // left arm resting
+  o+=tseg(20,34,20,44,4,3,FIG);
+  o+=tseg(30,44,26,54,6,5,FIG);
+  o+=tseg(30,44,34,54,6,5,FIG);
+  return o;
+})());
+
+const HAMMER_CURL_SVG = svg((()=>{
+  let o='';
+  o+=gnd(54);
+  o+=torso(30,28,12,16,FIG);
+  o+=head(30,20,5);
+  o+=tseg(30,28,40,32,4.5,3.5,FIG);
+  o+=tseg(40,32,38,20,4,3,FIG);
+  o+=dumbbell(38,18,10,90); // vertical = hammer
+  o+=tseg(30,28,20,34,4.5,3.5,FIG);
+  o+=tseg(20,34,20,44,4,3,FIG);
+  o+=tseg(30,44,26,54,6,5,FIG);
+  o+=tseg(30,44,34,54,6,5,FIG);
+  return o;
+})());
+
+const PREACHER_SVG = svg((()=>{
+  let o='';
+  o+=gnd(54);
+  o+=seg(10,28,40,20,14,BENCH);
+  o+=seg(4,48,18,28,8,BENCH);
+  o+=head(44,14,5);
+  o+=tseg(44,20,38,26,5,4,FIG);
+  o+=tseg(38,26,26,24,4.5,3.5,FIG);
+  o+=tseg(26,24,22,16,4,3,FIG);
+  o+=dumbbell(20,14,12,0);
+  o+=tseg(44,28,42,48,6,5,FIG);
+  o+=tseg(44,28,50,48,6,5,FIG);
+  return o;
+})());
+
+const CABLE_CURL_SVG = svg((()=>{
+  let o='';
+  o+=gnd(54);
+  o+=rr(0,0,6,54,2,EQP);
+  o+=cable(6,46,18,36);
+  o+=circ(18,36,2.5,LIME);
+  o+=head(34,14,5);
+  o+=torso(34,24,12,16,FIG);
+  o+=tseg(34,26,44,30,4.5,3.5,FIG);
+  o+=tseg(44,30,42,20,4,3,FIG);
+  o+=tseg(34,26,24,32,4.5,3.5,FIG);
+  o+=tseg(24,32,18,36,4,3,FIG);
+  o+=tseg(34,40,30,54,6,5,FIG);
+  o+=tseg(34,40,38,54,6,5,FIG);
+  return o;
+})());
+
+const INCLINE_DB_CURL_SVG = svg((()=>{
+  let o='';
+  o+=gnd(54);
+  o+=seg(8,50,46,24,12,BENCH);
+  o+=head(48,18,5);
+  o+=tseg(48,24,42,36,5,4,FIG2);
+  o+=tseg(44,28,42,42,4.5,3.5,FIG);
+  o+=tseg(42,42,34,36,4,3,FIG);
+  o+=dumbbell(32,34,12,20);
+  o+=tseg(44,28,50,36,4.5,3.5,FIG);
+  o+=tseg(50,36,52,46,4,3,FIG);
+  return o;
+})());
+
+// ═══════════════════════════════════════
+// LEGS ICONS
+// ═══════════════════════════════════════
+
+const BACK_SQUAT_SVG = svg((()=>{
+  let o='';
+  o+=gnd(54);
+  o+=barbell(4,20,56,20,8,6);
+  o+=tseg(30,20,30,30,12,10,FIG2); // torso
+  o+=head(30,12,5);
+  o+=tseg(30,30,20,22,5,4,FIG); // shoulder arms on bar
+  o+=tseg(30,30,40,22,5,4,FIG);
+  // squat deep
+  o+=tseg(30,34,22,48,7,6,FIG);
+  o+=tseg(30,34,38,48,7,6,FIG);
+  o+=tseg(22,48,18,54,6,5,FIG);
+  o+=tseg(38,48,42,54,6,5,FIG);
+  return o;
+})());
+
+const FRONT_SQUAT_SVG = svg((()=>{
+  let o='';
+  o+=gnd(54);
+  o+=barbell(4,18,56,18,8,6);
+  o+=tseg(30,18,30,30,12,10,FIG2);
+  o+=head(30,10,5);
+  // front rack arms up
+  o+=tseg(30,22,16,18,5,4,FIG);
+  o+=tseg(30,22,44,18,5,4,FIG);
+  o+=tseg(30,34,22,46,7,6,FIG);
+  o+=tseg(30,34,38,46,7,6,FIG);
+  o+=tseg(22,46,18,54,6,5,FIG);
+  o+=tseg(38,46,42,54,6,5,FIG);
+  return o;
+})());
+
+const LEG_PRESS_SVG = svg((()=>{
+  let o='';
+  o+=rr(30,4,26,52,3,EQP);
+  o+=seg(30,18,56,30,14,EQP); // reclined track
+  // footplate
+  o+=rr(30,10,22,10,2,BENCH);
+  // seat
+  o+=rr(4,34,22,6,2,BENCH);
+  o+=rr(4,16,6,20,2,BENCH); // back
+  o+=head(12,10,5);
+  o+=tseg(12,16,16,34,7,6,FIG2);
+  o+=tseg(16,26,28,16,5,4,FIG);
+  o+=tseg(28,16,30,12,5,4.5,FIG);
+  o+=tseg(16,34,10,40,6,5,FIG);
+  return o;
+})());
+
+const HACK_SQUAT_SVG = svg((()=>{
+  let o='';
+  o+=rr(2,4,8,52,2,EQP);
+  o+=rr(50,4,8,52,2,EQP);
+  o+=rr(6,14,12,6,2,BENCH); // shoulder pad L
+  o+=rr(42,14,12,6,2,BENCH); // shoulder pad R
+  o+=gnd(54);
+  o+=head(30,8,5);
+  o+=tseg(30,14,30,30,12,10,FIG2);
+  o+=tseg(30,30,22,44,7,6,FIG);
+  o+=tseg(30,30,38,44,7,6,FIG);
+  o+=tseg(22,44,20,54,6,5,FIG);
+  o+=tseg(38,44,40,54,6,5,FIG);
+  return o;
+})());
+
+const LEG_EXT_SVG = svg((()=>{
+  let o='';
+  o+=rr(4,16,28,38,4,EQP);
+  o+=rr(28,32,24,6,2,BENCH); // shin pad
+  o+=head(14,8,5);
+  o+=tseg(14,14,14,20,7,6,FIG2);
+  o+=tseg(14,30,4,30,6,5,FIG); // seated thigh
+  o+=tseg(14,30,36,30,6,5,FIG); // leg extending forward
+  o+=tseg(36,30,50,30,5.5,4.5,FIG); // lower leg
+  o+=tseg(14,20,10,14,4.5,3.5,FIG); // other arm
+  return o;
+})());
+
+const ROMANIAN_DL_SVG = svg((()=>{
+  let o='';
+  o+=gnd(54);
+  o+=barbell(4,40,56,40,8,6);
+  o+=head(44,10,5);
+  // hinged torso
+  o+=tseg(44,16,24,30,9,8,FIG2);
+  o+=tseg(34,22,32,40,5,4,FIG); // right arm
+  o+=tseg(34,22,20,36,5,4,FIG); // left arm
+  // nearly straight legs
+  o+=tseg(24,30,22,54,7,6,FIG);
+  o+=tseg(24,30,30,54,7,6,FIG);
+  return o;
+})());
+
+const LEG_CURL_SVG = svg((()=>{
+  let o='';
+  o+=rr(4,10,36,24,4,EQP);
+  o+=rr(34,26,14,6,2,BENCH); // shin pad
+  o+=head(14,8,5);
+  // lying prone
+  o+=tseg(14,14,52,16,10,9,FIG2);
+  o+=tseg(46,16,40,22,6,5,FIG); // thigh
+  o+=tseg(40,22,34,28,5.5,4.5,FIG); // shin curling
+  o+=tseg(14,14,10,12,4,3,FIG); // arm
+  return o;
+})());
+
+const SUMO_DL_SVG = svg((()=>{
+  let o='';
+  o+=gnd(54);
+  o+=barbell(4,40,56,40,10,7);
+  o+=head(30,10,5);
+  o+=tseg(30,16,30,32,12,10,FIG2);
+  o+=tseg(30,28,28,40,5,4,FIG); // arms down
+  // wide stance legs
+  o+=tseg(30,32,18,54,8,7,FIG);
+  o+=tseg(30,32,42,54,8,7,FIG);
+  return o;
+})());
+
+const LUNGES_SVG = svg((()=>{
+  let o='';
+  o+=gnd(54);
+  o+=head(30,10,5);
+  o+=torso(30,22,12,16,FIG);
+  o+=tseg(30,24,22,22,4.5,3.5,FIG);
+  o+=tseg(30,24,38,22,4.5,3.5,FIG);
+  // split stance
+  o+=tseg(30,38,20,46,7,6,FIG);
+  o+=tseg(20,46,16,54,6,5,FIG);
+  o+=tseg(30,38,42,42,7,6,FIG);
+  o+=tseg(42,42,44,54,6,5,FIG);
+  return o;
+})());
+
+const BULGARIAN_SVG = svg((()=>{
+  let o='';
+  o+=gnd(54);
+  o+=rr(40,40,18,8,2,BENCH);
+  o+=head(22,8,5);
+  o+=torso(22,22,12,16,FIG);
+  o+=tseg(22,24,14,22,4.5,3.5,FIG);
+  o+=tseg(22,24,30,22,4.5,3.5,FIG);
+  // front leg deep squat
+  o+=tseg(22,38,14,48,7,6,FIG);
+  o+=tseg(14,48,12,54,6,5,FIG);
+  // rear foot on bench
+  o+=tseg(22,38,40,42,7,6,FIG);
+  o+=circ(40,42,4,FIG2);
+  return o;
+})());
+
+const CALF_RAISE_SVG = svg((()=>{
+  let o='';
+  o+=rr(4,48,52,4,1,GND);
+  o+=rr(10,44,40,6,2,BENCH); // step
+  o+=head(30,8,5);
+  o+=torso(30,20,12,16,FIG);
+  o+=tseg(30,22,20,22,4.5,3.5,FIG);
+  o+=tseg(30,22,40,22,4.5,3.5,FIG);
+  // legs straight, raised heel
+  o+=tseg(30,36,26,46,7,6,FIG);
+  o+=tseg(30,36,34,46,7,6,FIG);
+  // tiptoe
+  o+=tseg(26,46,24,42,5,4,FIG);
+  o+=tseg(34,46,36,42,5,4,FIG);
+  return o;
+})());
+
+const SEATED_CALF_SVG = svg((()=>{
+  let o='';
+  o+=gnd(54);
+  o+=rr(4,30,30,10,2,BENCH); // seat
+  o+=rr(8,26,20,6,2,BENCH); // knee pad
+  o+=head(18,10,5);
+  o+=tseg(18,16,18,30,9,8,FIG2);
+  // legs go forward, up on toes
+  o+=tseg(18,32,4,34,7,6,FIG);
+  o+=tseg(4,34,2,30,5,4,FIG);
+  o+=tseg(18,32,30,34,7,6,FIG);
+  o+=tseg(30,34,32,30,5,4,FIG);
+  return o;
+})());
+
+const HIP_THRUST_SVG = svg((()=>{
+  let o='';
+  o+=gnd(54);
+  o+=rr(4,24,20,10,2,BENCH);
+  o+=head(12,16,5);
+  // upper back on bench
+  o+=tseg(18,26,34,30,8,7,FIG2);
+  // hips raised, bar on hips
+  o+=barbell(12,28,52,28,7,5);
+  // legs to floor
+  o+=tseg(34,30,28,46,8,7,FIG);
+  o+=tseg(28,46,24,54,7,6,FIG);
+  o+=tseg(34,30,40,46,8,7,FIG);
+  o+=tseg(40,46,44,54,7,6,FIG);
+  return o;
+})());
+
+const GLUTE_BRIDGE_SVG = svg((()=>{
+  let o='';
+  o+=gnd(54);
+  o+=head(10,24,5);
+  o+=tseg(14,26,30,28,8,7,FIG2); // upper back on floor
+  o+=tseg(30,28,40,34,7,6,FIG); // hips up
+  o+=tseg(40,34,34,48,7,6,FIG);
+  o+=tseg(34,48,30,54,6,5,FIG);
+  o+=tseg(40,34,42,48,7,6,FIG);
+  o+=tseg(42,48,46,54,6,5,FIG);
+  o+=tseg(14,26,8,30,4.5,3.5,FIG);
+  o+=tseg(8,30,6,38,4,3,FIG);
+  return o;
+})());
+
+const STEP_UPS_SVG = svg((()=>{
+  let o='';
+  o+=gnd(54);
+  o+=rr(28,32,30,22,2,BENCH);
+  o+=rr(28,30,30,4,1,EQP);
+  o+=head(24,8,5);
+  o+=torso(24,20,12,16,FIG);
+  o+=tseg(24,22,16,22,4.5,3.5,FIG);
+  o+=tseg(24,22,32,22,4.5,3.5,FIG);
+  o+=tseg(24,36,32,32,7,6,FIG);
+  o+=tseg(32,32,32,30,6,5,FIG);
+  o+=tseg(24,36,18,54,7,6,FIG);
+  return o;
+})());
+
+const NORDIC_CURL_SVG = svg((()=>{
+  let o='';
+  o+=gnd(54);
+  o+=rr(32,38,22,8,2,BENCH);
+  o+=head(12,16,5);
+  // torso leaning forward from kneeling
+  o+=tseg(12,22,34,36,9,8,FIG2);
+  o+=tseg(34,36,30,54,7,6,FIG);
+  o+=tseg(34,36,40,54,7,6,FIG);
+  o+=tseg(16,28,8,34,4.5,3.5,FIG);
+  o+=circ(8,36,3,FIG);
+  return o;
+})());
+
+// ═══════════════════════════════════════
+// CORE ICONS
+// ═══════════════════════════════════════
+
+const PLANK_SVG = svg((()=>{
+  let o='';
+  o+=gnd(54);
+  o+=head(50,24,5,VIOL);
+  o+=seg(10,34,50,28,12,FIG2);
+  // forearms down
+  o+=tseg(16,32,12,38,5,4,FIG);
+  o+=tseg(26,30,22,36,5,4,FIG);
+  o+=tseg(12,38,8,38,5,4.5,VIOL);
+  o+=tseg(22,36,18,36,5,4.5,VIOL);
+  o+=circ(8,40,3,FIG);
+  o+=circ(18,38,3,FIG);
+  return o;
+})());
+
+const CRUNCHES_SVG = svg((()=>{
+  let o='';
+  o+=gnd(54);
+  o+=head(20,20,5);
+  // curled up
+  o+=tseg(20,26,36,28,8,7,FIG2);
+  o+=tseg(36,28,44,38,7,6,FIG);
+  o+=tseg(44,38,40,48,6,5,FIG);
+  o+=tseg(44,38,48,48,6,5,FIG);
+  // hands behind head
+  o+=tseg(18,22,10,20,4,3,FIG);
+  o+=tseg(22,22,30,20,4,3,FIG);
+  return o;
+})());
+
+const CABLE_CRUNCH_SVG = svg((()=>{
+  let o='';
+  o+=gnd(54);
+  o+=rr(24,0,12,6,2,EQP);
+  o+=cable(30,6,30,16);
+  o+=rr(22,16,16,4,2,BAR);
+  o+=head(30,22,5);
+  o+=tseg(30,22,24,18,4.5,3.5,FIG);
+  o+=tseg(30,22,36,18,4.5,3.5,FIG);
+  o+=tseg(30,28,28,40,8,7,FIG2);
+  o+=tseg(28,40,24,54,6,5,FIG);
+  o+=tseg(28,40,32,54,6,5,FIG);
+  return o;
+})());
+
+const LEG_RAISES_SVG = svg((()=>{
+  let o='';
+  o+=gnd(54);
+  o+=head(12,30,5);
+  o+=seg(14,34,48,36,10,FIG2);
+  o+=tseg(44,34,40,16,7,6,FIG);
+  o+=tseg(40,16,44,10,6,5.5,FIG);
+  o+=tseg(44,10,48,16,6,5.5,FIG);
+  o+=tseg(12,34,6,38,4.5,3.5,FIG);
+  o+=tseg(12,34,18,38,4.5,3.5,FIG);
+  return o;
+})());
+
+const HANGING_LR_SVG = svg((()=>{
+  let o='';
+  o+=rr(0,4,60,6,2,EQP);
+  o+=rr(6,4,48,5,2,BAR);
+  o+=head(30,16,5);
+  o+=tseg(30,12,20,8,5,4,FIG);
+  o+=tseg(20,8,18,6,4,3.5,FIG);
+  o+=tseg(30,12,40,8,5,4,FIG);
+  o+=tseg(40,8,42,6,4,3.5,FIG);
+  o+=tseg(30,22,30,32,9,8,FIG2);
+  // legs raised
+  o+=tseg(30,32,24,20,7,6,FIG);
+  o+=tseg(30,32,36,20,7,6,FIG);
+  o+=tseg(24,20,22,14,6,5,FIG);
+  o+=tseg(36,20,38,14,6,5,FIG);
+  return o;
+})());
+
+const RUSSIAN_TWIST_SVG = svg((()=>{
+  let o='';
+  o+=gnd(54);
+  o+=head(30,20,5);
+  o+=tseg(30,26,30,40,9,8,FIG2); // torso
+  o+=tseg(30,40,22,48,7,6,FIG);
+  o+=tseg(22,48,18,54,6,5,FIG);
+  o+=tseg(30,40,38,48,7,6,FIG);
+  o+=tseg(38,48,42,54,6,5,FIG);
+  // arms rotating to side
+  o+=tseg(30,30,44,26,5,4,FIG);
+  o+=tseg(44,26,48,22,4.5,3.5,FIG);
+  o+=circ(48,20,4,PLAT2);
+  return o;
+})());
+
+const MTN_CLIMBERS_SVG = svg((()=>{
+  let o='';
+  o+=gnd(54);
+  o+=head(50,18,5);
+  o+=seg(14,38,50,24,11,FIG2);
+  o+=tseg(18,36,14,42,5,4,FIG);
+  o+=tseg(14,42,10,42,5,4.5,VIOL);
+  o+=tseg(28,34,26,40,5,4,FIG);
+  o+=tseg(26,40,22,40,5,4.5,VIOL);
+  // driven knee
+  o+=tseg(40,28,36,38,7,6,FIG);
+  o+=tseg(36,38,34,44,6,5,FIG);
+  // extended back leg
+  o+=tseg(40,28,44,40,7,6,FIG);
+  o+=tseg(44,40,46,50,6,5,FIG);
+  return o;
+})());
+
+const AB_WHEEL_SVG = svg((()=>{
+  let o='';
+  o+=gnd(54);
+  // wheel
+  o+=circ(30,42,10,PLAT2);
+  o+=circ(30,42,5,'#1a1a1a');
+  o+=circ(30,42,10,PLAT,'none',1.5);
+  o+=seg(16,42,44,42,2.5,BAR); // axle
+  o+=head(30,12,5);
+  o+=tseg(30,18,30,28,9,8,FIG2);
+  o+=tseg(30,24,20,34,5,4,FIG);
+  o+=tseg(20,34,16,42,4.5,3.5,FIG);
+  o+=tseg(30,24,40,34,5,4,FIG);
+  o+=tseg(40,34,44,42,4.5,3.5,FIG);
+  o+=tseg(30,28,24,42,7,6,FIG);
+  o+=tseg(30,28,36,42,7,6,FIG);
+  return o;
+})());
+
+const DEAD_BUG_SVG = svg((()=>{
+  let o='';
+  o+=gnd(54);
+  o+=head(30,28,5);
+  o+=seg(14,34,46,36,10,FIG2); // spine on floor
+  // one arm up
+  o+=tseg(22,32,16,24,5,4,FIG);
+  o+=tseg(16,24,10,18,4.5,3.5,FIG);
+  // opposite leg extended
+  o+=tseg(38,34,44,26,6,5,FIG);
+  o+=tseg(44,26,50,20,5.5,4.5,FIG);
+  // other arm & leg bent
+  o+=tseg(38,32,42,28,5,4,FIG2);
+  o+=tseg(22,34,18,38,5,4,FIG2);
+  return o;
+})());
+
+const PALLOF_PRESS_SVG = svg((()=>{
+  let o='';
+  o+=gnd(54);
+  o+=rr(50,4,8,50,2,EQP);
+  o+=cable(38,26,50,22);
+  o+=circ(38,26,3,LIME);
+  o+=head(22,10,5);
+  o+=torso(22,22,12,16,FIG);
+  o+=tseg(22,26,32,24,5,4,FIG);
+  o+=tseg(32,24,38,26,4.5,3.5,FIG);
+  o+=tseg(22,38,18,54,6,5,FIG);
+  o+=tseg(22,38,26,54,6,5,FIG);
+  return o;
+})());
+
+// ═══════════════════════════════════════
+// DATA MAP
+// ═══════════════════════════════════════
+const ICONS = {
+  'BENCH PRESS':BENCH_PRESS,
+  'INCLINE BENCH PRESS':INCLINE_BENCH,
+  'DECLINE BENCH PRESS':DECLINE_BENCH,
+  'DUMBBELL BENCH PRESS':DB_BENCH,
+  'INCLINE BARBELL PRESS':INCLINE_BAR_PRESS,
+  'CABLE FLYES':CABLE_FLYES,
+  'PEC DECK':PEC_DECK_SVG,
+  'DIPS':DIPS_SVG,
+  'PUSH UPS':PUSH_UPS_SVG,
+  'OVERHEAD PRESS':OHP_SVG,
+  'DUMBBELL SHOULDER PRESS':DB_SHOULDER,
+  'ARNOLD PRESS':ARNOLD_SVG,
+  'LATERAL RAISES':LAT_RAISES_SVG,
+  'FRONT RAISES':FRONT_RAISES_SVG,
+  'UPRIGHT ROW':UPRIGHT_ROW_SVG,
+  'TRICEP PUSHDOWN':TRICEP_PUSHDOWN_SVG,
+  'SKULL CRUSHER':SKULL_CRUSHER_SVG,
+  'CLOSE GRIP BENCH':CG_BENCH_SVG,
+  'OVERHEAD TRICEP EXT':OHD_TRICEP_SVG,
+  'DEADLIFT':DEADLIFT_SVG,
+  'PULL UPS':PULL_UPS_SVG,
+  'WEIGHTED PULL UPS':WEIGHTED_PU_SVG,
+  'CHIN UPS':CHIN_UPS_SVG,
+  'LAT PULLDOWN':LAT_PULLDOWN_SVG,
+  'SEATED CABLE ROW':SEATED_ROW_SVG,
+  'CABLE ROW':CABLE_ROW_SVG,
+  'BENT OVER ROW':BENT_ROW_SVG,
+  'DUMBBELL ROW':DB_ROW_SVG,
+  'T-BAR ROW':TBAR_ROW_SVG,
+  'FACE PULL':FACE_PULL_SVG,
+  'REVERSE FLYES':REV_FLYES_SVG,
+  'SHRUGS':SHRUGS_SVG,
+  'BICEP CURL':BICEP_CURL_SVG,
+  'HAMMER CURL':HAMMER_CURL_SVG,
+  'PREACHER CURL':PREACHER_SVG,
+  'CABLE CURL':CABLE_CURL_SVG,
+  'INCLINE DUMBBELL CURL':INCLINE_DB_CURL_SVG,
+  'BACK SQUAT':BACK_SQUAT_SVG,
+  'FRONT SQUAT':FRONT_SQUAT_SVG,
+  'LEG PRESS':LEG_PRESS_SVG,
+  'HACK SQUAT':HACK_SQUAT_SVG,
+  'LEG EXTENSION':LEG_EXT_SVG,
+  'ROMANIAN DEADLIFT':ROMANIAN_DL_SVG,
+  'LEG CURL':LEG_CURL_SVG,
+  'SUMO DEADLIFT':SUMO_DL_SVG,
+  'LUNGES':LUNGES_SVG,
+  'BULGARIAN SPLIT SQUAT':BULGARIAN_SVG,
+  'CALF RAISE':CALF_RAISE_SVG,
+  'SEATED CALF RAISE':SEATED_CALF_SVG,
+  'HIP THRUST':HIP_THRUST_SVG,
+  'GLUTE BRIDGE':GLUTE_BRIDGE_SVG,
+  'STEP UPS':STEP_UPS_SVG,
+  'NORDIC CURL':NORDIC_CURL_SVG,
+  'PLANK':PLANK_SVG,
+  'CRUNCHES':CRUNCHES_SVG,
+  'CABLE CRUNCH':CABLE_CRUNCH_SVG,
+  'LEG RAISES':LEG_RAISES_SVG,
+  'HANGING LEG RAISE':HANGING_LR_SVG,
+  'RUSSIAN TWIST':RUSSIAN_TWIST_SVG,
+  'MOUNTAIN CLIMBERS':MTN_CLIMBERS_SVG,
+  'AB WHEEL':AB_WHEEL_SVG,
+  'DEAD BUG':DEAD_BUG_SVG,
+  'PALLOF PRESS':PALLOF_PRESS_SVG,
+};
+const EXERCISES = {
+  push:['BENCH PRESS','INCLINE BENCH PRESS','DECLINE BENCH PRESS','DUMBBELL BENCH PRESS','INCLINE BARBELL PRESS','CABLE FLYES','PEC DECK','DIPS','PUSH UPS','OVERHEAD PRESS','DUMBBELL SHOULDER PRESS','ARNOLD PRESS','LATERAL RAISES','FRONT RAISES','UPRIGHT ROW','TRICEP PUSHDOWN','SKULL CRUSHER','CLOSE GRIP BENCH','OVERHEAD TRICEP EXT'],
+  pull:['DEADLIFT','PULL UPS','WEIGHTED PULL UPS','CHIN UPS','LAT PULLDOWN','SEATED CABLE ROW','CABLE ROW','BENT OVER ROW','DUMBBELL ROW','T-BAR ROW','FACE PULL','REVERSE FLYES','SHRUGS','BICEP CURL','HAMMER CURL','PREACHER CURL','CABLE CURL','INCLINE DUMBBELL CURL'],
+  legs:['BACK SQUAT','FRONT SQUAT','LEG PRESS','HACK SQUAT','LEG EXTENSION','ROMANIAN DEADLIFT','LEG CURL','SUMO DEADLIFT','LUNGES','BULGARIAN SPLIT SQUAT','CALF RAISE','SEATED CALF RAISE','HIP THRUST','GLUTE BRIDGE','STEP UPS','NORDIC CURL'],
+  core:['PLANK','CRUNCHES','CABLE CRUNCH','LEG RAISES','HANGING LEG RAISE','RUSSIAN TWIST','MOUNTAIN CLIMBERS','AB WHEEL','DEAD BUG','PALLOF PRESS'],
+};
+const CAT_LABELS={push:'PUSH',pull:'PULL',legs:'LEGS',core:'CORE'};
+const CAT_COLORS={push:'#c6f135',pull:'#00d4f0',legs:'#ff4d6a',core:'#a78bfa'};
+
+function render(){
+  const root=document.getElementById('root');
+  root.innerHTML=Object.entries(EXERCISES).map(([cat,exs])=>`
+    <div class="cat-section ${cat}">
+      <div class="cat-header">
+        <div class="cat-bar" style="background:${CAT_COLORS[cat]}"></div>
+        <div class="cat-title" style="color:${CAT_COLORS[cat]}">${CAT_LABELS[cat]}</div>
+        <span style="font-size:.7rem;color:#555;margin-left:auto;">${exs.length} exercises</span>
+      </div>
+      <div class="grid">
+        ${exs.map(name=>`
+          <div class="ex-row" onclick="this.classList.toggle('picked')">
+            <div class="ex-thumb">${ICONS[name]||''}</div>
+            <div class="ex-info">
+              <div class="ex-name">${name}</div>
+              <div class="ex-cat">${cat.toUpperCase()}</div>
+            </div>
+          </div>`).join('')}
+      </div>
+    </div>`).join('');
+}
+render();
+</script>
+</body>
+</html>

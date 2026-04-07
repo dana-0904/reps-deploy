@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reps Icons v2</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #0a0a0a; color: #e0e0e0; font-family: 'Barlow Condensed', sans-serif; padding: 24px; }
+  h1 { font-size: 28px; font-weight: 700; letter-spacing: 2px; color: #c6f135; margin-bottom: 24px; text-transform: uppercase; }
+  .category { margin-bottom: 36px; }
+  .cat-title { font-size: 13px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; padding: 6px 12px; border-radius: 4px; margin-bottom: 14px; display: inline-block; }
+  .cat-push .cat-title { background: #c6f13522; color: #c6f135; border: 1px solid #c6f13555; }
+  .cat-pull .cat-title { background: #00d4f022; color: #00d4f0; border: 1px solid #00d4f055; }
+  .cat-legs .cat-title { background: #ff4d6a22; color: #ff4d6a; border: 1px solid #ff4d6a55; }
+  .cat-core .cat-title { background: #a78bfa22; color: #a78bfa; border: 1px solid #a78bfa55; }
+  .grid { display: flex; flex-wrap: wrap; gap: 10px; }
+  .icon-item { display: flex; flex-direction: column; align-items: center; gap: 5px; cursor: pointer; padding: 8px 6px; border-radius: 8px; border: 2px solid transparent; transition: border-color 0.15s, background 0.15s; width: 82px; }
+  .icon-item:hover { background: #1a1a1a; }
+  .icon-item.picked { border-color: #c6f135; background: #c6f13510; }
+  .icon-name { font-size: 10px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; color: #aaa; text-align: center; line-height: 1.2; }
+  .icon-item.picked .icon-name { color: #c6f135; }
+</style>
+</head>
+<body>
+<h1>Reps Icons v2</h1>
+
+<script>
+let _n=0;
+function wrap(c){const id='g'+(++_n);return `<svg viewBox="0 0 60 60" width="54" height="54"><defs><radialGradient id="${id}" cx="50%" cy="40%" r="55%"><stop offset="0%" stop-color="#262626"/><stop offset="100%" stop-color="#0d0d0d"/></radialGradient></defs><rect width="60" height="60" rx="10" fill="url(#${id})"/>${c}</svg>`;}
+const L='#c6f135',EQ='#555',PA='#00d4f0',LA='#ff4d6a',CA='#a78bfa';
+function h(cx,cy,r=5){return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${L}"/>`;}
+function p(d,c=L,w=3.5){return `<path d="${d}" stroke="${c}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" fill="none"/>`;}
+function rc(x,y,w,hh,rx=2,c=EQ){return `<rect x="${x}" y="${y}" width="${w}" height="${hh}" rx="${rx}" fill="${c}"/>`;}
+function ln(x1,y1,x2,y2,c=EQ,w=2){return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c}" stroke-width="${w}" stroke-linecap="round"/>`;}
+function bb(y,c=EQ){return rc(8,y-1.5,44,3,1.5,c)+rc(6,y-5,4,10,1,c)+rc(50,y-5,4,10,1,c);}
+function db(cx,cy,a=0,c=EQ){const r=a*Math.PI/180,dx=Math.cos(r)*6,dy=Math.sin(r)*6;return rc(cx-dx-2,cy-dy-2,4,4,1,c)+ln(cx-dx,cy-dy,cx+dx,cy+dy,c,2)+rc(cx+dx-2,cy+dy-2,4,4,1,c);}
+function gnd(c=EQ){return rc(4,54,52,2,1,c);}
+function bench(x,y,w){return rc(x,y,w,5,2,EQ);}
+function cab(x1,y1,x2,y2,c=PA){return ln(x1,y1,x2,y2,c,1.5);}
+function uprightLegs(){return p('M30,28 L26,42 L24,53',L,4)+p('M30,28 L34,42 L36,53',L,4);}
+function wideLegs(){return p('M30,28 L22,42 L18,53',L,4)+p('M30,28 L38,42 L42,53',L,4);}
+
+// ===== PUSH (19) =====
+
+// 1. BENCH PRESS
+const BENCH_PRESS = wrap(
+  bench(6,34,48)+
+  h(50,28)+
+  p('M44,28 L16,28',L,9)+
+  p('M16,22 L16,18',L,3.5)+
+  p('M44,22 L44,18',L,3.5)+
+  bb(16)
+);
+
+// 2. INCLINE BENCH PRESS
+const INCLINE_BENCH_PRESS = wrap(
+  rc(8,38,36,4,2,EQ)+rc(8,38,4,14,2,EQ)+
+  h(46,26)+
+  p('M42,30 L20,36',L,9)+
+  p('M20,30 L20,22',L,3.5)+
+  p('M42,24 L42,18',L,3.5)+
+  bb(18)
+);
+
+// 3. DECLINE BENCH PRESS
+const DECLINE_BENCH_PRESS = wrap(
+  rc(16,30,36,4,2,EQ)+rc(48,30,4,14,2,EQ)+
+  h(16,28)+
+  p('M20,30 L44,36',L,9)+
+  p('M20,24 L20,18',L,3.5)+
+  p('M44,30 L44,22',L,3.5)+
+  bb(18)
+);
+
+// 4. DUMBBELL BENCH PRESS
+const DUMBBELL_BENCH_PRESS = wrap(
+  bench(6,34,48)+
+  h(50,28)+
+  p('M44,28 L16,28',L,9)+
+  p('M16,22 L16,16',L,3.5)+
+  p('M44,22 L44,16',L,3.5)+
+  db(16,14,0)+db(44,14,0)
+);
+
+// 5. INCLINE BARBELL PRESS
+const INCLINE_BARBELL_PRESS = wrap(
+  rc(8,40,36,4,2,EQ)+rc(8,40,4,12,2,EQ)+
+  h(46,28)+
+  p('M42,32 L18,38',L,9)+
+  p('M18,30 L14,22',L,3.5)+
+  p('M42,26 L40,18',L,3.5)+
+  bb(18)
+);
+
+// 6. CABLE FLYES
+const CABLE_FLYES = wrap(
+  rc(2,8,4,46,1,EQ)+rc(54,8,4,46,1,EQ)+
+  cab(6,18,30,32)+cab(54,18,30,32)+
+  h(30,10)+
+  p('M30,15 L30,28',L,9)+
+  p('M30,22 L10,32',L,3.5)+
+  p('M30,22 L50,32',L,3.5)+
+  uprightLegs()
+);
+
+// 7. PEC DECK
+const PEC_DECK = wrap(
+  rc(2,8,4,50,1,EQ)+rc(54,8,4,50,1,EQ)+
+  rc(2,24,8,8,2,EQ)+rc(50,24,8,8,2,EQ)+
+  h(30,10)+
+  p('M30,15 L30,28',L,9)+
+  p('M30,22 L14,28',L,3.5)+
+  p('M30,22 L46,28',L,3.5)+
+  uprightLegs()
+);
+
+// 8. DIPS
+const DIPS = wrap(
+  rc(8,22,4,32,2,EQ)+rc(48,22,4,32,2,EQ)+
+  ln(8,22,52,22,EQ,3)+
+  h(30,10)+
+  p('M30,15 L30,30',L,9)+
+  p('M30,22 L12,26',L,3.5)+
+  p('M30,22 L48,26',L,3.5)+
+  p('M30,30 L26,42',L,4)+p('M30,30 L34,42',L,4)
+);
+
+// 9. PUSH UPS
+const PUSH_UPS = wrap(
+  gnd()+
+  h(52,30)+
+  p('M48,30 L16,30',L,9)+
+  p('M16,30 L10,38',L,4)+p('M22,30 L22,40',L,4)+
+  p('M48,30 L52,38',L,4)+
+  gnd()
+);
+
+// 10. OVERHEAD PRESS
+const OVERHEAD_PRESS = wrap(
+  h(30,10)+
+  p('M30,15 L30,28',L,9)+
+  p('M30,20 L16,14',L,3.5)+
+  p('M30,20 L44,14',L,3.5)+
+  bb(10)+
+  uprightLegs()
+);
+
+// 11. DUMBBELL SHOULDER PRESS
+const DUMBBELL_SHOULDER_PRESS = wrap(
+  h(30,10)+
+  p('M30,15 L30,28',L,9)+
+  p('M30,20 L16,16',L,3.5)+
+  p('M30,20 L44,16',L,3.5)+
+  db(13,14,0)+db(47,14,0)+
+  uprightLegs()
+);
+
+// 12. ARNOLD PRESS
+const ARNOLD_PRESS = wrap(
+  h(30,10)+
+  p('M30,15 L30,28',L,9)+
+  p('M30,20 L16,22',L,3.5)+p('M16,22 L14,14',L,3.5)+
+  p('M30,20 L44,22',L,3.5)+p('M44,22 L46,14',L,3.5)+
+  db(14,14,0)+db(46,14,0)+
+  uprightLegs()
+);
+
+// 13. LATERAL RAISES
+const LATERAL_RAISES = wrap(
+  h(30,10)+
+  p('M30,15 L30,28',L,9)+
+  p('M30,22 L14,18',L,3.5)+
+  p('M30,22 L46,18',L,3.5)+
+  db(11,16,0)+db(49,16,0)+
+  uprightLegs()
+);
+
+// 14. FRONT RAISES
+const FRONT_RAISES = wrap(
+  h(30,10)+
+  p('M30,15 L30,28',L,9)+
+  p('M30,22 L20,14',L,3.5)+p('M20,14 L24,8',L,3.5)+
+  p('M30,22 L38,20',L,3.5)+
+  db(22,8,90)+db(40,20,90)+
+  uprightLegs()
+);
+
+// 15. UPRIGHT ROW
+const UPRIGHT_ROW = wrap(
+  h(30,10)+
+  p('M30,15 L30,28',L,9)+
+  p('M30,18 L22,14',L,3.5)+p('M22,14 L26,22',L,3.5)+
+  p('M30,18 L38,14',L,3.5)+p('M38,14 L34,22',L,3.5)+
+  bb(26)+
+  uprightLegs()
+);
+
+// 16. TRICEP PUSHDOWN
+const TRICEP_PUSHDOWN = wrap(
+  rc(27,2,6,20,2,EQ)+
+  cab(30,22,20,34,PA)+cab(30,22,40,22,PA)+
+  h(30,10)+
+  p('M30,15 L30,28',L,9)+
+  p('M30,22 L20,20',L,3.5)+p('M20,20 L20,34',L,3.5)+
+  p('M30,22 L40,20',L,3.5)+p('M40,20 L40,34',L,3.5)+
+  uprightLegs()
+);
+
+// 17. SKULL CRUSHER
+const SKULL_CRUSHER = wrap(
+  bench(6,38,48)+
+  h(14,30)+
+  p('M18,30 L46,30',L,9)+
+  p('M18,24 L14,16',L,3.5)+p('M14,16 L22,16',L,3.5)+
+  p('M46,24 L46,16',L,3.5)+
+  bb(14)
+);
+
+// 18. CLOSE GRIP BENCH
+const CLOSE_GRIP_BENCH = wrap(
+  bench(6,38,48)+
+  h(50,28)+
+  p('M44,28 L16,28',L,9)+
+  p('M16,22 L16,18',L,3.5)+
+  p('M44,22 L44,18',L,3.5)+
+  bb(16)+
+  rc(24,14,12,3,1,PA)
+);
+
+// 19. OVERHEAD TRICEP EXT
+const OVERHEAD_TRICEP_EXT = wrap(
+  h(30,8)+
+  p('M30,13 L30,26',L,9)+
+  p('M30,16 L24,10',L,3.5)+p('M24,10 L22,18',L,3.5)+
+  p('M30,16 L36,10',L,3.5)+p('M36,10 L38,18',L,3.5)+
+  db(30,8,0)+
+  uprightLegs()
+);
+
+// ===== PULL (18) =====
+
+// 20. DEADLIFT
+const DEADLIFT = wrap(
+  h(36,12)+
+  p('M32,16 L22,28',L,9)+
+  p('M26,22 L18,18',L,3.5)+p('M18,18 L16,28',L,3.5)+
+  p('M26,22 L34,18',L,3.5)+p('M34,18 L36,28',L,3.5)+
+  p('M22,28 L18,40 L16,52',L,4)+
+  p('M22,28 L28,40 L30,52',L,4)+
+  bb(30,PA)
+);
+
+// 21. PULL UPS
+const PULL_UPS = wrap(
+  rc(0,4,60,5,2,EQ)+
+  h(30,16)+
+  p('M30,21 L30,30',L,9)+
+  p('M30,23 L18,10',L,3.5)+p('M30,23 L42,10',L,3.5)+
+  p('M30,30 L26,42',L,4)+p('M30,30 L34,42',L,4)
+);
+
+// 22. WEIGHTED PULL UPS
+const WEIGHTED_PULL_UPS = wrap(
+  rc(0,4,60,5,2,EQ)+
+  h(30,16)+
+  p('M30,21 L30,30',L,9)+
+  p('M30,23 L18,10',L,3.5)+p('M30,23 L42,10',L,3.5)+
+  p('M30,30 L26,42',L,4)+p('M30,30 L34,42',L,4)+
+  db(30,48,0)
+);
+
+// 23. CHIN UPS
+const CHIN_UPS = wrap(
+  rc(0,4,60,5,2,EQ)+
+  h(30,16)+
+  p('M30,21 L30,30',L,9)+
+  p('M30,23 L20,10',L,3.5)+p('M30,23 L40,10',L,3.5)+
+  p('M30,30 L24,42 L22,52',L,4)+
+  p('M30,30 L36,42 L38,52',L,4)+
+  rc(18,8,24,3,1,PA)
+);
+
+// 24. LAT PULLDOWN
+const LAT_PULLDOWN = wrap(
+  rc(27,2,6,16,2,EQ)+
+  cab(30,18,18,24,PA)+cab(30,18,42,24,PA)+
+  h(30,10)+
+  p('M30,15 L30,28',L,9)+
+  p('M30,20 L18,26',L,3.5)+
+  p('M30,20 L42,26',L,3.5)+
+  p('M30,28 L28,42 L28,52',L,4)+
+  p('M30,28 L32,42 L32,52',L,4)
+);
+
+// 25. SEATED CABLE ROW
+const SEATED_CABLE_ROW = wrap(
+  rc(2,28,4,28,1,EQ)+
+  cab(6,38,20,36,PA)+
+  h(44,18)+
+  p('M40,22 L28,28',L,9)+
+  p('M28,28 L18,28',L,3.5)+p('M18,28 L22,36',L,3.5)+
+  p('M28,28 L42,32',L,4)+p('M42,32 L46,52',L,4)+
+  rc(26,44,20,5,2,EQ)
+);
+
+// 26. CABLE ROW
+const CABLE_ROW = wrap(
+  rc(2,28,4,28,1,EQ)+
+  cab(6,40,22,38,PA)+
+  h(44,22)+
+  p('M40,26 L26,32',L,9)+
+  p('M26,32 L14,30',L,3.5)+p('M14,30 L16,40',L,3.5)+
+  p('M26,32 L38,40',L,4)+p('M38,40 L40,52',L,4)+
+  gnd()
+);
+
+// 27. BENT OVER ROW
+const BENT_OVER_ROW = wrap(
+  h(40,14)+
+  p('M36,18 L22,28',L,9)+
+  p('M26,22 L16,18',L,3.5)+p('M16,18 L14,28',L,3.5)+
+  p('M26,22 L36,18',L,3.5)+
+  p('M22,28 L18,42 L16,52',L,4)+
+  p('M22,28 L28,40 L30,52',L,4)+
+  bb(26,PA)
+);
+
+// 28. DUMBBELL ROW
+const DUMBBELL_ROW = wrap(
+  bench(6,38,26)+
+  h(40,16)+
+  p('M36,20 L20,28',L,9)+
+  p('M20,28 L14,22',L,3.5)+p('M14,22 L12,32',L,3.5)+
+  p('M20,28 L24,42',L,4)+p('M24,42 L22,52',L,4)+
+  p('M36,20 L46,24',L,3.5)+p('M46,24 L46,32',L,3.5)+
+  db(46,34,90,PA)
+);
+
+// 29. T-BAR ROW
+const T_BAR_ROW = wrap(
+  h(42,14)+
+  p('M38,18 L24,28',L,9)+
+  p('M24,22 L14,18',L,3.5)+p('M14,18 L12,28',L,3.5)+
+  p('M24,22 L34,18',L,3.5)+
+  p('M24,28 L20,42 L18,52',L,4)+
+  p('M24,28 L30,42 L32,52',L,4)+
+  rc(28,26,4,24,2,EQ)+rc(20,44,16,3,1,PA)
+);
+
+// 30. FACE PULL
+const FACE_PULL = wrap(
+  rc(54,8,4,46,1,EQ)+
+  cab(54,22,44,26,PA)+cab(54,22,44,18,PA)+
+  h(22,14)+
+  p('M26,18 L38,24',L,9)+
+  p('M38,24 L46,20',L,3.5)+p('M46,20 L48,26',L,3.5)+
+  p('M38,24 L44,30',L,3.5)+p('M44,30 L46,24',L,3.5)+
+  p('M26,18 L20,30 L18,42',L,4)+
+  p('M26,18 L30,30 L32,42',L,4)+
+  gnd()
+);
+
+// 31. REVERSE FLYES
+const REVERSE_FLYES = wrap(
+  h(38,14)+
+  p('M34,18 L20,26',L,9)+
+  p('M20,20 L10,16',L,3.5)+
+  p('M20,20 L30,14',L,3.5)+
+  p('M20,26 L16,38 L14,52',L,4)+
+  p('M20,26 L26,38 L28,52',L,4)+
+  db(8,14,0)+db(32,12,0)
+);
+
+// 32. SHRUGS
+const SHRUGS = wrap(
+  h(30,10)+
+  p('M30,15 L30,28',L,9)+
+  p('M30,18 L20,22',L,3.5)+
+  p('M30,18 L40,22',L,3.5)+
+  bb(24,PA)+
+  uprightLegs()
+);
+
+// 33. BICEP CURL
+const BICEP_CURL = wrap(
+  h(30,10)+
+  p('M30,15 L30,28',L,9)+
+  p('M30,22 L20,20',L,3.5)+p('M20,20 L16,12',L,3.5)+
+  p('M30,22 L38,26',L,3.5)+
+  db(16,10,0)+
+  uprightLegs()
+);
+
+// 34. HAMMER CURL
+const HAMMER_CURL = wrap(
+  h(30,10)+
+  p('M30,15 L30,28',L,9)+
+  p('M30,22 L20,20',L,3.5)+p('M20,20 L18,12',L,3.5)+
+  p('M30,22 L38,24',L,3.5)+p('M38,24 L40,14',L,3.5)+
+  db(18,10,90)+db(40,12,90)+
+  uprightLegs()
+);
+
+// 35. PREACHER CURL
+const PREACHER_CURL = wrap(
+  rc(16,30,28,20,3,EQ)+
+  h(36,14)+
+  p('M32,18 L24,28',L,9)+
+  p('M24,22 L16,20',L,3.5)+p('M16,20 L14,32',L,3.5)+
+  p('M24,22 L34,18',L,3.5)+
+  p('M32,18 L40,28',L,4)+p('M40,28 L42,48',L,4)+
+  bb(32,PA)
+);
+
+// 36. CABLE CURL
+const CABLE_CURL = wrap(
+  rc(2,8,4,46,1,EQ)+
+  cab(6,44,20,32,PA)+
+  h(30,10)+
+  p('M30,15 L30,28',L,9)+
+  p('M30,22 L20,20',L,3.5)+p('M20,20 L18,32',L,3.5)+
+  p('M30,22 L40,26',L,3.5)+
+  uprightLegs()
+);
+
+// 37. INCLINE DUMBBELL CURL
+const INCLINE_DUMBBELL_CURL = wrap(
+  rc(8,30,36,5,2,EQ)+rc(8,30,4,20,2,EQ)+
+  h(48,24)+
+  p('M44,28 L24,36',L,9)+
+  p('M24,32 L14,26',L,3.5)+p('M14,26 L12,36',L,3.5)+
+  p('M44,28 L52,30',L,3.5)+p('M52,30 L52,40',L,3.5)+
+  db(14,24,0)+db(52,42,90)
+);
+
+// ===== LEGS (16) =====
+
+// 38. BACK SQUAT
+const BACK_SQUAT = wrap(
+  h(30,10)+
+  p('M30,15 L30,28',L,9)+
+  p('M30,20 L18,22',L,3.5)+p('M30,20 L42,22',L,3.5)+
+  bb(20,LA)+
+  p('M30,28 L20,42 L16,52',L,4)+
+  p('M30,28 L40,42 L44,52',L,4)
+);
+
+// 39. FRONT SQUAT
+const FRONT_SQUAT = wrap(
+  h(30,10)+
+  p('M30,15 L30,28',L,9)+
+  p('M30,18 L18,16',L,3.5)+p('M30,18 L42,16',L,3.5)+
+  bb(14,LA)+
+  p('M30,28 L20,42 L16,52',L,4)+
+  p('M30,28 L40,42 L44,52',L,4)
+);
+
+// 40. LEG PRESS
+const LEG_PRESS = wrap(
+  rc(2,18,6,38,2,EQ)+rc(2,38,52,8,2,EQ)+
+  h(18,28)+
+  p('M14,32 L10,38',L,9)+
+  p('M10,38 L32,32',L,4)+p('M32,32 L42,22',L,4)+
+  p('M14,28 L12,20',L,3.5)+p('M12,20 L20,18',L,3.5)+
+  rc(38,16,16,6,2,LA)
+);
+
+// 41. HACK SQUAT
+const HACK_SQUAT = wrap(
+  rc(2,10,4,46,2,EQ)+rc(54,10,4,46,2,EQ)+
+  h(30,14)+
+  p('M30,19 L30,32',L,9)+
+  p('M30,24 L18,22',L,3.5)+p('M30,24 L42,22',L,3.5)+
+  p('M30,32 L22,44 L20,54',L,4)+
+  p('M30,32 L38,44 L40,54',L,4)+
+  rc(8,44,14,4,1,LA)+rc(38,44,14,4,1,LA)
+);
+
+// 42. LEG EXTENSION
+const LEG_EXTENSION = wrap(
+  rc(14,28,32,5,2,EQ)+rc(14,28,5,24,2,EQ)+
+  h(34,14)+
+  p('M30,18 L20,26',L,9)+
+  p('M20,26 L14,22',L,3.5)+p('M14,22 L12,30',L,3.5)+
+  p('M30,18 L36,28',L,4)+p('M36,28 L46,28',L,4)+
+  p('M20,26 L22,40 L22,52',L,4)+
+  rc(42,26,10,4,2,LA)
+);
+
+// 43. ROMANIAN DEADLIFT
+const ROMANIAN_DEADLIFT = wrap(
+  h(40,12)+
+  p('M36,16 L24,26',L,9)+
+  p('M26,20 L16,16',L,3.5)+p('M16,16 L14,26',L,3.5)+
+  p('M26,20 L36,20',L,3.5)+
+  p('M24,26 L22,38 L22,52',L,4)+
+  p('M24,26 L28,36 L30,52',L,4)+
+  bb(28,LA)
+);
+
+// 44. LEG CURL
+const LEG_CURL = wrap(
+  bench(4,34,40)+
+  h(52,28)+
+  p('M48,28 L18,28',L,9)+
+  p('M18,28 L14,36',L,4)+p('M18,28 L16,20',L,3.5)+
+  p('M48,28 L52,36',L,4)+
+  rc(10,34,10,4,2,LA)
+);
+
+// 45. SUMO DEADLIFT
+const SUMO_DEADLIFT = wrap(
+  h(30,10)+
+  p('M30,15 L30,26',L,9)+
+  p('M30,18 L20,14',L,3.5)+p('M30,18 L40,14',L,3.5)+
+  p('M30,26 L18,38 L14,52',L,4)+
+  p('M30,26 L42,38 L46,52',L,4)+
+  bb(36,LA)
+);
+
+// 46. LUNGES
+const LUNGES = wrap(
+  h(30,10)+
+  p('M30,15 L30,28',L,9)+
+  p('M30,20 L22,18',L,3.5)+p('M30,20 L38,18',L,3.5)+
+  p('M30,28 L24,42 L20,54',L,4)+
+  p('M30,28 L38,36 L44,36 L44,52',L,4)+
+  gnd(LA)
+);
+
+// 47. BULGARIAN SPLIT SQUAT
+const BULGARIAN_SPLIT_SQUAT = wrap(
+  bench(30,36,24)+
+  h(28,10)+
+  p('M28,15 L28,28',L,9)+
+  p('M28,20 L20,18',L,3.5)+p('M28,20 L36,18',L,3.5)+
+  p('M28,28 L22,42 L18,54',L,4)+
+  p('M28,28 L36,34 L40,34 L42,36',L,4)
+);
+
+// 48. CALF RAISE
+const CALF_RAISE = wrap(
+  gnd(LA)+
+  h(30,10)+
+  p('M30,15 L30,28',L,9)+
+  p('M30,22 L22,20',L,3.5)+p('M30,22 L38,20',L,3.5)+
+  p('M30,28 L26,40 L24,48 L26,52',L,4)+
+  p('M30,28 L34,40 L36,48 L34,52',L,4)
+);
+
+// 49. SEATED CALF RAISE
+const SEATED_CALF_RAISE = wrap(
+  bench(8,30,44)+
+  h(30,14)+
+  p('M30,19 L30,30',L,9)+
+  p('M30,22 L22,20',L,3.5)+p('M30,22 L38,20',L,3.5)+
+  p('M30,30 L24,42 L24,52',L,4)+
+  p('M30,30 L36,42 L36,52',L,4)+
+  rc(16,26,28,4,1,LA)
+);
+
+// 50. HIP THRUST
+const HIP_THRUST = wrap(
+  bench(2,28,20)+
+  gnd(LA)+
+  h(16,24)+
+  p('M20,24 L40,20',L,9)+
+  p('M40,20 L48,30',L,4)+p('M48,30 L52,42',L,4)+
+  p('M40,20 L44,14',L,3.5)+p('M44,14 L46,22',L,3.5)+
+  bb(18,LA)
+);
+
+// 51. GLUTE BRIDGE
+const GLUTE_BRIDGE = wrap(
+  gnd(LA)+
+  h(14,28)+
+  p('M18,28 L38,22',L,9)+
+  p('M38,22 L46,32',L,4)+p('M46,32 L50,44',L,4)+
+  p('M18,28 L10,34',L,4)+p('M10,34 L8,44',L,4)+
+  p('M18,28 L18,20',L,3.5)+p('M18,20 L24,18',L,3.5)
+);
+
+// 52. STEP UPS
+const STEP_UPS = wrap(
+  rc(22,38,34,16,2,LA)+
+  h(26,14)+
+  p('M26,19 L26,32',L,9)+
+  p('M26,24 L18,22',L,3.5)+p('M26,24 L34,22',L,3.5)+
+  p('M26,32 L20,42 L20,52',L,4)+
+  p('M26,32 L34,36 L36,38',L,4)
+);
+
+// 53. NORDIC CURL
+const NORDIC_CURL = wrap(
+  gnd(LA)+
+  rc(22,46,16,6,2,EQ)+
+  h(44,14)+
+  p('M40,18 L28,24',L,9)+
+  p('M28,18 L20,14',L,3.5)+p('M20,14 L18,22',L,3.5)+
+  p('M28,24 L26,38 L28,46',L,4)+
+  p('M28,24 L32,38 L32,46',L,4)
+);
+
+// ===== CORE (10) =====
+
+// 54. PLANK
+const PLANK = wrap(
+  gnd(CA)+
+  h(52,30)+
+  p('M48,30 L12,30',L,9)+
+  p('M12,30 L8,38',L,4)+p('M20,30 L20,40',L,4)+
+  p('M48,30 L52,38',L,4)
+);
+
+// 55. CRUNCHES
+const CRUNCHES = wrap(
+  gnd(CA)+
+  h(44,28)+
+  p('M40,30 L22,32',L,9)+
+  p('M22,30 L18,20',L,3.5)+p('M18,20 L26,18',L,3.5)+
+  p('M22,32 L16,42 L14,52',L,4)+
+  p('M22,32 L28,42 L36,46',L,4)
+);
+
+// 56. CABLE CRUNCH
+const CABLE_CRUNCH = wrap(
+  rc(27,2,6,16,2,EQ)+
+  cab(30,18,28,24,CA)+
+  h(30,26)+
+  p('M30,31 L24,40',L,9)+
+  p('M24,36 L16,32',L,3.5)+p('M16,32 L14,42',L,3.5)+
+  p('M24,40 L20,50',L,4)+
+  p('M24,40 L30,48 L36,50',L,4)
+);
+
+// 57. LEG RAISES
+const LEG_RAISES = wrap(
+  gnd(CA)+
+  h(16,30)+
+  p('M20,30 L44,30',L,9)+
+  p('M44,24 L44,16',L,3.5)+p('M44,24 L36,20',L,3.5)+
+  p('M20,30 L14,42',L,4)+
+  p('M44,30 L38,18',L,4)+p('M38,18 L26,14',L,4)
+);
+
+// 58. HANGING LEG RAISE
+const HANGING_LEG_RAISE = wrap(
+  rc(0,4,60,5,2,EQ)+
+  h(30,16)+
+  p('M30,21 L30,32',L,9)+
+  p('M30,24 L20,10',L,3.5)+p('M30,24 L40,10',L,3.5)+
+  p('M30,32 L22,44 L26,54',L,4)+
+  p('M30,32 L38,44 L34,54',L,4)
+);
+
+// 59. RUSSIAN TWIST
+const RUSSIAN_TWIST = wrap(
+  gnd(CA)+
+  h(30,18)+
+  p('M30,22 L30,36',L,9)+
+  p('M30,28 L14,24',L,3.5)+p('M14,24 L16,32',L,3.5)+
+  p('M30,36 L22,44 L26,52',L,4)+
+  p('M30,36 L38,44 L34,52',L,4)+
+  db(12,28,0)
+);
+
+// 60. MOUNTAIN CLIMBERS
+const MOUNTAIN_CLIMBERS = wrap(
+  gnd(CA)+
+  h(52,26)+
+  p('M48,26 L16,28',L,9)+
+  p('M16,28 L8,36',L,4)+p('M22,28 L24,22',L,4)+
+  p('M48,26 L50,34',L,4)+
+  p('M16,28 L20,38 L18,46',L,4)
+);
+
+// 61. AB WHEEL
+const AB_WHEEL = wrap(
+  gnd(CA)+
+  h(30,18)+
+  p('M30,23 L30,36',L,9)+
+  p('M30,30 L14,42',L,3.5)+p('M30,30 L46,42',L,3.5)+
+  rc(24,40,12,6,3,EQ)+
+  ln(12,46,48,46,CA,2)
+);
+
+// 62. DEAD BUG
+const DEAD_BUG = wrap(
+  gnd(CA)+
+  h(16,30)+
+  p('M20,30 L42,28',L,9)+
+  p('M42,22 L50,14',L,3.5)+p('M50,14 L54,22',L,3.5)+
+  p('M20,28 L12,20',L,3.5)+p('M12,20 L8,28',L,3.5)+
+  p('M42,28 L50,40',L,4)+p('M50,40 L52,52',L,4)+
+  p('M20,30 L14,44',L,4)+p('M14,44 L10,52',L,4)
+);
+
+// 63. PALLOF PRESS
+const PALLOF_PRESS = wrap(
+  rc(54,8,4,46,1,EQ)+
+  cab(54,30,44,30,CA)+
+  h(28,10)+
+  p('M28,15 L28,28',L,9)+
+  p('M28,20 L38,28',L,3.5)+p('M38,28 L44,32',L,3.5)+
+  p('M28,20 L18,22',L,3.5)+
+  uprightLegs()
+);
+
+// ===== RENDER =====
+const EXERCISES = [
+  // PUSH
+  {cat:'push', name:'BENCH PRESS', svg:BENCH_PRESS},
+  {cat:'push', name:'INCLINE BENCH PRESS', svg:INCLINE_BENCH_PRESS},
+  {cat:'push', name:'DECLINE BENCH PRESS', svg:DECLINE_BENCH_PRESS},
+  {cat:'push', name:'DUMBBELL BENCH PRESS', svg:DUMBBELL_BENCH_PRESS},
+  {cat:'push', name:'INCLINE BARBELL PRESS', svg:INCLINE_BARBELL_PRESS},
+  {cat:'push', name:'CABLE FLYES', svg:CABLE_FLYES},
+  {cat:'push', name:'PEC DECK', svg:PEC_DECK},
+  {cat:'push', name:'DIPS', svg:DIPS},
+  {cat:'push', name:'PUSH UPS', svg:PUSH_UPS},
+  {cat:'push', name:'OVERHEAD PRESS', svg:OVERHEAD_PRESS},
+  {cat:'push', name:'DUMBBELL SHOULDER PRESS', svg:DUMBBELL_SHOULDER_PRESS},
+  {cat:'push', name:'ARNOLD PRESS', svg:ARNOLD_PRESS},
+  {cat:'push', name:'LATERAL RAISES', svg:LATERAL_RAISES},
+  {cat:'push', name:'FRONT RAISES', svg:FRONT_RAISES},
+  {cat:'push', name:'UPRIGHT ROW', svg:UPRIGHT_ROW},
+  {cat:'push', name:'TRICEP PUSHDOWN', svg:TRICEP_PUSHDOWN},
+  {cat:'push', name:'SKULL CRUSHER', svg:SKULL_CRUSHER},
+  {cat:'push', name:'CLOSE GRIP BENCH', svg:CLOSE_GRIP_BENCH},
+  {cat:'push', name:'OVERHEAD TRICEP EXT', svg:OVERHEAD_TRICEP_EXT},
+  // PULL
+  {cat:'pull', name:'DEADLIFT', svg:DEADLIFT},
+  {cat:'pull', name:'PULL UPS', svg:PULL_UPS},
+  {cat:'pull', name:'WEIGHTED PULL UPS', svg:WEIGHTED_PULL_UPS},
+  {cat:'pull', name:'CHIN UPS', svg:CHIN_UPS},
+  {cat:'pull', name:'LAT PULLDOWN', svg:LAT_PULLDOWN},
+  {cat:'pull', name:'SEATED CABLE ROW', svg:SEATED_CABLE_ROW},
+  {cat:'pull', name:'CABLE ROW', svg:CABLE_ROW},
+  {cat:'pull', name:'BENT OVER ROW', svg:BENT_OVER_ROW},
+  {cat:'pull', name:'DUMBBELL ROW', svg:DUMBBELL_ROW},
+  {cat:'pull', name:'T-BAR ROW', svg:T_BAR_ROW},
+  {cat:'pull', name:'FACE PULL', svg:FACE_PULL},
+  {cat:'pull', name:'REVERSE FLYES', svg:REVERSE_FLYES},
+  {cat:'pull', name:'SHRUGS', svg:SHRUGS},
+  {cat:'pull', name:'BICEP CURL', svg:BICEP_CURL},
+  {cat:'pull', name:'HAMMER CURL', svg:HAMMER_CURL},
+  {cat:'pull', name:'PREACHER CURL', svg:PREACHER_CURL},
+  {cat:'pull', name:'CABLE CURL', svg:CABLE_CURL},
+  {cat:'pull', name:'INCLINE DUMBBELL CURL', svg:INCLINE_DUMBBELL_CURL},
+  // LEGS
+  {cat:'legs', name:'BACK SQUAT', svg:BACK_SQUAT},
+  {cat:'legs', name:'FRONT SQUAT', svg:FRONT_SQUAT},
+  {cat:'legs', name:'LEG PRESS', svg:LEG_PRESS},
+  {cat:'legs', name:'HACK SQUAT', svg:HACK_SQUAT},
+  {cat:'legs', name:'LEG EXTENSION', svg:LEG_EXTENSION},
+  {cat:'legs', name:'ROMANIAN DEADLIFT', svg:ROMANIAN_DEADLIFT},
+  {cat:'legs', name:'LEG CURL', svg:LEG_CURL},
+  {cat:'legs', name:'SUMO DEADLIFT', svg:SUMO_DEADLIFT},
+  {cat:'legs', name:'LUNGES', svg:LUNGES},
+  {cat:'legs', name:'BULGARIAN SPLIT SQUAT', svg:BULGARIAN_SPLIT_SQUAT},
+  {cat:'legs', name:'CALF RAISE', svg:CALF_RAISE},
+  {cat:'legs', name:'SEATED CALF RAISE', svg:SEATED_CALF_RAISE},
+  {cat:'legs', name:'HIP THRUST', svg:HIP_THRUST},
+  {cat:'legs', name:'GLUTE BRIDGE', svg:GLUTE_BRIDGE},
+  {cat:'legs', name:'STEP UPS', svg:STEP_UPS},
+  {cat:'legs', name:'NORDIC CURL', svg:NORDIC_CURL},
+  // CORE
+  {cat:'core', name:'PLANK', svg:PLANK},
+  {cat:'core', name:'CRUNCHES', svg:CRUNCHES},
+  {cat:'core', name:'CABLE CRUNCH', svg:CABLE_CRUNCH},
+  {cat:'core', name:'LEG RAISES', svg:LEG_RAISES},
+  {cat:'core', name:'HANGING LEG RAISE', svg:HANGING_LEG_RAISE},
+  {cat:'core', name:'RUSSIAN TWIST', svg:RUSSIAN_TWIST},
+  {cat:'core', name:'MOUNTAIN CLIMBERS', svg:MOUNTAIN_CLIMBERS},
+  {cat:'core', name:'AB WHEEL', svg:AB_WHEEL},
+  {cat:'core', name:'DEAD BUG', svg:DEAD_BUG},
+  {cat:'core', name:'PALLOF PRESS', svg:PALLOF_PRESS},
+];
+
+const categories = [
+  {key:'push', label:'PUSH — 19 exercises'},
+  {key:'pull', label:'PULL — 18 exercises'},
+  {key:'legs', label:'LEGS — 16 exercises'},
+  {key:'core', label:'CORE — 10 exercises'},
+];
+
+let html = '';
+for (const cat of categories) {
+  const items = EXERCISES.filter(e => e.cat === cat.key);
+  html += `<div class="category cat-${cat.key}">`;
+  html += `<div class="cat-title">${cat.label}</div>`;
+  html += `<div class="grid">`;
+  for (const ex of items) {
+    html += `<div class="icon-item" onclick="this.classList.toggle('picked')">`;
+    html += `<div class="icon-svg">${ex.svg}</div>`;
+    html += `<div class="icon-name">${ex.name}</div>`;
+    html += `</div>`;
+  }
+  html += `</div></div>`;
+}
+document.write(html);
+</script>
+
+</body>
+</html>
