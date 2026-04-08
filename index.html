@@ -2887,6 +2887,12 @@ function migrateStorage(){
     ['reps_nextup','reps_wk_ex_upper-body','reps_wk_ex_leg-day','reps_wk_ex_upper-body-b','reps_seeded'].forEach(k=>localStorage.removeItem(k));
     localStorage.setItem('reps_data_v','2');
   }
+  // v3: update weekly session goal default from 2 → 4
+  if(localStorage.getItem('reps_data_v3') !== '1'){
+    const p = getProfile();
+    if(!p.freqGoal || p.freqGoal <= 2){ p.freqGoal = 4; saveProfile(p); }
+    localStorage.setItem('reps_data_v3','1');
+  }
 }
 function init(){
   migrateStorage();
