@@ -2470,17 +2470,6 @@ button{cursor:pointer;border:none;background:none;color:inherit;}
           <div class="cal-grid" id="cal-grid"></div>
         </div>
 
-        <!-- Streak -->
-        <div class="streak-card">
-          <div class="streak-info">
-            <div class="streak-label">MONTHLY STREAK</div>
-            <div class="streak-value" id="streak-value">12 DAYS</div>
-          </div>
-          <div class="streak-icon">
-            <svg viewBox="0 0 36 36" fill="none"><path d="M18 3C11 10 7 15 7 21a11 11 0 0022 0c0-6-4-11-11-18z" fill="var(--pink)" opacity="0.8"/><path d="M18 14c-2 3-4 5.5-4 8a4 4 0 008 0c0-2.5-2-5-4-8z" fill="var(--pink)"/></svg>
-          </div>
-        </div>
-
         <!-- Muscle Heatmap (F10) -->
         <div id="heatmap-section"></div>
 
@@ -4143,7 +4132,6 @@ function finishWorkout(){
 function renderProgress(){
   renderChart();
   renderCalendar();
-  renderStreak();
   renderHeatmap();
   renderRecentSessions();
 }
@@ -4271,7 +4259,6 @@ function deleteLog(sortedIndex){
   saveLogs(all);
   renderRecentSessions();
   renderCalendar();
-  renderStreak();
   renderHeatmap();
 }
 
@@ -4318,15 +4305,19 @@ function renderChart(exName){
   if(!_projEx){ svg.innerHTML=''; return; }
 
   const history = _getExercise1RMHistory(_projEx);
-  let values = history.values;
-  let months = history.months;
+  const values = history.values;
+  const months = history.months;
 
-  // Fall back to seed chart data if no real logs for this exercise
-  if(values.length < 2){
-    const seed = getChartData();
-    if(seed){ values = seed.values; months = seed.months; }
+  if(!values || values.length === 0){
+    svg.innerHTML='';
+    const bigNum = document.getElementById('proj-big-num');
+    const bigChg = document.getElementById('proj-big-change');
+    if(bigNum) bigNum.textContent = '— KG';
+    if(bigChg) bigChg.textContent = 'No data yet';
+    const mLabel = document.getElementById('chart-months');
+    if(mLabel) mLabel.innerHTML = '';
+    return;
   }
-  if(!values || values.length === 0){ svg.innerHTML=''; return; }
 
   // Big number
   const latest = values[values.length-1];
